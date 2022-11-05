@@ -27,7 +27,7 @@ jobs:
     - run: npm test
   
   deploy:
-    if: startsWith(github.head_ref, 'release/')
+    if: ${{ github.event.label.name == 'feature' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
