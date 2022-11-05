@@ -43,4 +43,4 @@ jobs:
       - id: deploy-url
         run: |
             echo "::set-output name=url::$(curl -s -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' 'https://api.vercel.com/v6/now/deployments?projectId=${{ secrets.VERCEL_PROJECT_ID }}&limit=1' | jq -r '.deployments[0].url')"
-            echo "step output: ${{ steps.deploy-url.outputs.url }}"
+            echo "$(curl -s -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' 'https://api.vercel.com/v6/now/deployments?projectId=${{ secrets.VERCEL_PROJECT_ID }}&limit=1' | jq -r '.deployments[0].url')"
