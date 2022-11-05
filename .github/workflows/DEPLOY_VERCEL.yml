@@ -1,0 +1,41 @@
+name: Node.js CI
+
+on:
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+  
+  deploy:
+    if: contains(github.event.pull_request.labels.*.name, 'feature')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: ${{ steps.deploy-url.outputs.URL }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      - id: deploy-url
+        run: |
+            echo "URL=https://$(curl -s -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' 'https://api.vercel.com/v6/now/deployments?projectId=${{ secrets.VERCEL_PROJECT_ID }}&limit=1' | jq -r '.deployments[0].url')" >> $GITHUB_OUTPUT
