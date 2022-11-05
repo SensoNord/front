@@ -41,4 +41,4 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
       - id: deploy
-          run: echo "::set-output name=url::$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
+          run: echo "::set-output name=url::$(npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
