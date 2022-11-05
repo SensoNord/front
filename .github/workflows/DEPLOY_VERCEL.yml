@@ -4,9 +4,7 @@
 name: Node.js CI
 
 on:
-  pull_request:
-    types:
-      - opened
+  - pull_request
 
 jobs:
   build:
