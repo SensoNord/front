@@ -1,6 +1,18 @@
-# Getting Started with Create React App
+# SensoNord - Front
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Différents environnements
+
+Il existe deux environnements : Development et Production
+
+Ces deux environnements sont visibles sur la sidebar a droite. Pour accéder aux liens, cliquer sur l'environnement souhaité puis faites `view deployments`
+
+### Development
+
+Quand une pull request est lancée avec le label `feature`, le site est automatiquement déployé sur l'environnement `development`
+
+### Production
+
+Quand un commit est fait sur la branche `main`, le site est automatiquement déployé sur l'envionnement `production`
 
 ## Available Scripts
 
