@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: development
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.deploy-url.outputs.url }}
     steps:
       - uses: actions/checkout@v2
       - uses: amondnet/vercel-action@v20
@@ -40,5 +40,5 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      - id: deploy
-          run: echo "::set-output name=url::$(npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
+      - id: deploy-url
+        run: "echo ::set-output name=url::$(curl -s -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' 'https://api.vercel.com/v12/now/deployments?projectId=${{ secrets.VERCEL_PROJECT_ID }}&limit=1' | jq -r '.deployments[0].url')"
