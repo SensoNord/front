@@ -27,7 +27,7 @@ jobs:
     - run: npm test
   
   deploy:
-    if: github.event.label.name == 'feature'
+    if: contains(github.event.pull_request.labels.*.name, 'feature')
     needs: build
     runs-on: ubuntu-latest
     steps:
