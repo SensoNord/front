@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          SensoNord - Test merge
+          SensoNord - Test new feature
         </p>
         <a
           className="App-link"
