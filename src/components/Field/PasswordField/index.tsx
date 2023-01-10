@@ -7,8 +7,8 @@ type PasswordFieldProps = {
     label: string
 }
 
-function PasswordField (props: PasswordFieldProps) {
-    const {password, handleChange, required, label} = props;
+function PasswordField(props: PasswordFieldProps) {
+    const { password, handleChange, required, label } = props;
     const [showPassword, setShowPassword] = useState(false)
     const inputType = showPassword ? 'text' : 'password'
     const buttonLabel = showPassword ? 'Hide' : 'Show'

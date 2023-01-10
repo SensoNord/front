@@ -33,7 +33,7 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        logout: (state) => initialState
+        logout: () => initialState
     },
     extraReducers: (builder) => {
         builder
@@ -48,7 +48,6 @@ const authSlice = createSlice({
                 state.error = {} as any;
             })
             .addCase(fetchLogin.rejected, (state, action) => {
-                console.log("test", action.payload)
                 state.status = StatusEnum.FAILED;
                 state.token = {} as TokenType;
                 state.error = action.payload as any;

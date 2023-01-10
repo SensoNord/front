@@ -23,7 +23,7 @@ export default function Login() {
     }, [status, navigate])
 
     const handleSubmit = (event: any) => {
-        
+
         event.preventDefault();
         const credentials: CredentialsType = {
             email,
@@ -37,7 +37,7 @@ export default function Login() {
             <section>
                 {/* Left Panel */}
             </section>
-                {/* Right Panel */}
+            {/* Right Panel */}
             <section>
                 <div>
                     <h1> Login Account </h1>

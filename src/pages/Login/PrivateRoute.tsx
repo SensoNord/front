@@ -10,6 +10,6 @@ const PrivateRoute: FC<{ children: React.ReactElement }> = ({ children }) => {
         return <Navigate to="/login" />;
     }
     return children;
- };
+};
 
 export default PrivateRoute;

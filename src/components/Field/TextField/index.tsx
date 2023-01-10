@@ -5,9 +5,9 @@ type TextFieldProps = {
     label: string
 }
 
-function TextField (props: TextFieldProps) {
-    const {value, handleChange, required, label} = props;
-    
+function TextField(props: TextFieldProps) {
+    const { value, handleChange, required, label } = props;
+
     return (
         <>
             <div>
