@@ -1,0 +1,60 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { directus } from '../libraries/directus';
+import { CredentialsType } from '../types/Credentials/CredentialsType';
+import { TokenType } from '../types/Credentials/TokenTypes';
+import { ErrorType } from '../types/Request/ErrorType';
+import { StatusEnum } from '../types/Request/StatusEnum';
+
+interface LoginState {
+    token: TokenType;
+    status: StatusEnum;
+    error: ErrorType
+}
+
+const initialState: LoginState = {
+    token: {} as TokenType,
+    status: StatusEnum.IDLE,
+    error: {} as ErrorType
+};
+
+export const fetchLogin = createAsyncThunk("auth/fetchLogin", async (credentials: CredentialsType, { rejectWithValue }) => {
+    try {
+        const response = await directus.auth.login(credentials);
+        console.log("response", response)
+        return response;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message
+        });
+    }
+});
+
+const authSlice = createSlice({
+    name: "auth",
+    initialState,
+    reducers: {
+        logout: (state) => initialState
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchLogin.pending, (state) => {
+                state.status = StatusEnum.LOADING;
+                state.token = {} as TokenType;
+                state.error = {} as any;
+            })
+            .addCase(fetchLogin.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.token = action.payload;
+                state.error = {} as any;
+            })
+            .addCase(fetchLogin.rejected, (state, action) => {
+                console.log("test", action.payload)
+                state.status = StatusEnum.FAILED;
+                state.token = {} as TokenType;
+                state.error = action.payload as any;
+            });
+    }
+});
+
+export const { logout } = authSlice.actions;
+export default authSlice.reducer;
