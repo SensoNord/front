@@ -20,7 +20,7 @@ const PrivateRoute: FC<{ children: React.ReactElement }> = ({ children }) => {
             )   
         }
         getToken();
-    }, []);
+    }, [directus.auth.token]);
 
 	// Let's login in case we don't have token or it is invalid / expired
 	if (!authenticated) {

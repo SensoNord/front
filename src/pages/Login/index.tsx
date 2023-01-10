@@ -41,7 +41,7 @@ export function Login() {
             .catch(() => {});
         }
         refreshToken()
-    }, []);
+    }, [directus.auth]);
 
     return (  
         <div>
