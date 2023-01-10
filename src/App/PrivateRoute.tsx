@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { DirectusContext } from "../../context/directus-context";
+import { DirectusContext } from "../context/directus-context";
 
 const PrivateRoute: FC<{ children: React.ReactElement }> = ({ children }) => {
 

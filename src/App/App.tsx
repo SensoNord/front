@@ -2,11 +2,11 @@ import './App.css';
 import { Directus } from '@directus/sdk';
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PrivateRoute from '../feature/Login/PrivateRoute';
+import PrivateRoute from './PrivateRoute';
 import Layout from '../components/Layout';
-import { Login } from '../feature/Login';
+import { Login } from '../pages/Login';
 import NotFoundPage from '../components/NotFoundPage';
-import Home from '../feature/Home';
+import Home from '../pages/Home';
 import { DirectusContext } from '../context/directus-context'
 export default function App() {
 

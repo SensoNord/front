@@ -32,7 +32,6 @@ export function Login() {
     }
 
     useEffect(() => {
-
         async function refreshToken() {
             await directus.auth
             .refresh()
@@ -41,11 +40,10 @@ export function Login() {
             })
             .catch(() => {});
         }
-
         refreshToken()
     }, []);
 
-    return (
+    return (  
         <div>
             <h1>Authentification</h1>
             <form onSubmit={handleSumbit}>
