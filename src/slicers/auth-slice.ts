@@ -20,11 +20,11 @@ const initialState: LoginState = {
 export const fetchLogin = createAsyncThunk("auth/fetchLogin", async (credentials: CredentialsType, { rejectWithValue }) => {
     try {
         const response = await directus.auth.login(credentials);
-        console.log(response)
         return response;
     } catch (error: any) {      
         return rejectWithValue({
-            error: error.message
+            error: error.message,
+            status: error.response.status
         });
     }
 });

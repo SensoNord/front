@@ -5,8 +5,8 @@ import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
 
 const errorMiddleware: Middleware = ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: any) => {
     try {
-        if (action.error && action.type.includes('rejected')) {
-            dispatch(logout())
+        if (action.error && action.payload.status === 401) {
+            dispatch(logout());
         }
         return next(action);
     } catch (error) {

@@ -1,3 +1,4 @@
 export type ErrorType = {
-	error: string
+	error: string,
+	status: number,
 }

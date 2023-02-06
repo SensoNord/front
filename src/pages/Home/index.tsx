@@ -8,7 +8,7 @@ export default function Home() {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        dispatch(fetchSubject("28730aa8-275a-4b16-9ff2-1494f5342243"))
+        dispatch(fetchSubject("fdsf"))
     }, [])
 
     return (

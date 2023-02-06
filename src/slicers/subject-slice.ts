@@ -20,11 +20,11 @@ const initialState: SubjectState = {
 export const fetchSubject = createAsyncThunk("items/fetchSubject", async (id: string, { rejectWithValue }) => {
     try {
         const response = await directus.items('subjects').readOne(id)
-        console.log(response)
         return response;
-    } catch (error: any) {      
+    } catch (error: any) {
         return rejectWithValue({
-            error: error.message
+            error: error.message,
+            status: error.response.status
         });
     }
 });
