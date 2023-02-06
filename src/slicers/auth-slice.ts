@@ -8,21 +8,21 @@ import { StatusEnum } from '../types/Request/StatusEnum';
 interface LoginState {
     token: TokenType;
     status: StatusEnum;
-    error: ErrorType
+    error: ErrorType;
 }
 
 const initialState: LoginState = {
     token: {} as TokenType,
     status: StatusEnum.IDLE,
-    error: {} as ErrorType
+    error: {} as ErrorType,
 };
 
 export const fetchLogin = createAsyncThunk("auth/fetchLogin", async (credentials: CredentialsType, { rejectWithValue }) => {
     try {
         const response = await directus.auth.login(credentials);
-        console.log("response", response)
+        console.log(response)
         return response;
-    } catch (error: any) {
+    } catch (error: any) {      
         return rejectWithValue({
             error: error.message
         });
@@ -33,19 +33,26 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        logout: () => initialState
+        loginWithToken: (state, action) => {
+            state.status = StatusEnum.SUCCEEDED;
+            state.token = action.payload;
+        },
+        logout: () => {
+            localStorage.clear();
+            return initialState;
+        }
     },
     extraReducers: (builder) => {
         builder
             .addCase(fetchLogin.pending, (state) => {
                 state.status = StatusEnum.LOADING;
                 state.token = {} as TokenType;
-                state.error = {} as any;
+                state.error = {} as ErrorType;
             })
             .addCase(fetchLogin.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.token = action.payload;
-                state.error = {} as any;
+                state.error = {} as ErrorType;
             })
             .addCase(fetchLogin.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
@@ -55,5 +62,5 @@ const authSlice = createSlice({
     }
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, loginWithToken } = authSlice.actions;
 export default authSlice.reducer;

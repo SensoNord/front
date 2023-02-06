@@ -3,13 +3,14 @@ import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../App/hooks";
 import PasswordField from "../../components/Field/PasswordField";
 import TextField from "../../components/Field/TextField";
-import { fetchLogin } from "../../slicers/auth-slice";
+import { fetchLogin, loginWithToken } from "../../slicers/auth-slice";
 import { CredentialsType } from "../../types/Credentials/CredentialsType";
 import { StatusEnum } from "../../types/Request/StatusEnum";
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [token, setToken] = useState<string>('');
     const textFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value);
     const passwordFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value);
     const { status, error } = useAppSelector(state => state.auth)
@@ -17,13 +18,21 @@ export default function Login() {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
+        const token = localStorage.getItem('auth_token');
+        const expires = localStorage.getItem('auth_expires');
+        if (token) {
+            setToken(token)
+            dispatch(loginWithToken({ access_token: token, expires: expires }))
+        }
+    }, [])
+
+    useEffect(() => {
         if (status === StatusEnum.SUCCEEDED) {
             navigate('/home');
         }
-    }, [status, navigate])
+    }, [status, token])
 
     const handleSubmit = (event: any) => {
-
         event.preventDefault();
         const credentials: CredentialsType = {
             email,
@@ -37,8 +46,8 @@ export default function Login() {
             <section>
                 {/* Left Panel */}
             </section>
-            {/* Right Panel */}
             <section>
+                {/* Right Panel */}
                 <div>
                     <h1> Login Account </h1>
                     <form onSubmit={handleSubmit}>
