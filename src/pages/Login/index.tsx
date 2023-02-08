@@ -24,13 +24,13 @@ export default function Login() {
             setToken(token)
             dispatch(loginWithToken({ access_token: token, expires: expires }))
         }
-    }, [])
+    }, [dispatch])
 
     useEffect(() => {
         if (status === StatusEnum.SUCCEEDED) {
             navigate('/home');
         }
-    }, [status, token])
+    }, [status, token, navigate])
 
     const handleSubmit = (event: any) => {
         event.preventDefault();
