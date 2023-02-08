@@ -1,19 +1,8 @@
 import { configureStore, ThunkDispatch } from "@reduxjs/toolkit";
-import authReducer, { logout } from "../slicers/auth-slice";
+import authReducer from "../slicers/auth-slice";
 import subjectReducer from "../slicers/subject-slice";
-import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
-
-const errorMiddleware: Middleware = ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: any) => {
-    try {
-        if (action.error && action.payload.status === 401) {
-            dispatch(logout());
-        }
-        return next(action);
-    } catch (error) {
-        return error;
-    }
-};
-
+import { AnyAction } from 'redux';
+import { errorMiddleware } from "./middleware";
 
 export const store = configureStore({
     reducer: {
