@@ -2,6 +2,7 @@ import {emptyUser, UserType} from "./UserType";
 import {MessageResponseType} from "./MessageResponseType";
 
 export type PostType = {
+    id: string;
     user_created: UserType;
     date_created: Date;
     user_updated: UserType;
@@ -12,6 +13,7 @@ export type PostType = {
 }
 
 const emptyPost: PostType = {
+    id: "",
     user_created: emptyUser,
     date_created: new Date(),
     user_updated: emptyUser,

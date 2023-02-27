@@ -15,6 +15,7 @@ export default class Forum {
                 "name",
                 "user_list.directus_users_id.first_name",
                 "user_list.directus_users_id.last_name",
+                "posts.id",
                 "posts.user_created.first_name",
                 "posts.user_created.last_name",
                 "posts.date_created",
@@ -34,4 +35,14 @@ export default class Forum {
         }));
     }
 
+    static async createResponse(post_id: string, message: string): Promise<any> {
+        return (await directus.items('responses').createOne({post_id, message}
+        ));
+    }
+
+    static async createPost(subject_id: string, title: string, message: string): Promise<any> {
+        return (await directus.items('posts').createOne(
+            {subject_id: subject_id, title: title, message: message}
+        ));
+    }
 }
