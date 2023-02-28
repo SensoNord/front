@@ -1,3 +1,3 @@
 import { Directus } from '@directus/sdk';
 
-export const directus = new Directus(process.env.REACT_APP_DIRECTUS_URL as string);
+export const directus = new Directus('http://146.59.228.178/');
