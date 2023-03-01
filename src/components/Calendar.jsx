@@ -28,7 +28,7 @@ const Calendar = () => {
     useEffect(() => {
         if (!isSetup) {
             directus.auth
-                .login({email: "*******************************", password: "************"})
+                .login({email: "first.user@example.com", password: "password"})
                 .then(() => {
                     directus.items('Calendrier').readByQuery({limit: -1}).then((calendar) => {
                         if (calendar) {
@@ -57,7 +57,7 @@ const Calendar = () => {
 
     async function createEvent (toAdd){
         let add;
-        if(toAdd.allDay == true){
+        if(toAdd.allDay === true){
             let start = toAdd.startDate.getTime()+3600000;
             start = new Date(start);
             let end = toAdd.endDate.getTime()+3600000;
@@ -146,7 +146,6 @@ const Calendar = () => {
 
             }
             if (deleted !== undefined) {
-                console.log(deleted)
                 suppressEvent(deleted)
                 updatedData = updatedData.filter((appointment) => appointment.id !== deleted);
             }
