@@ -28,7 +28,7 @@ const Calendar = () => {
     useEffect(() => {
         if (!isSetup) {
             directus.auth
-                .login({email: "first.user@example.com", password: "password"})
+                .login({email: "************", password: "*************"})
                 .then(() => {
                     directus.items('Calendrier').readByQuery({limit: -1}).then((calendar) => {
                         if (calendar) {
