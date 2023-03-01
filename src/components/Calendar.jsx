@@ -44,7 +44,6 @@ const Calendar = () => {
                 });
         }
     }, []);
-    console.log(calendar)
     const [data, setData] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentViewName, setCurrentViewName] = useState('work-week');
@@ -56,13 +55,75 @@ const Calendar = () => {
         setCurrentViewName(currentViewName);
     };
 
+    async function createEvent (toAdd){
+        let add;
+        if(toAdd.allDay == true){
+            let start = toAdd.startDate.getTime()+3600000;
+            start = new Date(start);
+            let end = toAdd.endDate.getTime()+3600000;
+            end = new Date(end);
+            add = await  directus.items('Calendrier').createOne(
+                {title :toAdd.title,
+                    startDate: start,
+                    endDate: end,
+                    notes: toAdd.notes});
+        }
+        else{
+            add =  await  directus.items('Calendrier').createOne(
+                {title :toAdd.title,
+                    startDate: toAdd.startDate,
+                    endDate: toAdd.endDate,
+                    notes: toAdd.notes});
+        }
+
+        return add
+
+    }
+
+    async function updateEvent (toUpdate,id){
+        if (toUpdate[id].title){
+            await directus.items('Calendrier').updateOne(id,
+                {
+                    title : toUpdate[id].title
+                });
+        }
+        if (toUpdate[id].startDate){
+            let start = toUpdate[id].startDate.getTime()+3600000;
+            start = new Date(start);
+            await directus.items('Calendrier').updateOne(id,
+                {
+                    startDate : start
+                });
+        }
+        if (toUpdate[id].endDate){
+            let end = toUpdate[id].endDate.getTime()+3600000;
+            end = new Date(end);
+            await directus.items('Calendrier').updateOne(id,
+                {
+                    endDate : end
+                });
+        }
+        if (toUpdate[id].notes){
+            await directus.items('Calendrier').updateOne(id,
+                {
+                    notes : toUpdate[id].notes
+                });
+        }
+        return await directus.items('Calendrier').readOne(id);
+
+    }
+
+
+    async function suppressEvent (toSuppress){
+        await directus.items('Calendrier').deleteOne(toSuppress);
+    }
     const commitChanges = ({added, changed, deleted}) => {
         setData((state) => {
             let updatedData = [...state];
             if (added) {
-                console.log(added.id)
                 if(added.id === undefined){
-                    console.log('test')
+                    added = createEvent(added).then(added = added,
+                    updatedData = [...updatedData, {...added}])
                 }
                 let isHere = false;
                 updatedData.map(c =>{
@@ -74,17 +135,21 @@ const Calendar = () => {
                     updatedData = [...updatedData, {...added}];
                 }
             }
-            /*if (added & added.id == undefined) {
-                const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
-                setData([...data, { id: startingAddedId, ...added }]);
-            }*/
+
             if (changed) {
-                updatedData = updatedData.map((appointment) => (changed[appointment.id] ? {...appointment, ...changed[appointment.id]} : appointment));
+                let id;
+                for (let i in changed) {
+                    id = i
+                }
+                changed = updateEvent(changed,id).then(changed = changed,
+                    updatedData = updatedData.map((appointment) => (changed[appointment.id] ? {...appointment, ...changed[appointment.id]} : appointment)));
+
             }
             if (deleted !== undefined) {
+                console.log(deleted)
+                suppressEvent(deleted)
                 updatedData = updatedData.filter((appointment) => appointment.id !== deleted);
             }
-            console.log(updatedData)
             return updatedData;
         });
     };
