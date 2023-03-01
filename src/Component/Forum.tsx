@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import forum from "../lib/forum";
-import {directus} from "../services/directus";
 import {emptySubject} from "../type/SubjectType";
 import {PostType} from "../type/PostType";
 import Post from "./Post";
@@ -28,8 +27,7 @@ export default function Forum() {
 
 
     useEffect(() => {
-        directus.auth
-            .login({email: "first.user@example.com", password: "password"})
+        forum.connection()
             .then(() => {
                 forum.getSubjects(subject_id).then((subject) => {
                     if (subject) {
@@ -52,12 +50,16 @@ export default function Forum() {
     async function handleSubmit(e: { preventDefault: () => void; target: any; }) {
         e.preventDefault();
 
-        const form = e.target;
-        const formData = new FormData(form);
-        const formJson = Object.fromEntries(formData.entries()) as { title: string, message: string };
-        if (formJson.title && formJson.message) {
-            forum.createPost(subject_id, formJson.title, formJson.message).then((result: any) => {
+        const formData = new FormData(e.target);
+        const formJson = Object.fromEntries(formData.entries()) as { titlePost: string, message: string };
+        const file = formData.get('file') as File;
+        if (formJson.titlePost && formJson.message) {
+            forum.createPost(subject_id, formJson.titlePost, formJson.message).then(async post => {
                     setShowPopup(false);
+                    if (file.size !== 0 || file.name.length !== 0) {
+                        await forum.uploadFile(formData, subject.id, subject.folder_id, post.id, 'Post');
+                        window.location.reload();
+                    }
                 }
             );
         } else {
@@ -84,7 +86,7 @@ export default function Forum() {
                             {
                                 subject['posts'].map((post: PostType, index: number) => {
                                         return (
-                                            <Post post={post} key={index} index={index}></Post>
+                                            <Post post={post} key={index} subject={subject} index={index}></Post>
                                         )
                                     }
                                 )
@@ -99,12 +101,16 @@ export default function Forum() {
                         <form className={"alertPopup text-center"} onSubmit={handleSubmit} ref={ref}>
                             <div className={"p-2 text-xl"}>
                                 <div className="grid grid-cols-1 mb-10">
-                                    <label htmlFor="title">Titre</label>
-                                    <input type="text" id="title" name="title" className={"mt-2 border-2 border-gray-700 rounded-md"}/>
+                                    <label htmlFor="titlePost">Titre</label>
+                                    <input type="text" id="titlePost" name="titlePost" className={"mt-2 border-2 border-gray-700 rounded-md"}/>
                                 </div>
                                 <div className="grid grid-cols-1">
                                     <label htmlFor="message">Message</label>
                                     <textarea id="message" name="message" className={"mt-2 border-2 border-gray-700 rounded-md"}/>
+                                </div>
+                                <div className="grid grid-cols-1">
+                                    <label htmlFor="file">Fichier</label>
+                                    <input type="file" name="file" id="file"/>
                                 </div>
                             </div>
                             <div id={"errorMessage"} className={"text-red-600 font-bold text-2xl hidden"}>Veuillez remplir tous les champs</div>

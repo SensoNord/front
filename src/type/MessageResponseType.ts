@@ -6,6 +6,7 @@ export type MessageResponseType = {
     user_updated: UserType;
     date_updated: Date;
     message: string;
+    file_id: string;
 }
 
 const emptyMessageResponse: MessageResponseType = {
@@ -13,7 +14,8 @@ const emptyMessageResponse: MessageResponseType = {
     date_created: new Date(),
     user_updated: emptyUser,
     date_updated: new Date(),
-    message: ""
+    message: "",
+    file_id: ""
 }
 
 export {emptyMessageResponse};

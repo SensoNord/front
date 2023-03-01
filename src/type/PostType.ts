@@ -10,6 +10,7 @@ export type PostType = {
     title: string;
     message: string;
     responses: MessageResponseType[];
+    file_id: string;
 }
 
 const emptyPost: PostType = {
@@ -20,7 +21,8 @@ const emptyPost: PostType = {
     date_updated: new Date(),
     title: "",
     message: "",
-    responses: []
+    responses: [],
+    file_id: ""
 }
 
 export {emptyPost};
