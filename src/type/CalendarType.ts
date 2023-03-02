@@ -4,6 +4,7 @@ export type CalendarType = {
     startDate: Date;
     endDate: Date;
     description: string;
+    rRule : string;
 }
 
 const emptyCalendar: CalendarType = {
@@ -11,7 +12,8 @@ const emptyCalendar: CalendarType = {
     endDate: new Date(),
     startDate: new Date(),
     title: "",
-    description: ""
+    description: "",
+    rRule:""
 }
 
 export {emptyCalendar};
