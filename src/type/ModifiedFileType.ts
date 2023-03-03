@@ -1,4 +1,4 @@
-export type DirectusFileType = {
+export type ModifiedFileType = {
     charset: string
     description: string
     duration: string
@@ -23,7 +23,7 @@ export type DirectusFileType = {
     width: string
 }
 
-const emptyDirectusFileType: DirectusFileType = {
+const emptyDirectusFileType: ModifiedFileType = {
     charset: "",
     description: "",
     duration: "",

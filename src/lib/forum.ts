@@ -1,7 +1,5 @@
-import {ItemInput, FileItem} from "@directus/sdk";
 import {directus} from "../services/directus";
 import {SubjectType} from "../type/SubjectType";
-import {DirectusFileType} from "../type/DirectusFileType";
 
 
 export default class Forum {
@@ -46,70 +44,13 @@ export default class Forum {
         }));
     }
 
-    static async getFile(file_id: string): Promise<any> {
-        return (await directus.files.readOne(file_id, {
-            fields: [
-                "type",
-                "filename_download",
-            ]
-        }))
+    static async createResponse(post_id: string, message: string, file_id: string | null = null): Promise<any> {
+        return (await directus.items('responses').createOne({post_id: post_id, message: message, file_id: file_id}));
     }
 
-    static async getFilesList(file_id: string): Promise<any> {
-        return (await directus.files.readByQuery({
-            filter: {
-                "id": {
-                    "_eq": file_id
-                }
-            },
-            fields: [
-                "id",
-            ]
-        }))
-    }
-
-    static async createResponse(post_id: string, message: string): Promise<any> {
-        return (await directus.items('responses').createOne({post_id, message}
-        ));
-    }
-
-    static async createPost(subject_id: string, title: string, message: string): Promise<any> {
+    static async createPost(subject_id: string, title: string, message: string, file_id: string | null = null): Promise<any> {
         return (await directus.items('posts').createOne(
-            {subject_id: subject_id, title: title, message: message}
+            {subject_id: subject_id, title: title, message: message, file_id: file_id}
         ));
-    }
-
-    static async uploadFile(form: FormData | ItemInput<FileItem<unknown>>, subject_id: string, folder_id: string, messageId: string, linkType: string): Promise<DirectusFileType | string | null | undefined> {
-        let responseCreateFile = (await directus.files.createOne(form));
-        if (responseCreateFile) {
-            switch (linkType) {
-                case 'Response':
-                    console.log("response", responseCreateFile.id);
-                    await directus.items('responses').updateOne(messageId, {
-                        "file_id": responseCreateFile.id
-                    })
-                    break;
-                case 'Post':
-                    console.log('post', responseCreateFile.id, messageId)
-                    await directus.items('posts').updateOne(messageId, {
-                        "file_id": responseCreateFile.id
-                    })
-                    break;
-            }
-            let responseUpdateFile = await directus.files.updateOne(responseCreateFile.id, {
-                "subject": [
-                    {
-                        "subjects_id": subject_id
-                    }
-                ],
-                "folder": folder_id
-            });
-            return responseUpdateFile as unknown as DirectusFileType;
-        }
-        return 'No file updated';
-    }
-
-    static async test(): Promise<any> {
-        return (await directus.relations);
     }
 }

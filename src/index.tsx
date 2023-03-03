@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Forum from "./Component/Forum";
+import DisplayFiles from "./Component/DisplayFiles";
+import folder from "./lib/folder";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,7 +12,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     {/*<App />*/}
-      <Forum />
+    {/*  <Forum />*/}
+      <DisplayFiles callback={folder.downloadFile}/>
   </React.StrictMode>
 );
 

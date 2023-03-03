@@ -3,27 +3,30 @@ import forum from "../lib/forum";
 import {emptySubject} from "../type/SubjectType";
 import {PostType} from "../type/PostType";
 import Post from "./Post";
-import "./Forum.css";
+import "../styles/Forum.css";
 import {createPortal} from "react-dom";
+import folder from "../lib/folder";
+import DisplayFiles from "./DisplayFiles";
 
 export default function Forum() {
     const [subject, setSubject] = useState(emptySubject);
     const subject_id = "28730aa8-275a-4b16-9ff2-1494f5342243";
     const [showPopup, setShowPopup] = useState(false);
-    const ref = useRef(null) as { current: any };
+    const [showPopup2, setShowPopup2] = useState(false);
+    const popupRef = useRef(null) as { current: any };
+    const popupRef2 = useRef(null) as { current: any };
+    const fileRef = useRef(null) as { current: any };
+    const [file_name, setFileName] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [file_id, setFileId] = useState<string | null>(null);
 
-    useEffect(() => {
-        function handleClickOutside(event: { target: any; }) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                setShowPopup(false);
-            }
-        }
+    function quitPopup() {
+        setShowPopup(false);
+    }
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
+    function quitPopup2() {
+        setShowPopup2(false);
+    }
 
 
     useEffect(() => {
@@ -52,23 +55,32 @@ export default function Forum() {
 
         const formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries()) as { titlePost: string, message: string };
-        const file = formData.get('file') as File;
         if (formJson.titlePost && formJson.message) {
-            forum.createPost(subject_id, formJson.titlePost, formJson.message).then(async post => {
-                    setShowPopup(false);
-                    if (file.size !== 0 || file.name.length !== 0) {
-                        await forum.uploadFile(formData, subject.id, subject.folder_id, post.id, 'Post');
-                        window.location.reload();
-                    }
-                }
-            );
+            const post = await forum.createPost(subject_id, formJson.titlePost, formJson.message, file_id);
+            setShowPopup(false);
+            if (file?.size !== 0 || file.name.length !== 0) {
+                await folder.uploadFile(file, subject.id, subject.folder_id, post.id, 'Post');
+            }
+            window.location.reload();
         } else {
             document.getElementById("errorMessage")?.classList.remove("hidden");
         }
     }
 
-    function quitPopup() {
-        setShowPopup(false);
+    function getFileFromDrive(file: any) {
+        fileRef.current.value = "";
+        setFile(null);
+        setFileId(file.id);
+        setFileName(file.filename_download);
+        setShowPopup2(false);
+    }
+
+    function getFileFromComputer(e: { target: { files: any; }; }) {
+        const f = e.target.files[0];
+        setFile(f);
+        setFileId(null);
+        setFileName(f.name);
+        setShowPopup2(false);
     }
 
     return (
@@ -98,7 +110,7 @@ export default function Forum() {
             {
                 showPopup && createPortal(
                     <div className={"alertContainer"}>
-                        <form className={"alertPopup text-center"} onSubmit={handleSubmit} ref={ref}>
+                        <form className={"alertPopup text-center"} onSubmit={handleSubmit} ref={popupRef}>
                             <div className={"p-2 text-xl"}>
                                 <div className="grid grid-cols-1 mb-10">
                                     <label htmlFor="titlePost">Titre</label>
@@ -110,15 +122,34 @@ export default function Forum() {
                                 </div>
                                 <div className="grid grid-cols-1">
                                     <label htmlFor="file">Fichier</label>
-                                    <input type="file" name="file" id="file"/>
+                                    <button type={"button"} className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white mx-auto font-bold py-2 px-4 mb-2 rounded"} onClick={() => setShowPopup2(true)}>Ajouter un fichier</button>
+                                    {
+                                        file_name && (
+                                            <span>{file_name}</span>
+                                        )
+                                    }
                                 </div>
                             </div>
-                            <div id={"errorMessage"} className={"text-red-600 font-bold text-2xl hidden"}>Veuillez remplir tous les champs</div>
+                            <div id={"errorMessage"} className={"text-red-600 font-bold text-2xl hidden"}>Veuillez remplir les champs "Titre" et "Message"1</div>
                             <div className="flex flex-row justify-evenly text-white mt-5">
                                 <button className={"bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"} onClick={quitPopup}>Annuler</button>
                                 <button className={"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} type={"submit"}>Envoyer</button>
                             </div>
                         </form>
+                    </div>,
+                    document.getElementById('modal-root') as HTMLElement)
+            }
+            {
+                showPopup2 && createPortal(
+                    <div className={"alertContainer"}>
+                        <div className={"alertPopup text-center"} ref={popupRef2}>
+                            <h1>Drive</h1>
+                            <DisplayFiles callback={getFileFromDrive}/>
+                            <h1>
+                                <input type="file" name="file" id="file" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} ref={fileRef} onChange={getFileFromComputer}/>
+                            </h1>
+                            <button className={"bg-red-500 hover:bg-red-700 text-white w-1/2 mx-auto font-bold py-2 px-4 rounded"} onClick={quitPopup2}>Annuler</button>
+                        </div>
                     </div>,
                     document.getElementById('modal-root') as HTMLElement)
             }
