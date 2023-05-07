@@ -1,7 +1,7 @@
 import React from "react";
 
 type Option = {
-  value: string;
+  value: any;
   label: string;
 };
 
@@ -11,16 +11,17 @@ type SelectFieldProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   required?: boolean;
   label: string;
+  className: string;
 };
 
 function SelectField(props: SelectFieldProps) {
-  const { options, value, handleChange, required, label } = props;
+  const { options, value, handleChange, required, label, className } = props;
 
   return (
     <div>
       <label htmlFor="select-field">{label}</label>
       <select
-        className="select-field"
+        className={className}
         id="select-field"
         name="select"
         value={value}
