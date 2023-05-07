@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../libraries/directus';
-import { CredentialsType } from '../types/Credentials/CredentialsType';
-import { TokenType } from '../types/Credentials/TokenTypes';
+import { CredentialsType } from '../types/Users/Credentials/CredentialsType';
+import { TokenType } from '../types/Users/Credentials/TokenTypes';
 import { ErrorType } from '../types/Request/ErrorType';
 import { StatusEnum } from '../types/Request/StatusEnum';
 

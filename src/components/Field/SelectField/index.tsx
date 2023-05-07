@@ -11,7 +11,7 @@ type SelectFieldProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   required?: boolean;
   label: string;
-  className: string;
+  className?: string;
 };
 
 function SelectField(props: SelectFieldProps) {

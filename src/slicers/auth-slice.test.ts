@@ -1,5 +1,5 @@
 import { store } from "../App/store";
-import { CredentialsType } from "../types/Credentials/CredentialsType";
+import { CredentialsType } from "../types/Users/Credentials/CredentialsType";
 import { fetchLogin, loginWithToken, logout } from "./auth-slice";
 
 describe('Test authentication', () => {

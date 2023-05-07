@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 
 type EmailFieldProps = {
   value: string;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   required: boolean;
   label: string;
+  classNameInput?: string;
+  setIsEmailValid: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function EmailField(props: EmailFieldProps) {
-  const { value, handleChange, required, label } = props;
-  const [isValid, setIsValid] = useState(true);
+  const { value, handleChange, required, label, classNameInput, setIsEmailValid } = props;
 
   function checkEmailValidity(email: string) {
     const emailPattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
@@ -18,15 +19,14 @@ function EmailField(props: EmailFieldProps) {
 
   function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
     const emailIsValid = checkEmailValidity(event.target.value);
-    setIsValid(emailIsValid);
+    setIsEmailValid(emailIsValid);
     handleChange(event);
   }
 
   return (
     <>
-      <div>
         <input
-          className={`input-box ${!isValid ? "input-box-invalid" : ""}`}
+          className={classNameInput}
           placeholder={label}
           id="email"
           name="email"
@@ -35,8 +35,6 @@ function EmailField(props: EmailFieldProps) {
           onChange={handleEmailChange}
           required={required}
         />
-        {!isValid && <p className="email-error-message">Email invalide</p>}
-      </div>
     </>
   );
 }
