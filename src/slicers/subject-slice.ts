@@ -7,7 +7,7 @@ import { StatusEnum } from "../types/Request/StatusEnum";
 
 interface SubjectState {
   string: any;
-  status: StatusEnum
+  status: StatusEnum;
   error: ErrorType;
 }
 
