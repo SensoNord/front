@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type EmailFieldProps = {
   value: string;
@@ -10,7 +10,14 @@ type EmailFieldProps = {
 };
 
 function EmailField(props: EmailFieldProps) {
-  const { value, handleChange, required, label, classNameInput, setIsEmailValid } = props;
+  const {
+    value,
+    handleChange,
+    required,
+    label,
+    classNameInput,
+    setIsEmailValid,
+  } = props;
 
   function checkEmailValidity(email: string) {
     const emailPattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
@@ -25,16 +32,16 @@ function EmailField(props: EmailFieldProps) {
 
   return (
     <>
-        <input
-          className={classNameInput}
-          placeholder={label}
-          id="email"
-          name="email"
-          type="email"
-          value={value}
-          onChange={handleEmailChange}
-          required={required}
-        />
+      <input
+        className={classNameInput}
+        placeholder={label}
+        id="email"
+        name="email"
+        type="email"
+        value={value}
+        onChange={handleEmailChange}
+        required={required}
+      />
     </>
   );
 }
