@@ -5,15 +5,15 @@ import roleReducer from '../slicers/role-slice';
 import { errorMiddleware } from './middleware';
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    subject: subjectReducer,
-    role: roleReducer,
-  },
-  middleware: getDefaultMiddleware => [
-    ...getDefaultMiddleware(),
-    errorMiddleware,
-  ],
+    reducer: {
+        auth: authReducer,
+        subject: subjectReducer,
+        role: roleReducer,
+    },
+    middleware: getDefaultMiddleware => [
+        ...getDefaultMiddleware(),
+        errorMiddleware,
+    ],
 });
 
 export type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>;
