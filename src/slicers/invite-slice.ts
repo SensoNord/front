@@ -3,6 +3,6 @@ import { StatusEnum } from '../types/Request/StatusEnum';
 
 interface InviteState {
   invitation: InvitationType;
-  status: StatusEnum;
+  status: StatusEnum
   error: ErrorType;
 }
