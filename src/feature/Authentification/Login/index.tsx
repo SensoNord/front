@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router";
-import { useAppDispatch, useAppSelector } from "../../App/hooks";
-import PasswordField from "../../components/Field/PasswordField";
-import TextField from "../../components/Field/TextField";
-import { fetchLogin, loginWithToken } from "../../slicers/auth-slice";
-import { CredentialsType } from "../../types/Credentials/CredentialsType";
-import { StatusEnum } from "../../types/Request/StatusEnum";
+import { useAppDispatch, useAppSelector } from "../../../App/hooks";
+import PasswordField from "../../../components/Field/PasswordField";
+import TextField from "../../../components/Field/TextField";
+import { fetchLogin, loginWithToken } from "../../../slicers/auth-slice";
+import { CredentialsType } from "../../../types/Credentials/CredentialsType";
+import { StatusEnum } from "../../../types/Request/StatusEnum";
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
