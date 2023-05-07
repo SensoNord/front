@@ -1,4 +1,4 @@
 export type InvitationType = {
-  roleId: string;
-  email: string;
+    roleId: string;
+    email: string;
 };
