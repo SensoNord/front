@@ -2,6 +2,7 @@ import { AnyAction, configureStore, ThunkDispatch } from '@reduxjs/toolkit';
 import authReducer from '../slicers/auth-slice';
 import subjectReducer from '../slicers/subject-slice';
 import roleReducer from '../slicers/role-slice';
+import invitationReducer from '../slicers/invite-slice';
 import { errorMiddleware } from './middleware';
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         auth: authReducer,
         subject: subjectReducer,
         role: roleReducer,
+        invitation: invitationReducer,
     },
     middleware: getDefaultMiddleware => [
         ...getDefaultMiddleware(),

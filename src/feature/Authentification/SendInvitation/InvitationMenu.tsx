@@ -3,8 +3,13 @@ import RoleSelection from './RoleSelection';
 import { RoleType } from '@directus/sdk';
 import EmailField from '../../../components/Field/EmailField';
 import CustomButton from '../../../components/Field/CustomButton';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import { sendInvite } from '../../../slicers/invite-slice';
+import { InvitationType } from '../../../types/Users/InvitationType';
 
 export default function InvitationMenu() {
+    const dispatch = useAppDispatch();
+    const { status, error } = useAppSelector(state => state.invitation);
     const [selectedRole, setSelectedRole] = useState<RoleType | undefined>();
     const [email, setEmail] = useState<string>('');
     const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
@@ -22,7 +27,14 @@ export default function InvitationMenu() {
 
     const handleSendInvitation = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(email, selectedRole);
+        if (isEmailValid && isRoleValid) {
+            dispatch(
+                sendInvite({
+                    email: email,
+                    roleId: selectedRole?.id,
+                } as InvitationType),
+            );
+        }
     };
 
     return (
@@ -51,6 +63,8 @@ export default function InvitationMenu() {
                     Send Invitation
                 </CustomButton>
             </form>
+            <h3>{status}</h3>
+            <h3>{error.error}</h3>
         </>
     );
 }

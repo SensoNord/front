@@ -16,8 +16,8 @@ const initialState: InviteState = {
     error: {} as ErrorType,
 };
 
-export const fetchInvite = createAsyncThunk(
-    'invite/fetchInvite',
+export const sendInvite = createAsyncThunk(
+    'invite/sendInvite',
     async (invitation: InvitationType, { rejectWithValue }) => {
         try {
             await directus.users.invites.send(
@@ -40,16 +40,16 @@ const inviteSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
-            .addCase(fetchInvite.pending, state => {
+            .addCase(sendInvite.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchInvite.fulfilled, (state, action) => {
+            .addCase(sendInvite.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.invitationList.push(action.payload);
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchInvite.rejected, (state, action) => {
+            .addCase(sendInvite.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as any;
             });
