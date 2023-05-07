@@ -40,7 +40,7 @@
       "prettier --write",
       "git add"
     ]
-  },  
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

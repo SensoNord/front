@@ -1,32 +1,32 @@
-import { store } from './store';
-import { loginWithToken } from '../slicers/auth-slice';
+import { store } from "./store";
+import { loginWithToken } from "../slicers/auth-slice";
 
-describe('Middleware', () => {
+describe("Middleware", () => {
   beforeEach(() => {
-    store.dispatch(loginWithToken({ access_token: 'token', expires: '123' }));
+    store.dispatch(loginWithToken({ access_token: "token", expires: "123" }));
   });
 
-  test('dispatches logout action when 401 error', () => {
+  test("dispatches logout action when 401 error", () => {
     const action = {
-      type: 'some/action',
+      type: "some/action",
       payload: {
         status: 401,
       },
-      error: 'Unauthorized',
+      error: "Unauthorized",
     };
     store.dispatch(action);
     expect(store.getState().auth.token).toBeNull;
   });
 
-  test('does not dispatch logout action when other error', () => {
+  test("does not dispatch logout action when other error", () => {
     const action = {
-      type: 'some/action',
+      type: "some/action",
       payload: {
         status: 500,
       },
-      error: 'Internal Server Error',
+      error: "Internal Server Error",
     };
     store.dispatch(action);
-    expect(store.getState().auth.token.access_token).toEqual('token');
+    expect(store.getState().auth.token.access_token).toEqual("token");
   });
 });

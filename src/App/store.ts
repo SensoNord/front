@@ -1,8 +1,8 @@
-import { AnyAction, configureStore, ThunkDispatch } from '@reduxjs/toolkit';
-import authReducer from '../slicers/auth-slice';
-import subjectReducer from '../slicers/subject-slice';
-import roleReducer from '../slicers/role-slice';
-import { errorMiddleware } from './middleware';
+import { AnyAction, configureStore, ThunkDispatch } from "@reduxjs/toolkit";
+import authReducer from "../slicers/auth-slice";
+import subjectReducer from "../slicers/subject-slice";
+import roleReducer from "../slicers/role-slice";
+import { errorMiddleware } from "./middleware";
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +10,7 @@ export const store = configureStore({
     subject: subjectReducer,
     role: roleReducer,
   },
-  middleware: getDefaultMiddleware => [
+  middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware(),
     errorMiddleware,
   ],

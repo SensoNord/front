@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { RoleType } from '@directus/sdk';
-import { StatusEnum } from '../types/Request/StatusEnum';
-import { ErrorType } from '../types/Request/ErrorType';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { directus } from "../libraries/directus";
+import { RoleType } from "@directus/sdk";
+import { StatusEnum } from "../types/Request/StatusEnum";
+import { ErrorType } from "../types/Request/ErrorType";
 
 interface RoleState {
   roles: Array<RoleType>;
@@ -17,7 +17,7 @@ const initialState: RoleState = {
 };
 
 export const fetchRoles = createAsyncThunk(
-  'roles/fetchRoles',
+  "roles/fetchRoles",
   async (_, { rejectWithValue }) => {
     try {
       const response = await directus.roles.readByQuery({
@@ -34,12 +34,12 @@ export const fetchRoles = createAsyncThunk(
 );
 
 const roleSlice = createSlice({
-  name: 'roles',
+  name: "roles",
   initialState,
   reducers: {},
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchRoles.pending, state => {
+      .addCase(fetchRoles.pending, (state) => {
         state.status = StatusEnum.LOADING;
         state.roles = [];
         state.error = {} as ErrorType;

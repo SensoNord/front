@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { CredentialsType } from '../types/Users/Credentials/CredentialsType';
-import { TokenType } from '../types/Users/Credentials/TokenTypes';
-import { ErrorType } from '../types/Request/ErrorType';
-import { StatusEnum } from '../types/Request/StatusEnum';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { directus } from "../libraries/directus";
+import { CredentialsType } from "../types/Users/Credentials/CredentialsType";
+import { TokenType } from "../types/Users/Credentials/TokenTypes";
+import { ErrorType } from "../types/Request/ErrorType";
+import { StatusEnum } from "../types/Request/StatusEnum";
 
 interface LoginState {
   token: TokenType;
@@ -18,7 +18,7 @@ const initialState: LoginState = {
 };
 
 export const fetchLogin = createAsyncThunk(
-  'auth/fetchLogin',
+  "auth/fetchLogin",
   async (credentials: CredentialsType, { rejectWithValue }) => {
     try {
       const response = await directus.auth.login(credentials);
@@ -33,7 +33,7 @@ export const fetchLogin = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     loginWithToken: (state, action) => {
@@ -45,9 +45,9 @@ const authSlice = createSlice({
       return initialState;
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchLogin.pending, state => {
+      .addCase(fetchLogin.pending, (state) => {
         state.status = StatusEnum.LOADING;
         state.token = {} as TokenType;
         state.error = {} as ErrorType;

@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import RoleSelection from './RoleSelection';
-import { RoleType } from '@directus/sdk';
-import EmailField from '../../../components/Field/EmailField';
-import CustomButton from '../../../components/Field/CustomButton';
+import { useState } from "react";
+import RoleSelection from "./RoleSelection";
+import { RoleType } from "@directus/sdk";
+import EmailField from "../../../components/Field/EmailField";
+import CustomButton from "../../../components/Field/CustomButton";
 
 export default function InvitationMenu() {
   const [selectedRole, setSelectedRole] = useState<RoleType | undefined>();
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
   const [isRoleValid, setIsRoleValid] = useState<boolean>(false);
-  const formId = 'invitation-form';
+  const formId = "invitation-form";
 
   const errorMessages = {
-    isEmailValid: 'Email is not valid',
-    isRoleValid: 'Role is not valid',
+    isEmailValid: "Email is not valid",
+    isRoleValid: "Role is not valid",
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {

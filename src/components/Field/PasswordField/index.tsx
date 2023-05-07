@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 type PasswordFieldProps = {
   password: string;
@@ -10,8 +10,8 @@ type PasswordFieldProps = {
 function PasswordField(props: PasswordFieldProps) {
   const { password, handleChange, required, label } = props;
   const [showPassword, setShowPassword] = useState(false);
-  const inputType = showPassword ? 'text' : 'password';
-  const buttonLabel = showPassword ? 'Hide' : 'Show';
+  const inputType = showPassword ? "text" : "password";
+  const buttonLabel = showPassword ? "Hide" : "Show";
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   return (

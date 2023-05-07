@@ -1,5 +1,5 @@
-import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
-import { logout } from '../slicers/auth-slice';
+import { Dispatch, Middleware, MiddlewareAPI } from "redux";
+import { logout } from "../slicers/auth-slice";
 
 export const errorMiddleware: Middleware =
   ({ dispatch }: MiddlewareAPI) =>

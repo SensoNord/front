@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { RoleType } from '@directus/sdk';
-import { fetchRoles } from '../../../slicers/role-slice';
-import SelectField from '../../../components/Field/SelectField';
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../../App/hooks";
+import { RoleType } from "@directus/sdk";
+import { fetchRoles } from "../../../slicers/role-slice";
+import SelectField from "../../../components/Field/SelectField";
 
 type RoleSelectionProps = {
   selectedRole: RoleType | undefined;
@@ -13,7 +13,7 @@ type RoleSelectionProps = {
 export default function RoleSelection(props: RoleSelectionProps) {
   const { selectedRole, setSelectedRole, setIsRoleValid } = props;
   const dispatch = useAppDispatch();
-  const { roles } = useAppSelector(state => state.role);
+  const { roles } = useAppSelector((state) => state.role);
 
   useEffect(() => {
     dispatch(fetchRoles());
@@ -34,7 +34,7 @@ export default function RoleSelection(props: RoleSelectionProps) {
         value: role.name,
         label: role.name,
       }))}
-      value={selectedRole?.name || ''}
+      value={selectedRole?.name || ""}
       handleChange={handleChange}
       required={true}
       label="Role: "

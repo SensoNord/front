@@ -1,6 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../App/hooks';
-import { logout } from '../../slicers/auth-slice';
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../App/hooks";
+import { logout } from "../../slicers/auth-slice";
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
@@ -8,7 +8,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   return (

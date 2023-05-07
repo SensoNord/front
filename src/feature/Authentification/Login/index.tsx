@@ -1,28 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import PasswordField from '../../../components/Field/PasswordField';
-import TextField from '../../../components/Field/TextField';
-import { fetchLogin, loginWithToken } from '../../../slicers/auth-slice';
-import { CredentialsType } from '../../../types/Users/Credentials/CredentialsType';
-import { StatusEnum } from '../../../types/Request/StatusEnum';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../../App/hooks";
+import PasswordField from "../../../components/Field/PasswordField";
+import TextField from "../../../components/Field/TextField";
+import { fetchLogin, loginWithToken } from "../../../slicers/auth-slice";
+import { CredentialsType } from "../../../types/Users/Credentials/CredentialsType";
+import { StatusEnum } from "../../../types/Request/StatusEnum";
 
 export default function Login() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [token, setToken] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [token, setToken] = useState<string>("");
   const textFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
   const passwordFieldHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => setPassword(event.target.value);
-  const { status, error } = useAppSelector(state => state.auth);
+  const { status, error } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const expires = localStorage.getItem('auth_expires');
+    const token = localStorage.getItem("auth_token");
+    const expires = localStorage.getItem("auth_expires");
     if (token) {
       setToken(token);
       dispatch(loginWithToken({ access_token: token, expires: expires }));
@@ -31,7 +31,7 @@ export default function Login() {
 
   useEffect(() => {
     if (status === StatusEnum.SUCCEEDED) {
-      navigate('/home');
+      navigate("/home");
     }
   }, [status, token, navigate]);
 

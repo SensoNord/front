@@ -1,13 +1,13 @@
-import { Provider } from 'react-redux';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
-import Layout from '../components/Layout';
-import Home from '../feature/Home';
-import Login from '../feature/Authentification/Login';
-import NotFound from '../feature/NotFound';
-import PrivateRoute from '../feature/Authentification/PrivateRoute';
-import { store } from './store';
-import Home2 from '../feature/Home2';
+import { Provider } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import Layout from "../components/Layout";
+import Home from "../feature/Home";
+import Login from "../feature/Authentification/Login";
+import NotFound from "../feature/NotFound";
+import PrivateRoute from "../feature/Authentification/PrivateRoute";
+import { store } from "./store";
+import Home2 from "../feature/Home2";
 
 function App() {
   return (

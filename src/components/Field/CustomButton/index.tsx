@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 type CustomButtonProps = {
-  type: 'submit';
+  type: "submit";
   disabled: boolean;
   validationStates: Record<string, boolean>;
   errorMessages: Record<string, string>;
