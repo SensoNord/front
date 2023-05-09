@@ -12,8 +12,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     {/*<App />*/}
-    {/*  <Forum />*/}
-      <DisplayFiles callback={folder.downloadFile}/>
+      <Forum />
+      {/*<DisplayFiles callback={folder.downloadFile}/>*/}
   </React.StrictMode>
 );
 

@@ -7,24 +7,10 @@ import DisplayFiles from "./DisplayFiles";
 
 const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }> = ({postId, subject, index}) => {
     const [showPopup, setShowPopup] = useState(false);
-    const popupRef = useRef(null) as { current: any };
     const fileRef = useRef(null) as { current: any };
     const [file_name, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [file_id, setFileId] = useState<string | null>(null);
-
-    useEffect(() => {
-        function handleClickOutside(event: { target: any; }) {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setShowPopup(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [popupRef]);
 
     function quitPopup() {
         setShowPopup(false);
@@ -86,7 +72,7 @@ const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }>
             {
                 showPopup && createPortal(
                     <div className={"alertContainer"}>
-                        <div className={"alertPopup text-center"} ref={popupRef}>
+                        <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
                             <DisplayFiles callback={getFileFromDrive}/>
                             <h1>

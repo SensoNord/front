@@ -24,6 +24,7 @@ export default class Forum {
                 "posts.id",
                 "posts.user_created.first_name",
                 "posts.user_created.last_name",
+                "posts.user_created.id",
                 "posts.date_created",
                 "posts.user_updated.first_name",
                 "posts.user_updated.last_name",
@@ -33,6 +34,7 @@ export default class Forum {
                 "posts.file_id",
                 "posts.responses.user_created.first_name",
                 "posts.responses.user_created.last_name",
+                "posts.responses.user_created.id",
                 "posts.responses.date_created",
                 "posts.responses.user_updated.first_name",
                 "posts.responses.user_updated.last_name",
@@ -52,5 +54,17 @@ export default class Forum {
         return (await directus.items('posts').createOne(
             {subject_id: subject_id, title: title, message: message, file_id: file_id}
         ));
+    }
+
+    static async deletePost(id: string) {
+        await directus.items('posts').deleteOne(id);
+    }
+
+    static async updatePost(id: string, message: string) {
+        return (await directus.items('posts').updateOne(id, {message: message}));
+    }
+
+    static async updateResponse(id: string, message: string) {
+        return (await directus.items('responses').updateOne(id, {message: message}));
     }
 }

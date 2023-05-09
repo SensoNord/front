@@ -1,6 +1,7 @@
 import {UserType, emptyUser} from "./UserType";
 
 export type MessageResponseType = {
+    id: string;
     user_created: UserType;
     date_created: Date;
     user_updated: UserType;
@@ -10,6 +11,7 @@ export type MessageResponseType = {
 }
 
 const emptyMessageResponse: MessageResponseType = {
+    id: "",
     user_created: emptyUser,
     date_created: new Date(),
     user_updated: emptyUser,

@@ -7,18 +7,21 @@ import "../styles/Forum.css";
 import {createPortal} from "react-dom";
 import folder from "../lib/folder";
 import DisplayFiles from "./DisplayFiles";
+import {UserType} from "../type/UserType";
+import {RoleType} from "@directus/sdk";
+import {directus} from "../services/directus";
 
 export default function Forum() {
     const [subject, setSubject] = useState(emptySubject);
     const subject_id = "28730aa8-275a-4b16-9ff2-1494f5342243";
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
-    const popupRef = useRef(null) as { current: any };
-    const popupRef2 = useRef(null) as { current: any };
     const fileRef = useRef(null) as { current: any };
     const [file_name, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [file_id, setFileId] = useState<string | null>(null);
+    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+    const [currentRole, setCurrentRole] = useState<RoleType | null>(null);
 
     function quitPopup() {
         setShowPopup(false);
@@ -31,15 +34,27 @@ export default function Forum() {
 
     useEffect(() => {
         forum.connection()
-            .then(() => {
-                forum.getSubjects(subject_id).then((subject) => {
-                    if (subject) {
-                        subject.posts.sort((a: PostType, b: PostType) => {
-                            return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
-                        });
-                        setSubject(subject);
-                    }
-                });
+            .then(async () => {
+                const subject = await forum.getSubjects(subject_id);
+                if (subject) {
+                    subject.posts.sort((a: PostType, b: PostType) => {
+                        return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+                    });
+                    const tmpUser = await directus.users.me.read({
+                        fields: ['id', 'role']
+                    });
+                    const tmpRole = await directus.roles.readByQuery({
+                        filter: {
+                            id: {
+                                _eq: tmpUser.role
+                            }
+                        },
+                        fields: ['name']
+                    }) as RoleType;
+                    setCurrentUser(tmpUser as UserType);
+                    setCurrentRole(tmpRole.data[0]);
+                    setSubject(subject);
+                }
             })
             .catch(() => {
                 window.alert('Invalid credentials');
@@ -98,7 +113,7 @@ export default function Forum() {
                             {
                                 subject['posts'].map((post: PostType, index: number) => {
                                         return (
-                                            <Post post={post} key={index} subject={subject} index={index}></Post>
+                                            <Post post={post} key={index} subject={subject} index={index} currentUser={currentUser} currentRole={currentRole}></Post>
                                         )
                                     }
                                 )
@@ -110,7 +125,7 @@ export default function Forum() {
             {
                 showPopup && createPortal(
                     <div className={"alertContainer"}>
-                        <form className={"alertPopup text-center"} onSubmit={handleSubmit} ref={popupRef}>
+                        <form className={"alertPopup text-center"} onSubmit={handleSubmit}>
                             <div className={"p-2 text-xl"}>
                                 <div className="grid grid-cols-1 mb-10">
                                     <label htmlFor="titlePost">Titre</label>
@@ -142,7 +157,7 @@ export default function Forum() {
             {
                 showPopup2 && createPortal(
                     <div className={"alertContainer"}>
-                        <div className={"alertPopup text-center"} ref={popupRef2}>
+                        <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
                             <DisplayFiles callback={getFileFromDrive}/>
                             <h1>
