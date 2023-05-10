@@ -19,6 +19,9 @@ export default function Navbar() {
             <div>
                 <Link to="/home2">Home2</Link>
             </div>
+            <div>
+                <Link to="/send-invitation">Send Invitation</Link>
+            </div>
             <button onClick={handleLogout}>Logout</button>
         </nav>
     );

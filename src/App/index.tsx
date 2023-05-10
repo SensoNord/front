@@ -8,6 +8,8 @@ import NotFound from '../feature/NotFound';
 import PrivateRoute from '../feature/Authentification/PrivateRoute';
 import { store } from './store';
 import Home2 from '../feature/Home2';
+import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
+import SendInvitation from '../feature/Authentification/SendInvitation';
 
 function App() {
     return (
@@ -24,8 +26,16 @@ function App() {
                     >
                         <Route path="home" element={<Home />} />
                         <Route path="home2" element={<Home2 />} />
+                        <Route
+                            path="send-invitation"
+                            element={<SendInvitation />}
+                        />
                     </Route>
                     <Route path="login" element={<Login />} />
+                    <Route
+                        path="accept-invitation"
+                        element={<AcceptInvitation />}
+                    />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>

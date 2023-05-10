@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { RoleType } from '@directus/sdk';
-import { fetchRoles } from '../../../slicers/role-slice';
-import SelectField from '../../../components/Field/SelectField';
+import { fetchRoles } from '../../slicers/role-slice';
+import SelectField from '../Field/SelectField';
 
 type RoleSelectionProps = {
     selectedRole: RoleType | undefined;

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import RoleSelection from './RoleSelection';
+import RoleSelection from '../../../components/Users/RoleSelection';
 import { RoleType } from '@directus/sdk';
 import EmailField from '../../../components/Field/EmailField';
-import CustomButton from '../../../components/Field/CustomButton';
+import CustomButton from '../../../components/Field/CustomButtonWithValidation';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { sendInvite } from '../../../slicers/invite-slice';
 import { InvitationType } from '../../../types/Users/InvitationType';
 
-export default function InvitationMenu() {
+export default function SendInvitation() {
     const dispatch = useAppDispatch();
     const { status, error } = useAppSelector(state => state.invitation);
     const [selectedRole, setSelectedRole] = useState<RoleType | undefined>();
