@@ -6,7 +6,6 @@ import TextField from '../../../components/Field/TextField';
 import { fetchLogin, loginWithToken } from '../../../slicers/auth-slice';
 import { CredentialsType } from '../../../types/Users/Credentials/CredentialsType';
 import { StatusEnum } from '../../../types/Request/StatusEnum';
-import CustomButtonWithValidation from '../../../components/Field/CustomButtonWithValidation';
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
