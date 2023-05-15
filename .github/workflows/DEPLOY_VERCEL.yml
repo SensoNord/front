@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Deploy to Vercel - development
 
 env:
   REACT_APP_EMAIL_TESTEUR: ${{ secrets.REACT_APP_EMAIL_TESTEUR }}
