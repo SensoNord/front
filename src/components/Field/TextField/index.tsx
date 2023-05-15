@@ -1,21 +1,24 @@
 type TextFieldProps = {
+    customKey: string;
     value: string;
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     required: boolean;
     label: string;
+    className?: string;
 };
 
 function TextField(props: TextFieldProps) {
-    const { value, handleChange, required, label } = props;
+    const { value, handleChange, required, label, className, customKey } =
+        props;
 
     return (
         <>
             <div>
                 <input
-                    className="input-box"
+                    className={className}
                     placeholder={label}
-                    id="text"
-                    name="text"
+                    id={customKey}
+                    name={customKey}
                     type="text"
                     value={value}
                     onChange={handleChange}

@@ -24,12 +24,14 @@ export default function AcceptInvitation() {
                     <h1>Accept invitation</h1>
                     <form onSubmit={handleSubmit}>
                         <PasswordField
+                            customKey="password-invitation"
                             password={password}
                             handleChange={passwordFieldHandleChange}
                             required
                             label="Password"
                         />
                         <PasswordField
+                            customKey="confirm-password-invitation"
                             password={confirmPassword}
                             handleChange={confirmPasswordFieldHandleChange}
                             required

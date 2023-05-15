@@ -2,7 +2,7 @@ import { useState } from 'react';
 import RoleSelection from '../../../components/Users/RoleSelection';
 import { RoleType } from '@directus/sdk';
 import EmailField from '../../../components/Field/EmailField';
-import CustomButton from '../../../components/Field/CustomButtonWithValidation';
+import CustomButtonWithValidation from '../../../components/Field/CustomButtonWithValidation';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { sendInvite } from '../../../slicers/invite-slice';
 import { InvitationType } from '../../../types/Users/InvitationType';
@@ -53,7 +53,7 @@ export default function SendInvitation() {
                     setSelectedRole={setSelectedRole}
                     setIsRoleValid={setIsRoleValid}
                 />
-                <CustomButton
+                <CustomButtonWithValidation
                     type="submit"
                     disabled={false}
                     validationStates={{ isEmailValid, isRoleValid }}
@@ -61,7 +61,7 @@ export default function SendInvitation() {
                     formId={formId}
                 >
                     Send Invitation
-                </CustomButton>
+                </CustomButtonWithValidation>
             </form>
             <h3>{status}</h3>
             <h3>{error.error}</h3>

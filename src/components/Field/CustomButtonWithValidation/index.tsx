@@ -10,7 +10,7 @@ type CustomButtonProps = {
     formId?: string;
 };
 
-function CustomButton(props: CustomButtonProps) {
+export default function CustomButtonWithValidation(props: CustomButtonProps) {
     const {
         type,
         disabled,
@@ -52,5 +52,3 @@ function CustomButton(props: CustomButtonProps) {
         </>
     );
 }
-
-export default CustomButton;
