@@ -1,4 +1,4 @@
-name: Deploy to Vercel in development
+name: Deploy to Vercel - development
 
 env:
   REACT_APP_EMAIL_TESTEUR: ${{ secrets.REACT_APP_EMAIL_TESTEUR }}
