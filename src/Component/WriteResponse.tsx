@@ -8,9 +8,9 @@ import DisplayFiles from "./DisplayFiles";
 const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }> = ({postId, subject, index}) => {
     const [showPopup, setShowPopup] = useState(false);
     const fileRef = useRef(null) as { current: any };
-    const [file_name, setFileName] = useState<string | null>(null);
+    const [fileName, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
-    const [file_id, setFileId] = useState<string | null>(null);
+    const [fileId, setFileId] = useState<string | null>(null);
 
     function quitPopup() {
         setShowPopup(false);
@@ -26,10 +26,11 @@ const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }>
             return;
         }
 
-        let responseSendMessage = await forum.createResponse(postId, responseMessage, file_id);
-
-        if (file?.size !== 0 || file.name.length !== 0) {
-            await folder.uploadFile(file, subject.id, subject.folder_id, responseSendMessage.id, 'Response');
+        if (file && !fileId) {
+            const newFile = await forum.uploadFile(file, subject.folder_id, subject.id);
+            if (newFile) await forum.createResponse(postId, responseMessage, newFile.id);
+        } else {
+            await forum.createResponse(postId, responseMessage, fileId);
         }
 
         window.location.reload();
@@ -62,8 +63,8 @@ const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }>
                 <span className={"inline col-start-11 col-span-2 flex flex-col justify-end items-end"}>
                     <button type={"button"} className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} onClick={() => setShowPopup(true)}>Ajouter un fichier</button>
                     {
-                        file_name && (
-                            <span>{file_name}</span>
+                        fileName && (
+                            <span>{fileName}</span>
                         )
                     }
                     <button type="submit" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>Envoyer</button>
@@ -74,7 +75,7 @@ const WriteResponse: FC<{ postId: string, subject: SubjectType, index: number }>
                     <div className={"alertContainer"}>
                         <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
-                            <DisplayFiles callback={getFileFromDrive}/>
+                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolder={subject.folder_id}/>
                             <h1>
                                 <input type="file" name="file" id="file" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} ref={fileRef} onChange={getFileFromComputer}/>
                             </h1>

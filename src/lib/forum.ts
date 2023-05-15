@@ -1,10 +1,13 @@
 import {directus} from "../services/directus";
 import {SubjectType} from "../type/SubjectType";
+import {ModifiedFileType} from "../type/ModifiedFileType";
+import folder from "./folder";
 
 
 export default class Forum {
     static async connection() {
         return directus.auth.login({email: "first.user@example.com", password: "password"});
+        // return directus.auth.login({email: "second.user@example.com", password: "password"});
         // return directus.auth.login({email: "sensonord.dev@gmail.com", password: "c9wiHGaB!1ZhQo!U"});
     }
 
@@ -41,6 +44,7 @@ export default class Forum {
                 "posts.responses.date_updated",
                 "posts.responses.message",
                 "posts.responses.file_id",
+                "posts.responses.id",
                 "folder_id"
             ]
         }));
@@ -66,5 +70,10 @@ export default class Forum {
 
     static async updateResponse(id: string, message: string) {
         return (await directus.items('responses').updateOne(id, {message: message}));
+    }
+
+    static async uploadFile(file: File | null, folder_id: string, subject_id: string): Promise<ModifiedFileType | null> {
+        if (!file) return null;
+        return await folder.uploadFile(file, folder_id, subject_id);
     }
 }

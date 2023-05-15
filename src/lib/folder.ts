@@ -31,6 +31,10 @@ export default class Folder {
         }))
     }
 
+    static async getfileById(file_id: string): Promise <any> {
+        return (await directus.files.readOne(file_id))
+    }
+
     static async getFolderByParent(parent_id: string | null): Promise<any> {
         return (await directus.folders.readByQuery({
             filter: {
@@ -48,41 +52,28 @@ export default class Folder {
         return (await directus.folders.readOne(parent))
     }
 
-    static async uploadFile(file: File | null, subject_id: string, folder_id: string, messageId: string, linkType: string): Promise<ModifiedFileType | string | null | undefined> {
-        if (!file) return 'No file uploaded';
+    static async uploadFile(file: File | null, folder_id: string, subject_id: string | null = null): Promise<ModifiedFileType | null> {
+        if (!file) return null;
+
         function getFormData(object: any) {
             const formData = new FormData();
             Object.keys(object).forEach(key => formData.append(key, object[key]));
             return formData;
         }
+
         const formData = getFormData({file});
-        let responseCreateFile = (await directus.files.createOne(formData));
-        if (responseCreateFile) {
-            switch (linkType) {
-                case 'Response':
-                    console.log("response", responseCreateFile.id);
-                    await directus.items('responses').updateOne(messageId, {
-                        "file_id": responseCreateFile.id
-                    })
-                    break;
-                case 'Post':
-                    console.log('post', responseCreateFile.id, messageId)
-                    await directus.items('posts').updateOne(messageId, {
-                        "file_id": responseCreateFile.id
-                    })
-                    break;
+        let createFile = await directus.files.createOne(formData);
+        if (folder_id !== '') {
+            if (createFile) {
+                const options = subject_id !== null ? {"subject": [{"subjects_id": subject_id}], "folder": folder_id} : {"folder": folder_id};
+                let updateFile = await directus.files.updateOne(createFile.id, options);
+                return updateFile as unknown as ModifiedFileType;
+            } else {
+                return null;
             }
-            let responseUpdateFile = await directus.files.updateOne(responseCreateFile.id, {
-                "subject": [
-                    {
-                        "subjects_id": subject_id
-                    }
-                ],
-                "folder": folder_id
-            });
-            return responseUpdateFile as unknown as ModifiedFileType;
+        } else {
+            return createFile as unknown as ModifiedFileType;
         }
-        return 'No file uploaded';
     }
 
     static downloadFile(file: ModifiedFileType) {
@@ -108,5 +99,9 @@ export default class Folder {
                 link.click();
                 link.parentNode?.removeChild(link);
             });
+    }
+
+    static async deleteFile(file: ModifiedFileType) {
+        await directus.files.deleteOne(file.id);
     }
 }

@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {FC, useEffect, useRef, useState} from "react";
 import forum from "../lib/forum";
-import {emptySubject} from "../type/SubjectType";
+import {SubjectType} from "../type/SubjectType";
 import {PostType} from "../type/PostType";
 import Post from "./Post";
 import "../styles/Forum.css";
@@ -9,11 +9,11 @@ import folder from "../lib/folder";
 import DisplayFiles from "./DisplayFiles";
 import {UserType} from "../type/UserType";
 import {RoleType} from "@directus/sdk";
-import {directus} from "../services/directus";
+import {directus, directusUrl} from "../services/directus";
+import {Simulate} from "react-dom/test-utils";
+import {ModifiedFileType} from "../type/ModifiedFileType";
 
-export default function Forum() {
-    const [subject, setSubject] = useState(emptySubject);
-    const subject_id = "28730aa8-275a-4b16-9ff2-1494f5342243";
+const Forum: FC<{ subject: SubjectType }> = ({subject}) => {
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
     const fileRef = useRef(null) as { current: any };
@@ -33,32 +33,24 @@ export default function Forum() {
 
 
     useEffect(() => {
-        forum.connection()
-            .then(async () => {
-                const subject = await forum.getSubjects(subject_id);
-                if (subject) {
-                    subject.posts.sort((a: PostType, b: PostType) => {
-                        return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
-                    });
-                    const tmpUser = await directus.users.me.read({
-                        fields: ['id', 'role']
-                    });
-                    const tmpRole = await directus.roles.readByQuery({
-                        filter: {
-                            id: {
-                                _eq: tmpUser.role
-                            }
-                        },
-                        fields: ['name']
-                    }) as RoleType;
-                    setCurrentUser(tmpUser as UserType);
-                    setCurrentRole(tmpRole.data[0]);
-                    setSubject(subject);
-                }
-            })
-            .catch(() => {
-                window.alert('Invalid credentials');
+        subject.posts.sort((a: PostType, b: PostType) => {
+            return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+        });
+        directus.users.me.read({
+            fields: ['id', 'role']
+        }).then((tmpUser) => {
+            directus.roles.readByQuery({
+                filter: {
+                    id: {
+                        _eq: tmpUser.role
+                    }
+                },
+                fields: ['name']
+            }).then((tmpRole) => {
+                setCurrentUser(tmpUser as UserType);
+                if (tmpRole.data) setCurrentRole(tmpRole.data[0] as RoleType);
             });
+        });
     }, []);
 
     function createPostButton() {
@@ -71,10 +63,27 @@ export default function Forum() {
         const formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries()) as { titlePost: string, message: string };
         if (formJson.titlePost && formJson.message) {
-            const post = await forum.createPost(subject_id, formJson.titlePost, formJson.message, file_id);
             setShowPopup(false);
-            if (file?.size !== 0 || file.name.length !== 0) {
-                await folder.uploadFile(file, subject.id, subject.folder_id, post.id, 'Post');
+            if (file && !file_id) {
+                if (file?.size !== 0 || file.name.length !== 0) {
+                    const newFile = await forum.uploadFile(file, subject.folder_id, subject.id);
+                    if (newFile) await forum.createPost(subject.id, formJson.titlePost, formJson.message, newFile.id);
+                }
+            } else if (file_id) {
+                const existingFile = await folder.getfileById(file_id);
+                const response = await fetch(directusUrl + 'assets/' + file_id + '?download', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': existingFile?.type as string,
+                        'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+                    },
+                });
+                const blob = await response.blob();
+                const newFile = new File([blob], existingFile?.filename_download as string, {type: existingFile?.type as string});
+                let resFile = await forum.uploadFile(newFile, subject.folder_id, subject.id) as ModifiedFileType;
+                await forum.createPost(subject.id, formJson.titlePost, formJson.message, resFile.id);
+            } else {
+                await forum.createPost(subject.id, formJson.titlePost, formJson.message);
             }
             window.location.reload();
         } else {
@@ -159,7 +168,7 @@ export default function Forum() {
                     <div className={"alertContainer"}>
                         <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
-                            <DisplayFiles callback={getFileFromDrive}/>
+                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolder={subject.folder_id}/>
                             <h1>
                                 <input type="file" name="file" id="file" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} ref={fileRef} onChange={getFileFromComputer}/>
                             </h1>
@@ -171,3 +180,5 @@ export default function Forum() {
         </>
     )
 }
+
+export default Forum;
