@@ -198,7 +198,7 @@ const Calendar = () => {
                 <EditingState onCommitChanges={commitChanges}/>
                 <IntegratedEditing/>
 
-                <WeekView startDayHour={9} endDayHour={19}/>
+                <WeekView startDayHour={8} endDayHour={19}/>
                 <WeekView name="work-week" displayName="Work Week" excludedDays={[0, 6]} startDayHour={9}
                           endDayHour={19}/>
                 <MonthView/>
