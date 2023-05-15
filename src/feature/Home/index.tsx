@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../App/hooks';
 import { fetchSubject } from '../../slicers/subject-slice';
-import InvitationMenu from '../Authentification/SendInvitation';
 
 export default function Home() {
     const dispatch = useAppDispatch();

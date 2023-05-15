@@ -22,7 +22,7 @@ export default function Login() {
     const passwordFieldHandleChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => setPassword(event.target.value);
-    const { status, error } = useAppSelector(state => state.auth);
+    const { status } = useAppSelector(state => state.auth);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
