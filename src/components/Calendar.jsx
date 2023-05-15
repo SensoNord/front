@@ -29,7 +29,7 @@ const Calendar = () => {
     useEffect(() => {
         if (!isSetup) {
             directus.auth
-                .login({email: "************", password: "**********"})
+                .login({email: "**************", password: "**********"})
                 .then(() => {
                     directus.items('Calendrier').readByQuery({limit: -1}).then((calendar) => {
                         if (calendar) {
@@ -57,31 +57,26 @@ const Calendar = () => {
     };
 
     async function createEvent (toAdd){
-        let add;
-        let start = toAdd.startDate.getTime()+3600000;
-        start = new Date(start);
-        let end = toAdd.endDate.getTime() + 3600000;
-        end = new Date(end);
-        add = await directus.items('Calendrier').createOne(
+
+        await directus.items('Calendrier').createOne(
             {
                 title: toAdd.title,
-                startDate: start,
-                endDate: end,
+                startDate: toAdd.startDate,
+                endDate: toAdd.endDate,
                 notes: toAdd.notes,
                 rRule:toAdd.rRule
             });
-        return add
     }
 
     async function updateEvent (toUpdate,id,changed){
         if(toUpdate[id].allDay){
             let start = new Date(changed.startDate);
             let end = new Date(changed.endDate);
-            start.setHours(1);
+            start.setHours(0);
             start.setMinutes(0);
             let day = end.getDate();
             end.setDate(day+1);
-            end.setHours(1);
+            end.setHours(0);
             end.setMinutes(0)
             await directus.items('Calendrier').updateOne(id,
                 {
@@ -102,19 +97,15 @@ const Calendar = () => {
                 });
         }
         if (toUpdate[id].startDate){
-            let start = toUpdate[id].startDate.getTime()+3600000;
-            start = new Date(start);
             await directus.items('Calendrier').updateOne(id,
                 {
-                    startDate : start
+                    startDate : toUpdate[id].startDate
                 });
         }
         if (toUpdate[id].endDate){
-            let end = toUpdate[id].endDate.getTime()+3600000;
-            end = new Date(end);
             await directus.items('Calendrier').updateOne(id,
                 {
-                    endDate : end
+                    endDate : toUpdate[id].endDate
                 });
         }
         if (toUpdate[id].notes){
@@ -143,17 +134,33 @@ const Calendar = () => {
             let updatedData = [...state];
             if (added) {
                 if(added.id === undefined){
-                    added = createEvent(added).then(added = added,
-                    updatedData = [...updatedData, {...added}])
-                }
-                let isHere = false;
-                updatedData.map(c =>{
-                    if(c.id===added.id){
-                        isHere = true;
-                    }
-                });
-                if (!isHere){
+                    createEvent(added);
+                    directus.items('Calendrier').readByQuery(
+                        {
+                        filter:{
+                            title:{
+                                _eq:added.title
+                            },
+                        },
+                        fields:['id']
+                        }).then((result)=>{
+                        added = {id: result.data[0].id, ...added };
+                        updatedData = [...updatedData, {...added}];
+                        });
                     updatedData = [...updatedData, {...added}];
+                    window.location.reload();
+                }
+                else{
+                    let isHere = false;
+                    updatedData.map(c =>{
+                        if(c.id===added.id){
+                            isHere = true;
+                        }
+                    });
+                    if (!isHere){
+                        console.log(added.title,added.startDate,new Date(added.startDate));
+                        updatedData = [...updatedData, {...added}];
+                    }
                 }
             }
 

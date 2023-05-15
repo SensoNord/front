@@ -1,19 +1,20 @@
 export type CalendarType = {
     id: string;
     title : string;
-    startDate: Date;
-    endDate: Date;
+    startDate: number;
+    endDate: number;
     description: string;
     rRule : string;
+
 }
 
 const emptyCalendar: CalendarType = {
     id: "",
-    endDate: new Date(),
-    startDate: new Date(),
+    endDate: 0,
+    startDate: 0,
     title: "",
-    description: "",
-    rRule:""
+    description:" ",
+    rRule:"",
 }
 
 export {emptyCalendar};
