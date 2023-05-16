@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PasswordField from '../../../components/Field/PasswordField';
+import PasswordField from '../../components/Field/PasswordField';
 
 export default function AcceptInvitation() {
     const [password, setPassword] = useState<string>('');
