@@ -10,7 +10,7 @@ import { store } from './store';
 import Home2 from '../feature/Home2';
 import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
 import SendInvitation from '../feature/Authentification/SendInvitation';
-import Drive from '../Component/Drive';
+import Drive from '../feature/Drive';
 
 function App() {
     return (

@@ -1,8 +1,8 @@
-import { FolderType } from "@directus/sdk";
-import { StatusEnum } from "../types/Request/StatusEnum";
-import { ErrorType } from "../types/Request/ErrorType";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { directus } from "../libraries/directus";
+import { FolderType } from '@directus/sdk';
+import { StatusEnum } from '../types/Request/StatusEnum';
+import { ErrorType } from '../types/Request/ErrorType';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { directus } from '../libraries/directus';
 
 interface FolderState {
     actualFolder: FolderType;
@@ -21,12 +21,14 @@ const initialState: FolderState = {
 export const fetchFolderByParent = createAsyncThunk(
     'folder/fetchFolderByParent',
     async (parentId: string | null, { rejectWithValue }) => {
+        console.log(parentId);
         try {
             const response = await directus.folders.readByQuery({
                 filter: {
-                    parent: parentId ? { _eq: parentId } : { _null: true }
+                    parent: parentId ? { _eq: parentId } : { _null: true },
                 },
             });
+            console.log(response);
             return response.data as Array<FolderType>;
         } catch (error: any) {
             return rejectWithValue({
@@ -34,7 +36,7 @@ export const fetchFolderByParent = createAsyncThunk(
                 status: error.response.status,
             });
         }
-    }
+    },
 );
 
 export const fetchFolderById = createAsyncThunk(
@@ -49,7 +51,7 @@ export const fetchFolderById = createAsyncThunk(
                 status: error.response.status,
             });
         }
-    }
+    },
 );
 
 const folderSlice = createSlice({
