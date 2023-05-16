@@ -6,9 +6,9 @@ import folder from "./folder";
 
 export default class Forum {
     static async connection() {
-        return directus.auth.login({email: "first.user@example.com", password: "password"});
-        // return directus.auth.login({email: "second.user@example.com", password: "password"});
-        // return directus.auth.login({email: "sensonord.dev@gmail.com", password: "c9wiHGaB!1ZhQo!U"});
+        return directus.auth.login({email: process.env.REACT_APP_EMAIL_FIRST as string, password: process.env.REACT_APP_PASSWORD as string});
+        // return directus.auth.login({email: process.env.REACT_APP_EMAIL_SECOND as string, password: process.env.REACT_APP_PASSWORD as string});
+        // return directus.auth.login({email: process.env.REACT_APP_EMAIL_ADMIN as string, password: process.env.REACT_APP_PASSWORD_ADMIN as string});
     }
 
     static async getSubjects(subject_id: string): Promise<SubjectType | null | undefined> {
