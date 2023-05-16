@@ -9,9 +9,10 @@ import folder from "../lib/folder";
 import DisplayFiles from "./DisplayFiles";
 import {UserType} from "../type/UserType";
 import {RoleType} from "@directus/sdk";
-import {directus, directusUrl} from "../services/directus";
-import {Simulate} from "react-dom/test-utils";
+import {directus} from "../libraries/directus";
 import {ModifiedFileType} from "../type/ModifiedFileType";
+
+const directusUrl = process.env.REACT_APP_DIRECTUS_URL as string;
 
 const Forum: FC<{ subject: SubjectType }> = ({subject}) => {
     const [showPopup, setShowPopup] = useState(false);
@@ -168,7 +169,7 @@ const Forum: FC<{ subject: SubjectType }> = ({subject}) => {
                     <div className={"alertContainer"}>
                         <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
-                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolder={subject.folder_id}/>
+                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolderId={subject.folder_id}/>
                             <h1>
                                 <input type="file" name="file" id="file" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} ref={fileRef} onChange={getFileFromComputer}/>
                             </h1>

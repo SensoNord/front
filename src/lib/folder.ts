@@ -1,5 +1,8 @@
 import {ModifiedFileType} from "../type/ModifiedFileType";
-import {directus, directusUrl} from "../services/directus";
+import {directus} from "../libraries/directus";
+import { FileType } from "@directus/sdk";
+
+const directusUrl = process.env.REACT_APP_DIRECTUS_URL as string;
 
 export default class Folder {
 
@@ -101,7 +104,7 @@ export default class Folder {
             });
     }
 
-    static async deleteFile(file: ModifiedFileType) {
+    static async deleteFile(file: FileType) {
         await directus.files.deleteOne(file.id);
     }
 }

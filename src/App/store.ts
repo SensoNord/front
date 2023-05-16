@@ -3,6 +3,7 @@ import authReducer from '../slicers/auth-slice';
 import subjectReducer from '../slicers/subject-slice';
 import roleReducer from '../slicers/role-slice';
 import invitationReducer from '../slicers/invite-slice';
+import folderReducer from '../slicers/folder-slice';
 import { errorMiddleware } from './middleware';
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         subject: subjectReducer,
         role: roleReducer,
         invitation: invitationReducer,
+        folder: folderReducer,
     },
     middleware: getDefaultMiddleware => [
         ...getDefaultMiddleware(),

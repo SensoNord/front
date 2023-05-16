@@ -10,6 +10,7 @@ import { store } from './store';
 import Home2 from '../feature/Home2';
 import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
 import SendInvitation from '../feature/Authentification/SendInvitation';
+import Drive from '../Component/Drive';
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                             path="send-invitation"
                             element={<SendInvitation />}
                         />
+                        <Route path="drive" element={<Drive />} />
                     </Route>
                     <Route path="login" element={<Login />} />
                     <Route

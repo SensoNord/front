@@ -1,16 +1,18 @@
 import React, {useRef, useState} from "react";
 import DisplayFiles from "./DisplayFiles";
 import {createPortal} from "react-dom";
-import {directus} from "../services/directus";
+import {directus} from "../libraries/directus";
 import "../styles/Forum.css";
 import folder from "../lib/folder";
+import { useAppDispatch, useAppSelector } from "../App/hooks";
 
 
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);
     const [file, setFile] = useState<File | null>(null);
-    const [folderId, setFolderId] = useState<string>('');
+    // const [folderId, setFolderId] = useState<string>('');
     const [uploadIsEnabled, setUploadIsEnabled] = useState<boolean>(false);
+    const { actualFolder } = useAppSelector(state => state.folder);
 
     const fileRef = useRef(null) as { current: any };
 
@@ -18,10 +20,10 @@ export default function Drive() {
         setShowPopup(true);
     }
 
-    if (folderId !== '') {
+    if (actualFolder.id !== undefined) {
         directus.items('subjects').readByQuery({
             filter: {
-                "folder_id": {"_eq": folderId}
+                "folder_id": {"_eq": actualFolder.id}
             },
             fields: ['id']
         }).then((res) => {
@@ -46,11 +48,11 @@ export default function Drive() {
         if (file?.size !== 0 || file.name.length !== 0) {
             let subject = (await directus.items('subjects').readByQuery({
                 filter: {
-                    "folder_id": {"_eq": folderId}
+                    "folder_id": {"_eq": actualFolder.id}
                 },
                 fields: ['id']
             }) as any).data[0];
-            await folder.uploadFile(file, folderId, subject.id);
+            await folder.uploadFile(file, actualFolder.id, subject.id);
         }
 
         setShowPopup(false);
@@ -66,7 +68,7 @@ export default function Drive() {
         <>
             <div>
                 <button className={`bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded${!uploadIsEnabled ? ' cursor-not-allowed' : ''}`} disabled={!uploadIsEnabled} onClick={newFile}>Ajouter un fichier</button>
-                <DisplayFiles setFolderId={setFolderId} showDelete={true} callbackOnClick={folder.downloadFile}></DisplayFiles>
+                <DisplayFiles showDelete={true} callbackOnClick={folder.downloadFile}></DisplayFiles>
             </div>
             {
                 showPopup && createPortal(
