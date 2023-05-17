@@ -150,7 +150,7 @@ const fileSlice = createSlice({
             })
             .addCase(fetchFileByFolder.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.fileList = action.payload;
+                state.fileList = action.payload as Array<FileType>;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFileByFolder.rejected, (state, action) => {
@@ -170,7 +170,7 @@ const fileSlice = createSlice({
             })
             .addCase(deleteFileById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             })
             .addCase(createFile.pending, state => {
                 state.status = StatusEnum.LOADING;
@@ -180,11 +180,11 @@ const fileSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.fileList.push(action.payload);
                 state.error = {} as ErrorType;
-                state.createdFile = action.payload;
+                state.createdFile = action.payload as FileType;
             })
             .addCase(createFile.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             })
             .addCase(updateFile.pending, state => {
                 state.status = StatusEnum.LOADING;
@@ -199,7 +199,7 @@ const fileSlice = createSlice({
             })
             .addCase(updateFile.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             })
             .addCase(downloadFile.pending, state => {
                 state.status = StatusEnum.LOADING;
@@ -211,7 +211,7 @@ const fileSlice = createSlice({
             })
             .addCase(downloadFile.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             });
     },
 });

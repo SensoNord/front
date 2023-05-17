@@ -54,13 +54,13 @@ const authSlice = createSlice({
             })
             .addCase(fetchLogin.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.token = action.payload;
+                state.token = action.payload as TokenType;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchLogin.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.token = {} as TokenType;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             });
     },
 });
