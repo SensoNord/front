@@ -31,29 +31,37 @@ export default function Drive() {
     }, [dispatch]);
 
     useEffect(() => {
-        if (
-            actualFolder.id !== '' &&
-            createdFile &&
-            subjectList.length !== 0 &&
-            isFileCreated
-        ) {
-            let subject = subjectList[0];
-            dispatch(
-                updateFile({
-                    file: createdFile,
-                    subjectId: subject.id,
-                    folderId: actualFolder.id,
-                }),
-            );
-            setIsFileCreated(false);
-            dispatch(resetCreatedFile());
+        const doUpdateFile = async () => {
+            if (
+                actualFolder.id !== '' &&
+                createdFile &&
+                subjectList.length !== 0 &&
+                isFileCreated
+            ) {
+                let subject = subjectList[0];
+                await dispatch(
+                    updateFile({
+                        file: createdFile,
+                        subjectId: subject.id,
+                        folderId: actualFolder.id,
+                    }),
+                );
+                setIsFileCreated(false);
+                dispatch(resetCreatedFile());
+            }
         }
+
+        doUpdateFile();
     }, [createdFile, isFileCreated, dispatch, actualFolder, subjectList]);
 
     useEffect(() => {
-        if (actualFolder.id !== '') {
-            dispatch(fetchSubjectByFolderId(actualFolder.id));
+        const doFetchSubjectByFolderId = async () => {
+            if (actualFolder.id !== '') {
+                await dispatch(fetchSubjectByFolderId(actualFolder.id));
+            }
         }
+
+        doFetchSubjectByFolderId();
     }, [actualFolder, dispatch]);
 
     useEffect(() => {
@@ -64,7 +72,7 @@ export default function Drive() {
         setShowPopup(true);
     }
 
-    const handleAddNewFile = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddNewFile = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const responseMessage = (
@@ -81,11 +89,11 @@ export default function Drive() {
         }
 
         if (uploadedFile?.size !== 0 || uploadedFile.name.length !== 0) {
-            dispatch(fetchSubjectByFolderId(actualFolder.id));
+            await dispatch(fetchSubjectByFolderId(actualFolder.id));
 
             if (uploadedFile) {
                 const formData = getFormData({ uploadedFile });
-                dispatch(createFile(formData));
+                await dispatch(createFile(formData));
                 setIsFileCreated(true);
             }
         }
@@ -104,8 +112,8 @@ export default function Drive() {
         return formData;
     }
 
-    const handleDownloadFile = (file: FileType) => {
-        dispatch(downloadFile(file));
+    const handleDownloadFile = async (file: FileType) => {
+        await dispatch(downloadFile(file));
     };
 
     return (

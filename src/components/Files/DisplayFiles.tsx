@@ -32,34 +32,39 @@ export default function DisplayFiles(props: Props) {
     // const [tmpFolder, setTmpFolder] = useState(emptyFolderType);
 
     useEffect(() => {
-        setIsLoading(true);
-        let parentId = null;
-        if (startingFolderId) {
-            dispatch(fetchFolderById(startingFolderId));
-            parentId = actualFolder.id;
-        }
-        dispatch(fetchFolderByParent(parentId));
-        dispatch(fetchFileByFolder(parentId));
-        setIsLoading(false);
+        const fetchData = async () => {
+            setIsLoading(true);
+            let parentId = null;
+            if (startingFolderId) {
+                await dispatch(fetchFolderById(startingFolderId));
+                parentId = actualFolder.id;
+            }
+            await dispatch(fetchFolderByParent(parentId));
+            await dispatch(fetchFileByFolder(parentId));
+            setIsLoading(false);
+        };
+    
+        fetchData();
     }, []);
 
-    const handleClickFolder = (newFolder: FolderType) => {
+    const handleClickFolder = async (newFolder: FolderType) => {
+        console.log("pass")
         setIsLoading(true);
-        dispatch(fetchFolderByParent(newFolder.id));
-        dispatch(fetchFileByFolder(newFolder.id));
+        await dispatch(fetchFolderByParent(newFolder.id));
+        await dispatch(fetchFileByFolder(newFolder.id));
         dispatch(setActualFolder(newFolder));
         setIsLoading(false);
     };
 
-    const handleClickBack = () => {
+    const handleClickBack = async () => {
         if (actualFolder.parent === '') return;
         setIsLoading(true);
-        dispatch(fetchFolderByParent(actualFolder.parent));
-        dispatch(fetchFileByFolder(actualFolder.parent));
+        await dispatch(fetchFolderByParent(actualFolder.parent));
+        await dispatch(fetchFileByFolder(actualFolder.parent));
         if (actualFolder.parent === null) {
             dispatch(setActualFolder(rootFolder));
         } else {
-            dispatch(fetchFolderById(actualFolder.parent));
+            await dispatch(fetchFolderById(actualFolder.parent));
         }
         setIsLoading(false);
     };
@@ -68,9 +73,9 @@ export default function DisplayFiles(props: Props) {
         setShowPopup(false);
     };
 
-    async function deleteFile() {
+    const deleteFile = async () => {
         if (!tmpFile) return;
-        dispatch(deleteFileById(tmpFile.id));
+        await dispatch(deleteFileById(tmpFile.id));
         setShowPopup(false);
     }
 

@@ -3,6 +3,7 @@ import { StatusEnum } from '../types/Request/StatusEnum';
 import { ErrorType } from '../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../libraries/directus';
+import { TokenType } from '../types/Users/Credentials/TokenTypes';
 
 interface FileState {
     fileList: FileType[];
@@ -90,14 +91,14 @@ export const downloadFile = createAsyncThunk(
     async (file: FileType, { rejectWithValue, getState }) => {
         try {
             const state = getState() as any;
-            const token = state.auth.token;
+            const token = state.auth.token as TokenType;
             const response = await fetch(
                 `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
                 {
                     method: 'GET',
                     headers: {
                         'Content-Type': file.type,
-                        Authorization: 'Bearer ' + token,
+                        Authorization: 'Bearer ' + token.access_token,
                     },
                 },
             );
@@ -155,7 +156,7 @@ const fileSlice = createSlice({
             })
             .addCase(fetchFileByFolder.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             })
             .addCase(deleteFileById.pending, state => {
                 state.status = StatusEnum.LOADING;
