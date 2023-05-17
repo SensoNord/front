@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import PasswordField from '../../components/Field/PasswordField';
 import TextField from '../../components/Field/TextField';
-import { fetchLogin, loginWithToken } from '../../slicers/auth-slice';
+import {
+    fetchConnectedUser,
+    fetchLogin,
+    loginWithToken,
+} from '../../slicers/auth-slice';
 import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 
@@ -53,13 +57,14 @@ export default function Login() {
         }
     }, [status, token, navigate]);
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = async (event: any) => {
         event.preventDefault();
         const credentials: CredentialsType = {
             email,
             password,
         };
-        dispatch(fetchLogin(credentials));
+        await dispatch(fetchLogin(credentials));
+        await dispatch(fetchConnectedUser());
     };
 
     return (

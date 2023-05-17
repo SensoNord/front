@@ -3,12 +3,7 @@ import DisplayFiles from '../../components/Files/DisplayFiles';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { fetchSubjectByFolderId } from '../../slicers/subject-slice';
-import {
-    createFile,
-    downloadFile,
-    resetCreatedFile,
-    updateFile,
-} from '../../slicers/file-slice';
+import { createFile, downloadFile, updateFile } from '../../slicers/file-slice';
 import { setActualFolder } from '../../slicers/folder-slice';
 import '../../styles/Forum.css';
 import { FileType } from '@directus/sdk';
@@ -16,13 +11,10 @@ import { FileType } from '@directus/sdk';
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-    // const [folderId, setFolderId] = useState<string>('');
     const [uploadIsEnabled, setUploadIsEnabled] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const { actualFolder } = useAppSelector(state => state.folder);
-    const { subjectList } = useAppSelector(state => state.subject);
-    const { createdFile } = useAppSelector(state => state.file);
-    const [isFileCreated, setIsFileCreated] = useState<boolean>(false);
+    const { subjectListForFolder } = useAppSelector(state => state.subject);
 
     const fileRef = useRef(null) as { current: any };
 
@@ -31,42 +23,20 @@ export default function Drive() {
     }, [dispatch]);
 
     useEffect(() => {
-        const doUpdateFile = async () => {
-            if (
-                actualFolder.id !== '' &&
-                createdFile &&
-                subjectList.length !== 0 &&
-                isFileCreated
-            ) {
-                let subject = subjectList[0];
-                await dispatch(
-                    updateFile({
-                        file: createdFile,
-                        subjectId: subject.id,
-                        folderId: actualFolder.id,
-                    }),
-                );
-                setIsFileCreated(false);
-                dispatch(resetCreatedFile());
-            }
-        }
-
-        doUpdateFile();
-    }, [createdFile, isFileCreated, dispatch, actualFolder, subjectList]);
-
-    useEffect(() => {
         const doFetchSubjectByFolderId = async () => {
             if (actualFolder.id !== '') {
                 await dispatch(fetchSubjectByFolderId(actualFolder.id));
             }
-        }
+        };
 
         doFetchSubjectByFolderId();
     }, [actualFolder, dispatch]);
 
     useEffect(() => {
-        setUploadIsEnabled(subjectList && subjectList.length !== 0);
-    }, [subjectList]);
+        setUploadIsEnabled(
+            subjectListForFolder && subjectListForFolder.length !== 0,
+        );
+    }, [subjectListForFolder]);
 
     function newFile() {
         setShowPopup(true);
@@ -91,10 +61,21 @@ export default function Drive() {
         if (uploadedFile?.size !== 0 || uploadedFile.name.length !== 0) {
             await dispatch(fetchSubjectByFolderId(actualFolder.id));
 
-            if (uploadedFile) {
+            if (
+                uploadedFile &&
+                actualFolder.id !== '' &&
+                subjectListForFolder.length !== 0
+            ) {
                 const formData = getFormData({ uploadedFile });
-                await dispatch(createFile(formData));
-                setIsFileCreated(true);
+                const createdFilePayload = await dispatch(createFile(formData));
+                const createdFile = createdFilePayload.payload as FileType;
+                await dispatch(
+                    updateFile({
+                        file: createdFile,
+                        subjectId: subjectListForFolder[0].id,
+                        folderId: actualFolder.id,
+                    }),
+                );
             }
         }
 

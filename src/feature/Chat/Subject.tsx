@@ -1,28 +1,28 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
-import forum from '../lib/forum';
-import { SubjectType } from '../type/SubjectType';
-import { PostType } from '../type/PostType';
-import Post from './Post';
-import '../styles/Forum.css';
+import { useEffect, useRef, useState } from 'react';
+import forum from '../../lib/forum';
+import { PostType } from '../../type/PostType';
+import Post from '../../Component/Post';
+import '../../styles/Forum.css';
 import { createPortal } from 'react-dom';
-import folder from '../lib/folder';
-import DisplayFiles from '../components/Files/DisplayFiles';
-import { UserType } from '../type/UserType';
-import { RoleType } from '@directus/sdk';
-import { directus } from '../libraries/directus';
-import { ModifiedFileType } from '../type/ModifiedFileType';
+import folder from '../../lib/folder';
+import DisplayFiles from '../../components/Files/DisplayFiles';
+import { ModifiedFileType } from '../../type/ModifiedFileType';
+import { useAppDispatch, useAppSelector } from '../../App/hooks';
+import { updateFile } from '../../slicers/file-slice';
 
 const directusUrl = process.env.REACT_APP_DIRECTUS_URL as string;
+const subject_id = '28730aa8-275a-4b16-9ff2-1494f5342243';
+// const subject_id = "d7aa3244-4a37-4999-a716-9a0100eb20cc";
 
-const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
+export default function Subject() {
+    const { currentSubjectDisplay } = useAppSelector(state => state.subject);
+
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
     const fileRef = useRef(null) as { current: any };
     const [file_name, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [file_id, setFileId] = useState<string | null>(null);
-    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-    const [currentRole, setCurrentRole] = useState<RoleType | null>(null);
 
     function quitPopup() {
         setShowPopup(false);
@@ -33,32 +33,12 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
     }
 
     useEffect(() => {
-        subject.posts.sort((a: PostType, b: PostType) => {
+        currentSubjectDisplay!.posts.sort((a: PostType, b: PostType) => {
             return (
                 new Date(b.date_created).getTime() -
                 new Date(a.date_created).getTime()
             );
         });
-        directus.users.me
-            .read({
-                fields: ['id', 'role'],
-            })
-            .then(tmpUser => {
-                directus.roles
-                    .readByQuery({
-                        filter: {
-                            id: {
-                                _eq: tmpUser.role,
-                            },
-                        },
-                        fields: ['name'],
-                    })
-                    .then(tmpRole => {
-                        setCurrentUser(tmpUser as UserType);
-                        if (tmpRole.data)
-                            setCurrentRole(tmpRole.data[0] as RoleType);
-                    });
-            });
     }, []);
 
     function createPostButton() {
@@ -82,12 +62,12 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
                 if (file?.size !== 0 || file.name.length !== 0) {
                     const newFile = await forum.uploadFile(
                         file,
-                        subject.folder_id,
-                        subject.id,
+                        currentSubjectDisplay!.folder_id,
+                        currentSubjectDisplay!.id,
                     );
                     if (newFile)
                         await forum.createPost(
-                            subject.id,
+                            currentSubjectDisplay!.id,
                             formJson.titlePost,
                             formJson.message,
                             newFile.id,
@@ -114,18 +94,18 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
                 );
                 let resFile = (await forum.uploadFile(
                     newFile,
-                    subject.folder_id,
-                    subject.id,
+                    currentSubjectDisplay!.folder_id,
+                    currentSubjectDisplay!.id,
                 )) as ModifiedFileType;
                 await forum.createPost(
-                    subject.id,
+                    currentSubjectDisplay!.id,
                     formJson.titlePost,
                     formJson.message,
                     resFile.id,
                 );
             } else {
                 await forum.createPost(
-                    subject.id,
+                    currentSubjectDisplay!.id,
                     formJson.titlePost,
                     formJson.message,
                 );
@@ -154,11 +134,11 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
 
     return (
         <>
-            {subject && (
+            {currentSubjectDisplay! && (
                 <div>
                     <div className={'grid grid-cols-12'}>
                         <h1 className="col-span-6 mx-10 my-10 pb-10 text-4xl font-bold underline">
-                            {subject['name']}
+                            {currentSubjectDisplay!['name']}
                         </h1>
                         <div
                             className={
@@ -176,16 +156,14 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
                         </div>
                     </div>
                     <div>
-                        {subject['posts'].map(
+                        {currentSubjectDisplay!['posts'].map(
                             (post: PostType, index: number) => {
                                 return (
                                     <Post
                                         post={post}
                                         key={index}
-                                        subject={subject}
+                                        subject={currentSubjectDisplay!}
                                         index={index}
-                                        currentUser={currentUser}
-                                        currentRole={currentRole}
                                     ></Post>
                                 );
                             },
@@ -274,7 +252,9 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
                             <h1>Drive</h1>
                             <DisplayFiles
                                 callbackOnClick={getFileFromDrive}
-                                startingFolderId={subject.folder_id}
+                                startingFolderId={
+                                    currentSubjectDisplay!.folder_id
+                                }
                             />
                             <h1>
                                 <input
@@ -302,6 +282,4 @@ const Forum: FC<{ subject: SubjectType }> = ({ subject }) => {
                 )}
         </>
     );
-};
-
-export default Forum;
+}
