@@ -4,6 +4,8 @@ import { SubjectType } from '../type/SubjectType';
 import folder from '../lib/folder';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../components/Files/DisplayFiles';
+import { useAppDispatch } from '../App/hooks';
+import { createResponseToPost } from '../slicers/subject-slice';
 
 const WriteResponse: FC<{
     postId: string;
@@ -15,6 +17,7 @@ const WriteResponse: FC<{
     const [fileName, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [fileId, setFileId] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
 
     function quitPopup() {
         setShowPopup(false);
@@ -46,6 +49,7 @@ const WriteResponse: FC<{
             if (newFile)
                 await forum.createResponse(postId, responseMessage, newFile.id);
         } else {
+            // dispatch(createResponseToPost({ post_id: postId, message: responseMessage, file_id: fileId }))
             await forum.createResponse(postId, responseMessage, fileId);
         }
 

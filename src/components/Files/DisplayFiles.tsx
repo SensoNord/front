@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FileType, FolderType } from '@directus/sdk';
-import LoadingSpinner from '../../Component/LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import {
@@ -43,12 +43,12 @@ export default function DisplayFiles(props: Props) {
             await dispatch(fetchFileByFolder(parentId));
             setIsLoading(false);
         };
-    
+
         fetchData();
     }, []);
 
     const handleClickFolder = async (newFolder: FolderType) => {
-        console.log("pass")
+        console.log('pass');
         setIsLoading(true);
         await dispatch(fetchFolderByParent(newFolder.id));
         await dispatch(fetchFileByFolder(newFolder.id));
@@ -77,7 +77,7 @@ export default function DisplayFiles(props: Props) {
         if (!tmpFile) return;
         await dispatch(deleteFileById(tmpFile.id));
         setShowPopup(false);
-    }
+    };
 
     return (
         <>

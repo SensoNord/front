@@ -9,6 +9,7 @@ import DisplayFiles from '../../components/Files/DisplayFiles';
 import { ModifiedFileType } from '../../type/ModifiedFileType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { updateFile } from '../../slicers/file-slice';
+import { updatePostListBySubjectId } from '../../slicers/subject-slice';
 
 const directusUrl = process.env.REACT_APP_DIRECTUS_URL as string;
 const subject_id = '28730aa8-275a-4b16-9ff2-1494f5342243';
@@ -16,6 +17,7 @@ const subject_id = '28730aa8-275a-4b16-9ff2-1494f5342243';
 
 export default function Subject() {
     const { currentSubjectDisplay } = useAppSelector(state => state.subject);
+    const dispatch = useAppDispatch();
 
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
@@ -33,7 +35,13 @@ export default function Subject() {
     }
 
     useEffect(() => {
-        currentSubjectDisplay!.posts.sort((a: PostType, b: PostType) => {
+        if (currentSubjectDisplay) {
+            dispatch(updatePostListBySubjectId(currentSubjectDisplay.id));
+        }
+    }, [dispatch, currentSubjectDisplay]);
+
+    useEffect(() => {
+        [...currentSubjectDisplay!.posts].sort((a: PostType, b: PostType) => {
             return (
                 new Date(b.date_created).getTime() -
                 new Date(a.date_created).getTime()

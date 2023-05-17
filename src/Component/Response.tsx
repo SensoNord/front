@@ -4,10 +4,10 @@ import { emptyDirectusFileType } from '../type/ModifiedFileType';
 import folder from '../lib/folder';
 import forum from '../lib/forum';
 import { createPortal } from 'react-dom';
-import { UserType } from '../type/UserType';
-import { RoleType } from '@directus/sdk';
-import LoadingSpinner from './LoadingSpinner';
-import { useAppSelector } from '../App/hooks';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useAppDispatch, useAppSelector } from '../App/hooks';
+import { fetchFileById } from '../slicers/file-slice';
+import { FileType } from '@directus/sdk';
 
 type Props = {
     response: MessageResponseType;
@@ -18,6 +18,7 @@ export default function Response(props: Props) {
     const { connectedUser, connectedUserRole } = useAppSelector(
         state => state.auth,
     );
+    const dispatch = useAppDispatch();
 
     const [downloadButton, setDownloadButton] = useState(false);
     const [showFileDeleted, setShowFileDeleted] = useState(false);
@@ -30,7 +31,7 @@ export default function Response(props: Props) {
     const [responseIsBeingEdited, setResponseIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(true);
 
     useEffect(() => {
         const timeout = setTimeout(async () => {
@@ -70,6 +71,7 @@ export default function Response(props: Props) {
         connectedUserRole,
         connectedUser?.id,
         downloadButton,
+        response,
         response.file_id,
         response.user_created.id,
     ]);

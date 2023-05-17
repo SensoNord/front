@@ -9,8 +9,9 @@ import folder from '../lib/folder';
 import forum from '../lib/forum';
 import { RoleType, UserType } from '@directus/sdk';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from './LoadingSpinner';
-import { useAppSelector } from '../App/hooks';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useAppDispatch, useAppSelector } from '../App/hooks';
+import { updatePostListBySubjectId } from '../slicers/subject-slice';
 
 type Props = {
     post: PostType;
@@ -23,6 +24,7 @@ export default function Post(props: Props) {
     const { connectedUser, connectedUserRole } = useAppSelector(
         state => state.auth,
     );
+    const dispatch = useAppDispatch();
 
     const [showPopup, setShowPopup] = useState(false);
 
@@ -34,7 +36,13 @@ export default function Post(props: Props) {
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(true);
+
+    useEffect(() => {
+        // update post list
+        console.log('update post list');
+        dispatch(updatePostListBySubjectId(subject.id));
+    }, [post]);
 
     useEffect(() => {
         const timeout = setTimeout(async () => {
@@ -210,7 +218,7 @@ export default function Post(props: Props) {
                         </div>
                         <div className={'mx-10 flex flex-row justify-end'}>
                             <div className={'w-4/5'}>
-                                {post['responses']
+                                {[...post['responses']]
                                     .sort(
                                         (
                                             a: MessageResponseType,
@@ -231,6 +239,7 @@ export default function Post(props: Props) {
                                             response: MessageResponseType,
                                             index: number,
                                         ) => {
+                                            console.log(response);
                                             return (
                                                 <Response
                                                     response={response}

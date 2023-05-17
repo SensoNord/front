@@ -5,6 +5,8 @@ import { directus } from '../libraries/directus';
 import { ErrorType } from '../types/Request/ErrorType';
 import { StatusEnum } from '../types/Request/StatusEnum';
 import { SubjectType } from '../type/SubjectType';
+import { PostType } from '../type/PostType';
+import { MessageResponseType } from '../type/MessageResponseType';
 
 interface SubjectState {
     subjectListDisplay: SubjectType[];
@@ -20,6 +22,12 @@ const initialState: SubjectState = {
     currentSubjectDisplay: null,
     status: StatusEnum.IDLE,
     error: {} as ErrorType,
+};
+
+type PayLoadMessage = {
+    post_id: string;
+    message: string;
+    file_id: string | null;
 };
 
 export const fetchSubjectByFolderId = createAsyncThunk(
@@ -94,6 +102,46 @@ export const fetchAllVisibleSubjectAndRelatedPost = createAsyncThunk(
     },
 );
 
+export const updatePostListBySubjectId = createAsyncThunk(
+    'items/fetchPostBySubjectId',
+    async (subjectId: string, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('posts').readByQuery({
+                filter: {
+                    subject_id: {
+                        _eq: subjectId,
+                    },
+                },
+            });
+            return response.data as PostType[];
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const createResponseToPost = createAsyncThunk(
+    'items/createResponseToPostWithPostId',
+    async (payLoadMessage: PayLoadMessage, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('responses').createOne({
+                post_id: payLoadMessage.post_id,
+                message: payLoadMessage.message,
+                file_id: payLoadMessage.file_id,
+            });
+            return response as MessageResponseType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 const subjectSlice = createSlice({
     name: 'items',
     initialState,
@@ -135,7 +183,61 @@ const subjectSlice = createSlice({
                     state.status = StatusEnum.FAILED;
                     state.error = action.payload as ErrorType;
                 },
-            );
+            )
+            .addCase(updatePostListBySubjectId.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updatePostListBySubjectId.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+
+                const subjectId = action.meta.arg;
+                const newPosts = action.payload as PostType[];
+
+                const subjectIndex = state.subjectListDisplay.findIndex(
+                    (subject: SubjectType) => subject.id === subjectId,
+                );
+
+                if (subjectIndex !== -1) {
+                    const oldPosts = state.subjectListDisplay[subjectIndex]
+                        .posts as PostType[];
+                    const mergedPosts = [
+                        ...oldPosts,
+                        ...newPosts.filter(
+                            (newPost: PostType) =>
+                                !oldPosts.some(
+                                    (oldPost: PostType) =>
+                                        oldPost.id === newPost.id,
+                                ),
+                        ),
+                    ];
+
+                    state.subjectListDisplay = state.subjectListDisplay.map(
+                        (subject, index) => {
+                            if (index !== subjectIndex) {
+                                return subject;
+                            }
+                            return {
+                                ...subject,
+                                posts: mergedPosts,
+                            };
+                        },
+                    );
+                }
+            })
+            .addCase(updatePostListBySubjectId.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(createResponseToPost.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createResponseToPost.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+            });
     },
 });
 

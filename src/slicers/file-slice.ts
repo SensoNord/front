@@ -44,6 +44,21 @@ export const fetchFileByFolder = createAsyncThunk(
     },
 );
 
+export const fetchFileById = createAsyncThunk(
+    'file/fetchFileById',
+    async (fileId: string, { rejectWithValue }) => {
+        try {
+            const response = await directus.files.readOne(fileId);
+            return response as unknown as FileType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 export const createFile = createAsyncThunk(
     'file/createFile',
     async (file: FormData, { rejectWithValue }) => {
@@ -211,6 +226,21 @@ const fileSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(downloadFile.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(fetchFileById.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchFileById.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+                state.fileList = state.fileList.map(file =>
+                    file.id === action.payload.id ? action.payload : file,
+                );
+            })
+            .addCase(fetchFileById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });
