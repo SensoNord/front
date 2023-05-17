@@ -1,4 +1,4 @@
-import { FolderType } from '@directus/sdk';
+import { FileType, FolderType } from '@directus/sdk';
 import { StatusEnum } from '../types/Request/StatusEnum';
 import { ErrorType } from '../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -71,12 +71,12 @@ const folderSlice = createSlice({
             })
             .addCase(fetchFolderByParent.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.folderList = action.payload;
+                state.folderList = action.payload as Array<FolderType>;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFolderByParent.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             })
             .addCase(fetchFolderById.pending, state => {
                 state.status = StatusEnum.LOADING;
@@ -84,12 +84,12 @@ const folderSlice = createSlice({
             })
             .addCase(fetchFolderById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.actualFolder = action.payload;
+                state.actualFolder = action.payload as FolderType;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFolderById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             });
     },
 });

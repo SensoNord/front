@@ -37,7 +37,6 @@ export default function Drive() {
             subjectList.length !== 0 &&
             isFileCreated
         ) {
-            // [MAEL] Pourquoi on ne récupère que le premier sujet ?
             let subject = subjectList[0];
             dispatch(
                 updateFile({
