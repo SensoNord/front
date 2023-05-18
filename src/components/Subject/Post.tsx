@@ -50,9 +50,9 @@ export default function Post(props: Props) {
         setConnectedUserRoleName(
             localStorage.getItem('connectedUserRoleName') as string,
         );
-        setIsAdministrator(connectedUserRoleName == 'Administrator');
-        setIsPostOwner(connectedUserId == post.user_created.id);
-    }, [connectedUserId, connectedUserRoleName]);
+        setIsAdministrator(connectedUserRoleName === 'Administrator');
+        setIsPostOwner(connectedUserId === post.user_created.id);
+    }, [connectedUserId, connectedUserRoleName, post.user_created.id]);
 
     useEffect(() => {
         async function fetchFile() {
@@ -78,7 +78,7 @@ export default function Post(props: Props) {
             }
         }
         fetchFile();
-    }, []);
+    }, [dispatch, post.file_id]);
 
     function quitPopup() {
         setShowPopup(false);
