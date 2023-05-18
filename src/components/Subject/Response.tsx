@@ -73,8 +73,8 @@ export default function Response(props: Props) {
                     setDownloadButton(false);
                     setFile(emptyDirectusFileType);
                 }
-                setIsLoaded(true);
             }
+            setIsLoaded(true);
         }
         fetchFile();
     }, []);

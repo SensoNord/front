@@ -3,16 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Forum from "./Component/Forum";
-import Drive from "./Component/Drive";
+import Forum from "./feature/Chat/Forum";
+import Drive from "./feature/Drive";
 import folder from "./lib/folder";
 import forum from "./lib/forum";
-import {PostType} from "./type/PostType";
-import {directus} from "./services/directus";
-import {UserType} from "./type/UserType";
+import {PostType} from "./types/Chat/PostType";
+import {directus} from "./libraries/directus";
+import {UserType} from "./types/Chat/UserType";
 import {RoleType} from "@directus/sdk";
 import conversation from "./lib/conversation";
-import Conversation from "./Component/Conversation";
+import Conversation from "./components/Conversation/Conversation";
 
 const subject_id = "28730aa8-275a-4b16-9ff2-1494f5342243";
 // const subject_id = "d7aa3244-4a37-4999-a716-9a0100eb20cc";
@@ -30,11 +30,11 @@ const root = ReactDOM.createRoot(
 //         if (page === 'forum') {
 //             const subject = await forum.getSubjects(subject_id);
 //             if (subject) {
-//                 root.render(
-//                     <React.StrictMode>
-//                         <Forum subject={subject}/>
-//                     </React.StrictMode>
-//                 );
+//                 // root.render(
+//                 //     <React.StrictMode>
+//                 //         <Forum subject={subject}/>
+//                 //     </React.StrictMode>
+//                 // );
 //             } else {
 //                 window.alert('Invalid subject');
 //             }

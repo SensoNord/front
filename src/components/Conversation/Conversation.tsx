@@ -1,14 +1,11 @@
 import {FC, useEffect, useRef, useState} from "react";
-import forum from "../lib/forum";
-import conversation from "../lib/conversation";
 import WriteMessage from "./WriteMessage";
-import {ConversationType} from "../type/ConversationType";
-import {UserType} from "../type/UserType";
-import {directus} from "../services/directus";
-import folder from "../lib/folder";
+import {ConversationType} from "../../types/Chat/ConversationType";
+import {UserType} from "../../types/Chat/UserType";
+import {directus} from "../../libraries/directus";
+import folder from "../../lib/folder";
 import Message from "./Message";
-import {PostType} from "../type/PostType";
-import {MessageResponseType} from "../type/MessageResponseType";
+import {MessageResponseType} from "../../types/Chat/MessageResponseType";
 
 const Conversation: FC<{ conv: ConversationType }> = ({conv}) => {
     const [currentUser, setCurrentUser] = useState<UserType | null>(null);
@@ -50,20 +47,15 @@ const Conversation: FC<{ conv: ConversationType }> = ({conv}) => {
             {
                 conv && (
                     <div style={{height: '100%'}} className={"overflow-hidden"}>
-                        {/*<div style={{backgroundColor: 'rgb(239, 246, 255)'}} className={"flex flex-col justify-between h-full"}>*/}
-                        {/*<div className={'text-3xl justify-center flex border-2 border-black mx-auto'} style={{position: "absolute", maxWidth: 'max-content', right: 0, left: 0}}>*/}
                         <div className={'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white border-t-0'} style={{position: "absolute", maxWidth: 'max-content', right: 0, left: 0}}>
                             <h1>Conversation avec {otherUser?.first_name} {otherUser?.last_name}</h1>
                         </div>
                         <div style={{backgroundColor: 'rgb(239, 246, 255)'}} className={"grid grid-rows-[repeat(10,_minmax(0,_1fr))] grid-flow-col h-full"}>
                             <div className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden'} style={{overflowAnchor: 'auto'}}>
                                 {
-                                    // subject.posts.sort((a: PostType, b: PostType) => {
-                                    //     return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
-                                    // });
                                     conv.messages_list.sort((a: MessageResponseType, b: MessageResponseType) => {
                                         return new Date(a.date_created).getTime() - new Date(b.date_created).getTime();
-                                    }).map((message) => {
+                                    }).map((message: MessageResponseType) => {
                                         return (
                                             <div className={`flex ${message.user_created.id === currentUser?.id ? 'justify-end' : 'justify-start'}`}>
                                                 <div className={"w-7/12"}>

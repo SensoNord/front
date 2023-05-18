@@ -1,5 +1,5 @@
-import {ModifiedFileType} from "../type/ModifiedFileType";
-import {directus, directusUrl} from "../services/directus";
+import {ModifiedFileType} from "../types/Chat/ModifiedFileType";
+import {directus} from "../libraries/directus";
 
 export default class Folder {
 
@@ -84,7 +84,7 @@ export default class Folder {
     }
 
     static downloadFile(file: ModifiedFileType) {
-        fetch(directusUrl + 'assets/' + file.id + '?download', {
+        fetch(process.env.REACT_APP_DIRECTUS_URL + 'assets/' + file.id + '?download', {
             method: 'GET',
             headers: {
                 'Content-Type': file.type,

@@ -1,11 +1,11 @@
-import {ConversationType} from "../type/ConversationType";
+import {ConversationType} from "../../types/Chat/ConversationType";
 import React, {FC, useRef, useState} from "react";
 import {createPortal} from "react-dom";
-import DisplayFiles from "./DisplayFiles";
-import forum from "../lib/forum";
-import folder from "../lib/folder";
-import conversation from "../lib/conversation";
-import '../styles/textarea.css';
+import DisplayFiles from "../Files/DisplayFiles";
+import forum from "../../lib/forum";
+import folder from "../../lib/folder";
+import conversation from "../../lib/conversation";
+import '../../styles/textarea.css';
 
 const WriteMessage: FC<{ conv: ConversationType }> = ({conv}) => {
     const [showPopup, setShowPopup] = useState(false);
@@ -76,7 +76,7 @@ const WriteMessage: FC<{ conv: ConversationType }> = ({conv}) => {
                     <div className={"alertContainer"}>
                         <div className={"alertPopup text-center"}>
                             <h1>Drive</h1>
-                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolder={conv.folder_id}/>
+                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolderId={conv.folder_id}/>
                             <h1>
                                 <input type="file" name="file" id="file" className={"w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded"} ref={fileRef} onChange={getFileFromComputer}/>
                             </h1>

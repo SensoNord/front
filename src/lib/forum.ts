@@ -1,6 +1,6 @@
-import {directus} from "../services/directus";
-import {SubjectType} from "../type/SubjectType";
-import {ModifiedFileType} from "../type/ModifiedFileType";
+import {directus} from "../libraries/directus";
+import {SubjectType} from "../types/Chat/SubjectType";
+import {ModifiedFileType} from "../types/Chat/ModifiedFileType";
 import folder from "./folder";
 
 

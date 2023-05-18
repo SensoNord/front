@@ -1,5 +1,5 @@
-import {directus} from "../services/directus";
-import {ConversationType} from "../type/ConversationType";
+import {directus} from "../libraries/directus";
+import {ConversationType} from "../types/Chat/ConversationType";
 
 export default class conversation {
     static async getConversation(conversation_id: string): Promise<ConversationType | null | undefined> {

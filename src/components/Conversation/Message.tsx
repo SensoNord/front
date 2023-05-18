@@ -1,12 +1,12 @@
 import React, {FC, useEffect, useRef, useState} from "react";
-import {MessageResponseType} from "../type/MessageResponseType";
-import {emptyDirectusFileType} from "../type/ModifiedFileType";
-import folder from "../lib/folder";
-import LoadingSpinner from "./LoadingSpinner";
+import {MessageResponseType} from "../../types/Chat/MessageResponseType";
+import {emptyDirectusFileType} from "../../types/Chat/ModifiedFileType";
+import folder from "../../lib/folder";
+import LoadingSpinner from "../LoadingSpinner";
 import {createPortal} from "react-dom";
-import {UserType} from "../type/UserType";
-import conversation from "../lib/conversation";
-import NameAndDate from "./NameAndDate";
+import {UserType} from "../../types/Chat/UserType";
+import conversation from "../../lib/conversation";
+import NameAndDate from "../Field/NameAndDate";
 
 const Message: FC<{ message: MessageResponseType, currentUser: UserType | null, align: string }> = ({message, currentUser, align}) => {
     const [downloadButton, setDownloadButton] = useState(false);
