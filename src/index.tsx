@@ -3,14 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Forum from "./Component/Forum";
-import Drive from "./Component/Drive";
-import folder from "./lib/folder";
-import forum from "./lib/forum";
-import {PostType} from "./type/PostType";
-import {directus} from "./services/directus";
-import {UserType} from "./type/UserType";
-import {RoleType} from "@directus/sdk";
 
 const subject_id = "28730aa8-275a-4b16-9ff2-1494f5342243";
 // const subject_id = "d7aa3244-4a37-4999-a716-9a0100eb20cc";

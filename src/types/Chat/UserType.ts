@@ -3,13 +3,13 @@ export type UserType = {
     last_name: string;
     id: string;
     role: string;
-}
+};
 
 const emptyUser: UserType = {
-    first_name: "",
-    last_name: "",
-    id: "",
-    role: ""
-}
+    first_name: '',
+    last_name: '',
+    id: '',
+    role: '',
+};
 
-export {emptyUser};
+export { emptyUser };

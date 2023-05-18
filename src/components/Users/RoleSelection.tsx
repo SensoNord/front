@@ -25,7 +25,6 @@ export default function RoleSelection(props: RoleSelectionProps) {
         );
         setSelectedRole(role);
         role ? setIsRoleValid(true) : setIsRoleValid(false);
-        console.log(role);
     };
 
     return (

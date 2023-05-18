@@ -52,7 +52,7 @@ const inviteSlice = createSlice({
             })
             .addCase(sendInvite.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.error = action.payload as any;
+                state.error = action.payload as ErrorType;
             });
     },
 });

@@ -41,17 +41,15 @@ const roleSlice = createSlice({
         builder
             .addCase(fetchRoles.pending, state => {
                 state.status = StatusEnum.LOADING;
-                state.roles = [] as Array<RoleType>;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchRoles.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.roles = action.payload;
+                state.roles = action.payload as Array<RoleType>;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchRoles.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.roles = [] as Array<RoleType>;
                 state.error = action.payload as any;
             });
     },
