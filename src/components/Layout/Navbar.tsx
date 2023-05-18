@@ -22,6 +22,12 @@ export default function Navbar() {
             <div>
                 <Link to="/send-invitation">Send Invitation</Link>
             </div>
+            <div>
+                <Link to="/drive">Drive</Link>
+            </div>
+            <div>
+                <Link to="/chat">Chat</Link>
+            </div>
             <button onClick={handleLogout}>Logout</button>
         </nav>
     );

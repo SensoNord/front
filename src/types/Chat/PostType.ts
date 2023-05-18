@@ -1,5 +1,5 @@
-import {emptyUser, UserType} from "./UserType";
-import {MessageResponseType} from "./MessageResponseType";
+import { emptyUser, UserType } from './UserType';
+import { MessageResponseType } from './MessageResponseType';
 
 export type PostType = {
     id: string;
@@ -11,18 +11,20 @@ export type PostType = {
     message: string;
     responses: MessageResponseType[];
     file_id: string;
-}
+    subject_id: string;
+};
 
 const emptyPost: PostType = {
-    id: "",
+    id: '',
     user_created: emptyUser,
     date_created: new Date(),
     user_updated: emptyUser,
     date_updated: new Date(),
-    title: "",
-    message: "",
+    title: '',
+    message: '',
     responses: [],
-    file_id: ""
-}
+    file_id: '',
+    subject_id: '',
+};
 
-export {emptyPost};
+export { emptyPost };

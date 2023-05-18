@@ -25,48 +25,48 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-forum.connection()
-    .then(async () => {
-        if (page === 'forum') {
-            const subject = await forum.getSubjects(subject_id);
-            if (subject) {
-                root.render(
-                    <React.StrictMode>
-                        <Forum subject={subject}/>
-                    </React.StrictMode>
-                );
-            } else {
-                window.alert('Invalid subject');
-            }
-        } else if (page === 'drive') {
-            root.render(
-                <React.StrictMode>
-                    <Drive/>
-                </React.StrictMode>
-            );
-        } else if (page === 'conversation') {
-            const conv = await conversation.getConversation(conversation_id);
-            if (conv) {
-                root.render(
-                    <React.StrictMode>
-                        <div style={{height: '800px', width: '80%'}} className={"mx-auto my-32 border-2 border-black"}>
-                            <Conversation conv={conv}/>
-                        </div>
-                    </React.StrictMode>
-                );
-            } else {
-                window.alert('Invalid conversation');
-            }
-        }
-    })
-    .catch(() => {
-        window.alert('Invalid credentials');
-    });
-// root.render(
-//     <React.StrictMode>
-//         <App />
-//     </React.StrictMode>,
-// );
+// forum.connection()
+//     .then(async () => {
+//         if (page === 'forum') {
+//             const subject = await forum.getSubjects(subject_id);
+//             if (subject) {
+//                 root.render(
+//                     <React.StrictMode>
+//                         <Forum subject={subject}/>
+//                     </React.StrictMode>
+//                 );
+//             } else {
+//                 window.alert('Invalid subject');
+//             }
+//         } else if (page === 'drive') {
+//             root.render(
+//                 <React.StrictMode>
+//                     <Drive/>
+//                 </React.StrictMode>
+//             );
+//         } else if (page === 'conversation') {
+//             const conv = await conversation.getConversation(conversation_id);
+//             if (conv) {
+//                 root.render(
+//                     <React.StrictMode>
+//                         <div style={{height: '800px', width: '80%'}} className={"mx-auto my-32 border-2 border-black"}>
+//                             <Conversation conv={conv}/>
+//                         </div>
+//                     </React.StrictMode>
+//                 );
+//             } else {
+//                 window.alert('Invalid conversation');
+//             }
+//         }
+//     })
+//     .catch(() => {
+//         window.alert('Invalid credentials');
+//     });
+root.render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
