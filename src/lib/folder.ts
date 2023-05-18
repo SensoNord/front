@@ -52,7 +52,7 @@ export default class Folder {
         return (await directus.folders.readOne(parent))
     }
 
-    static async uploadFile(file: File | null, folder_id: string, subject_id: string | null = null): Promise<ModifiedFileType | null> {
+    static async uploadFile(file: File | null, folder_id: string, subject_id: string | null = null, conv_id: string | null = null): Promise<ModifiedFileType | null> {
         if (!file) return null;
 
         function getFormData(object: any) {
@@ -65,7 +65,14 @@ export default class Folder {
         let createFile = await directus.files.createOne(formData);
         if (folder_id !== '') {
             if (createFile) {
-                const options = subject_id !== null ? {"subject": [{"subjects_id": subject_id}], "folder": folder_id} : {"folder": folder_id};
+                let options: {};
+                if (subject_id !== null) {
+                    options = {"subject": [{"subjects_id": subject_id}], "folder": folder_id};
+                } else if (conv_id !== null) {
+                    options = {"conversation": [{"conversations_id": conv_id}], "folder": folder_id};
+                } else {
+                    options = {"folder": folder_id};
+                }
                 let updateFile = await directus.files.updateOne(createFile.id, options);
                 return updateFile as unknown as ModifiedFileType;
             } else {

@@ -45,8 +45,8 @@ const Response: FC<{ response: MessageResponseType, currentUser: UserType | null
                     setDownloadButton(false);
                     setFile(emptyDirectusFileType);
                 }
-                setIsLoaded(true);
             }
+            setIsLoaded(true);
         }, 500);
         return () => clearTimeout(timeout);
     }, [currentRole, currentUser?.id, downloadButton, response.file_id, response.user_created.id]);
@@ -56,7 +56,7 @@ const Response: FC<{ response: MessageResponseType, currentUser: UserType | null
     }
 
     async function deleteResponse() {
-        await forum.deletePost(response.id);
+        await forum.deleteResponse(response.id);
         window.location.reload();
     }
 
