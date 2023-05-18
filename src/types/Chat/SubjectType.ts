@@ -1,8 +1,8 @@
-import {emptyUser, UserType} from "./UserType";
-import {PostType} from "./PostType";
+import { emptyUser, UserType } from './UserType';
+import { PostType } from './PostType';
 
 export type SubjectType = {
-    id: string
+    id: string;
     user_created: UserType;
     date_created: Date;
     user_updated: UserType;
@@ -11,26 +11,26 @@ export type SubjectType = {
     user_list: [
         {
             directus_users_id: UserType;
-        }
+        },
     ];
     posts: PostType[] | [];
-    folder_id: string
-}
+    folder_id: string;
+};
 
 const emptySubject: SubjectType = {
-    id: "",
+    id: '',
     user_created: emptyUser,
     date_created: new Date(),
     user_updated: emptyUser,
     date_updated: new Date(),
-    name: "",
+    name: '',
     user_list: [
         {
-            directus_users_id: emptyUser
-        }
+            directus_users_id: emptyUser,
+        },
     ],
     posts: [],
-    folder_id: ""
+    folder_id: '',
 };
 
-export {emptySubject};
+export { emptySubject };

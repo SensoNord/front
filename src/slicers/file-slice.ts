@@ -4,7 +4,7 @@ import { ErrorType } from '../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../libraries/directus';
 import { TokenType } from '../types/Users/Credentials/TokenTypes';
-import { ModifiedFileType } from '../type/ModifiedFileType';
+import { ModifiedFileType } from '../types/Chat/ModifiedFileType';
 
 interface FileState {
     fileList: ModifiedFileType[];
@@ -54,7 +54,6 @@ export const fetchFileById = createAsyncThunk(
     async (fileId: string, { rejectWithValue }) => {
         try {
             const response = await directus.files.readOne(fileId);
-            console.log('response', response);
             return response as unknown as ModifiedFileType;
         } catch (error: any) {
             return rejectWithValue({

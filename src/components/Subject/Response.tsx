@@ -1,18 +1,19 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
-import { MessageResponseType } from '../type/MessageResponseType';
+import { useEffect, useRef, useState } from 'react';
+import { MessageResponseType } from '../../types/Chat/MessageResponseType';
 import {
     ModifiedFileType,
     emptyDirectusFileType,
-} from '../type/ModifiedFileType';
-import folder from '../lib/folder';
-import forum from '../lib/forum';
+} from '../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useAppDispatch, useAppSelector } from '../App/hooks';
-import { fetchFileById } from '../slicers/file-slice';
-import { FileType } from '@directus/sdk';
-import { deletePostById, deleteResponseById } from '../slicers/subject-slice';
-import { ErrorType, isErrorType } from '../types/Request/ErrorType';
+import LoadingSpinner from '../LoadingSpinner';
+import { useAppDispatch } from '../../App/hooks';
+import { downloadFile, fetchFileById } from '../../slicers/file-slice';
+import {
+    deleteResponseById,
+    updateResponseMessageById,
+} from '../../slicers/subject-slice';
+import { ErrorType, isErrorType } from '../../types/Request/ErrorType';
+import { PayLoadUpdateResponse } from '../../slicers/subject-slice-helper';
 
 type Props = {
     response: MessageResponseType;
@@ -20,44 +21,42 @@ type Props = {
 
 export default function Response(props: Props) {
     const { response } = props;
-    const { connectedUser, connectedUserRole } = useAppSelector(
-        state => state.auth,
-    );
     const dispatch = useAppDispatch();
 
     const [downloadButton, setDownloadButton] = useState(false);
     const [showFileDeleted, setShowFileDeleted] = useState(false);
     const [file, setFile] = useState(emptyDirectusFileType);
-
     const [showPopup, setShowPopup] = useState(false);
 
-    const [showDeleteButton, setShowDeleteButton] = useState(false);
-    const [showEditButton, setShowEditButton] = useState(false);
+    const [isAdministrator, setIsAdministrator] = useState(
+        null as boolean | null,
+    );
+    const [isResponseOwner, setIsResponseOwner] = useState(
+        null as boolean | null,
+    );
+    const [connectedUserId, setConnectedUserId] = useState('');
+    const [connectedUserRoleName, setConnectedUserRoleName] = useState('');
+
     const [responseIsBeingEdited, setResponseIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
     const [isLoaded, setIsLoaded] = useState(true);
 
     useEffect(() => {
-        const timeout = setTimeout(async () => {
-            if (connectedUser?.id === response.user_created.id) {
-                setShowDeleteButton(true);
-                setShowEditButton(true);
-            } else if (
-                connectedUserRole &&
-                connectedUserRole['name'] === 'Administrator'
-            ) {
-                setShowDeleteButton(true);
-                setShowEditButton(false);
-            } else {
-                setShowDeleteButton(false);
-                setShowEditButton(false);
-            }
+        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
+        setConnectedUserRoleName(
+            localStorage.getItem('connectedUserRoleName') as string,
+        );
+        setIsAdministrator(connectedUserRoleName == 'Administrator');
+        setIsResponseOwner(connectedUserId == response.user_created.id);
+    }, [connectedUserId, connectedUserRoleName]);
+
+    useEffect(() => {
+        async function fetchFile() {
             if (
                 response.file_id !== '' &&
                 response.file_id !== null &&
-                response.file_id !== undefined &&
-                !downloadButton // [MAEL] Pourquoi cette condition ? Pb boucle infinie ?
+                response.file_id !== undefined
             ) {
                 let filesPayload = await dispatch(
                     fetchFileById(response.file_id),
@@ -76,27 +75,17 @@ export default function Response(props: Props) {
                 }
                 setIsLoaded(true);
             }
-        }, 500);
-        return () => clearTimeout(timeout);
-    }, [
-        connectedUserRole,
-        connectedUser?.id,
-        downloadButton,
-        response,
-        response.file_id,
-        response.user_created.id,
-    ]);
+        }
+        fetchFile();
+    }, []);
 
     function quitPopup() {
         setShowPopup(false);
     }
 
     async function deleteResponse() {
-        // [MAEL] Pourquoi on utilise deletePost pour supprimer une réponse ?
         await dispatch(deleteResponseById(response.id));
         quitPopup();
-        // await forum.deletePost(response.id);
-        // window.location.reload();
     }
 
     function editResponse() {
@@ -104,8 +93,16 @@ export default function Response(props: Props) {
     }
 
     async function updateMessage() {
-        await forum.updateResponse(response.id, textAreaRef.current.value);
-        window.location.reload();
+        await dispatch(
+            updateResponseMessageById({
+                id: response.id,
+                message: textAreaRef.current.value,
+            } as PayLoadUpdateResponse),
+        );
+    }
+
+    async function handleDownloadFile() {
+        await dispatch(downloadFile(file as ModifiedFileType));
     }
 
     return (
@@ -175,7 +172,7 @@ export default function Response(props: Props) {
                                 )}
                             </div>
                             <div className={'col-span-1'}>
-                                {showEditButton && !responseIsBeingEdited && (
+                                {isResponseOwner && !responseIsBeingEdited && (
                                     <button
                                         className={
                                             'bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-1 w-24 rounded'
@@ -185,21 +182,22 @@ export default function Response(props: Props) {
                                         Modifier
                                     </button>
                                 )}
-                                {showDeleteButton && !responseIsBeingEdited && (
-                                    <button
-                                        className={
-                                            'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 w-24 rounded'
-                                        }
-                                        onClick={() => setShowPopup(true)}
-                                    >
-                                        Supprimer
-                                    </button>
-                                )}
+                                {(isResponseOwner || isAdministrator) &&
+                                    !responseIsBeingEdited && (
+                                        <button
+                                            className={
+                                                'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 w-24 rounded'
+                                            }
+                                            onClick={() => setShowPopup(true)}
+                                        >
+                                            Supprimer
+                                        </button>
+                                    )}
                             </div>
                         </div>
                         {downloadButton ? (
                             <button
-                                onClick={() => folder.downloadFile(file)}
+                                onClick={handleDownloadFile}
                                 className={'underline underline-offset-4'}
                             >
                                 Télécharger {file.filename_download}

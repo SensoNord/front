@@ -9,7 +9,7 @@ import {
     setActualFolder,
 } from '../../slicers/folder-slice';
 import { deleteFileById, fetchFileByFolder } from '../../slicers/file-slice';
-import { ModifiedFileType } from '../../type/ModifiedFileType';
+import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
 
 type Props = {
     callbackOnClick?: Function;

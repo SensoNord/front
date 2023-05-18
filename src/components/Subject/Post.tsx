@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { PostType } from '../type/PostType';
-import { MessageResponseType } from '../type/MessageResponseType';
+import { PostType } from '../../types/Chat/PostType';
+import { MessageResponseType } from '../../types/Chat/MessageResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import { SubjectType } from '../type/SubjectType';
+import { SubjectType } from '../../types/Chat/SubjectType';
 import {
     ModifiedFileType,
     emptyDirectusFileType,
-} from '../type/ModifiedFileType';
-import folder from '../lib/folder';
-import forum from '../lib/forum';
+} from '../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useAppDispatch, useAppSelector } from '../App/hooks';
+import LoadingSpinner from '../LoadingSpinner';
+import { useAppDispatch } from '../../App/hooks';
 import {
     deletePostById,
     setCurrentSubjectDisplayWithAllRelatedData,
     updatePostMessageById,
-} from '../slicers/subject-slice';
-import { fetchFileById } from '../slicers/file-slice';
-import { ErrorType, isErrorType } from '../types/Request/ErrorType';
-import { PayLoadUpdatePost } from '../slicers/subject-slice-helper';
+} from '../../slicers/subject-slice';
+import { downloadFile, fetchFileById } from '../../slicers/file-slice';
+import { ErrorType, isErrorType } from '../../types/Request/ErrorType';
+import { PayLoadUpdatePost } from '../../slicers/subject-slice-helper';
 
 type Props = {
     post: PostType;
@@ -30,9 +28,6 @@ type Props = {
 
 export default function Post(props: Props) {
     const { post, subject, index } = props;
-    const { connectedUser, connectedUserRole } = useAppSelector(
-        state => state.auth,
-    );
     const dispatch = useAppDispatch();
 
     const [showPopup, setShowPopup] = useState(false);
@@ -40,61 +35,50 @@ export default function Post(props: Props) {
     const [downloadButton, setDownloadButton] = useState(false);
     const [showFileDeleted, setShowFileDeleted] = useState(false);
     const [file, setFile] = useState(emptyDirectusFileType);
-    const [showDeleteButton, setShowDeleteButton] = useState(false);
-    const [showEditButton, setShowEditButton] = useState(false);
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
-
     const [isLoaded, setIsLoaded] = useState(true);
+    const [isAdministrator, setIsAdministrator] = useState(
+        null as boolean | null,
+    );
+    const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
+    const [connectedUserId, setConnectedUserId] = useState('');
+    const [connectedUserRoleName, setConnectedUserRoleName] = useState('');
 
     useEffect(() => {
-        console.log(post.title + ' ' + 'useEffect');
-        const timeout = setTimeout(async () => {
-            if (connectedUser?.id === post.user_created.id) {
-                setShowDeleteButton(true);
-                setShowEditButton(true);
-            } else if (
-                connectedUser.role &&
-                connectedUserRole['name'] === 'Administrator'
-            ) {
-                setShowDeleteButton(true);
-                setShowEditButton(false);
-            } else {
-                setShowDeleteButton(false);
-                setShowEditButton(false);
-            }
+        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
+        setConnectedUserRoleName(
+            localStorage.getItem('connectedUserRoleName') as string,
+        );
+        setIsAdministrator(connectedUserRoleName == 'Administrator');
+        setIsPostOwner(connectedUserId == post.user_created.id);
+    }, [connectedUserId, connectedUserRoleName]);
+
+    useEffect(() => {
+        async function fetchFile() {
             if (
                 post.file_id !== '' &&
                 post.file_id !== null &&
                 post.file_id !== undefined
             ) {
-                console.log(post.title + ' ' + 'fetchFileById');
                 let filesPayload = await dispatch(fetchFileById(post.file_id));
                 let files = filesPayload.payload as
                     | ModifiedFileType
                     | ErrorType;
                 if (!isErrorType(files)) {
-                    console.log(post.title + ' ' + files.filename_download);
                     setDownloadButton(true);
                     setShowFileDeleted(false);
                     setFile(files);
                 } else {
-                    console.log(post.title + ' ' + 'fail');
                     setShowFileDeleted(true);
                     setDownloadButton(false);
                     setFile(emptyDirectusFileType);
                 }
                 setIsLoaded(true);
             }
-        }, 500);
-        return () => clearTimeout(timeout);
-    }, [
-        connectedUserRole,
-        connectedUser?.id,
-        downloadButton,
-        post.file_id,
-        post.user_created.id,
-    ]);
+        }
+        fetchFile();
+    }, []);
 
     function quitPopup() {
         setShowPopup(false);
@@ -102,7 +86,6 @@ export default function Post(props: Props) {
 
     async function deletePost() {
         await dispatch(deletePostById(post.id));
-        console.log('pass', subject.id);
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
         quitPopup();
     }
@@ -121,8 +104,10 @@ export default function Post(props: Props) {
         );
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
         setPostIsBeingEdited(false);
-        // await forum.updatePost(post.id, textAreaRef.current.value);
-        // window.location.reload();
+    }
+
+    async function handleDownloadFile() {
+        await dispatch(downloadFile(file as ModifiedFileType));
     }
 
     return (
@@ -143,7 +128,7 @@ export default function Post(props: Props) {
                                 >
                                     {post.title}
                                 </h2>
-                                {showEditButton && !postIsBeingEdited && (
+                                {isPostOwner && !postIsBeingEdited && (
                                     <button
                                         className={
                                             'col-start-11 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-1 w-24 rounded'
@@ -153,16 +138,17 @@ export default function Post(props: Props) {
                                         Modifier
                                     </button>
                                 )}
-                                {showDeleteButton && !postIsBeingEdited && (
-                                    <button
-                                        className={
-                                            'col-start-12 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 w-24 rounded'
-                                        }
-                                        onClick={() => setShowPopup(true)}
-                                    >
-                                        Supprimer
-                                    </button>
-                                )}
+                                {(isPostOwner || isAdministrator) &&
+                                    !postIsBeingEdited && (
+                                        <button
+                                            className={
+                                                'col-start-12 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 w-24 rounded'
+                                            }
+                                            onClick={() => setShowPopup(true)}
+                                        >
+                                            Supprimer
+                                        </button>
+                                    )}
                             </div>
                             {!postIsBeingEdited && (
                                 <p className={'text-1xl whitespace-pre-wrap'}>
@@ -210,7 +196,7 @@ export default function Post(props: Props) {
                             )}
                             {downloadButton ? (
                                 <button
-                                    onClick={() => folder.downloadFile(file)}
+                                    onClick={handleDownloadFile}
                                     className={'underline underline-offset-4'}
                                 >
                                     Télécharger {file.filename_download}

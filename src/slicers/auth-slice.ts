@@ -63,7 +63,7 @@ export const fetchConnectedUserRole = createAsyncThunk(
                     id: { _eq: connectedUser.role },
                 },
             });
-            return response as RoleItem;
+            return response.data![0] as unknown as RoleItem;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -112,6 +112,10 @@ const authSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.connectedUser = action.payload as UserType;
                 state.error = {} as ErrorType;
+                localStorage.setItem(
+                    'connectedUserId',
+                    state.connectedUser.id.toString(),
+                );
             })
             .addCase(fetchConnectedUser.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
@@ -127,6 +131,10 @@ const authSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.connectedUserRole = action.payload as RoleItem;
                 state.error = {} as ErrorType;
+                localStorage.setItem(
+                    'connectedUserRoleName',
+                    state.connectedUserRole.name.toString(),
+                );
             })
             .addCase(fetchConnectedUserRole.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;

@@ -12,7 +12,7 @@ import {
 import { setActualFolder } from '../../slicers/folder-slice';
 import '../../styles/Forum.css';
 import { FileType } from '@directus/sdk';
-import { ModifiedFileType } from '../../type/ModifiedFileType';
+import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
 
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);

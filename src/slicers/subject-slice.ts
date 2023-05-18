@@ -4,9 +4,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../libraries/directus';
 import { ErrorType } from '../types/Request/ErrorType';
 import { StatusEnum } from '../types/Request/StatusEnum';
-import { SubjectType } from '../type/SubjectType';
-import { PostType } from '../type/PostType';
-import { MessageResponseType } from '../type/MessageResponseType';
+import { SubjectType } from '../types/Chat/SubjectType';
+import { PostType } from '../types/Chat/PostType';
+import { MessageResponseType } from '../types/Chat/MessageResponseType';
 import {
     PayLoadCreateMessage,
     PayLoadCreatePost,
@@ -229,8 +229,6 @@ const subjectSlice = createSlice({
             state.currentSubjectDisplayWithAllRelatedData = action.payload;
         },
         setCurrentSubjectDisplayWithAllRelatedData: (state, action) => {
-            console.log('action.payload.id');
-            console.log(action);
             const foundSubject = state.subjectListDisplay.find(
                 subject => subject.id === action.payload,
             );

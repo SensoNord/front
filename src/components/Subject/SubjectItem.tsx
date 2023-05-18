@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { setCurrentSubjectDisplay } from '../../slicers/subject-slice';
-import { SubjectType } from '../../type/SubjectType';
+import { SubjectType } from '../../types/Chat/SubjectType';
 
 type SubjectItemProps = {
     subject: SubjectType;

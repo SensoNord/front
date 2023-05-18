@@ -1,63 +1,39 @@
 import { useEffect, useRef, useState } from 'react';
-import forum from '../../lib/forum';
-import { PostType } from '../../type/PostType';
-import Post from '../../Component/Post';
+import { PostType } from '../../types/Chat/PostType';
+import Post from '../../components/Subject/Post';
 import '../../styles/Forum.css';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../../components/Files/DisplayFiles';
-import { ModifiedFileType } from '../../type/ModifiedFileType';
+import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import {
     createPostToSubject,
     setCurrentSubjectDisplayWithAllRelatedData,
-    updatePostListAndRelatedResponseBySubjectId,
 } from '../../slicers/subject-slice';
 import { PayLoadCreatePost } from '../../slicers/subject-slice-helper';
 import {
     UpdateFilePayload,
     createFile,
-    downloadFile,
     downloadFileWithoutURL,
     fetchFileById,
     updateFile,
 } from '../../slicers/file-slice';
+
+type UploadedFile = {
+    file: ModifiedFileType | File;
+    uploadOrigin: 'computer' | 'drive';
+    name: string;
+};
 
 export default function Subject() {
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
         state => state.subject,
     );
     const dispatch = useAppDispatch();
-
-    type UploadedFile = {
-        file: ModifiedFileType | File;
-        uploadOrigin: 'computer' | 'drive';
-        name: string;
-    };
-
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
-    // const fileRef = useRef(null) as { current: any };
     const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
-
-    // const [fileName, setFileName] = useState<string | null>(null);
-    // const [file, setFile] = useState<File | null>(null);
-    // const [file_id, setFileId] = useState<string | null>(null);
-    // useEffect(() => {
-    //     if (currentSubjectDisplayWithAllRelatedData) {
-    //         dispatch(updatePostListAndRelatedResponseBySubjectId(currentSubjectDisplayWithAllRelatedData.id));
-    //     }
-    // }, [currentSubjectDisplayWithAllRelatedData, dispatch]);
-
     const [sortedPost, setSortedPost] = useState<PostType[]>([]);
-
-    function quitPopup() {
-        setShowPopup(false);
-        setUploadedFile(null);
-    }
-
-    function quitPopup2() {
-        setShowPopup2(false);
-    }
 
     useEffect(() => {
         const sortedPost = [
@@ -70,6 +46,15 @@ export default function Subject() {
         });
         setSortedPost(sortedPost);
     }, [currentSubjectDisplayWithAllRelatedData]);
+
+    function quitPopup() {
+        setShowPopup(false);
+        setUploadedFile(null);
+    }
+
+    function quitPopup2() {
+        setShowPopup2(false);
+    }
 
     function createPostButton() {
         setShowPopup(true);

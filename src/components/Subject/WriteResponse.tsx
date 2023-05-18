@@ -1,17 +1,25 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
-import forum from '../lib/forum';
-import { SubjectType } from '../type/SubjectType';
-import folder from '../lib/folder';
+import { useRef, useState } from 'react';
+import { SubjectType } from '../../types/Chat/SubjectType';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../components/Files/DisplayFiles';
-import { useAppDispatch } from '../App/hooks';
-import { createResponseToPost } from '../slicers/subject-slice';
+import DisplayFiles from '../Files/DisplayFiles';
+import { useAppDispatch } from '../../App/hooks';
+import {
+    UpdateFilePayload,
+    createFile,
+    updateFile,
+} from '../../slicers/file-slice';
+import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
+import { createResponseToPost } from '../../slicers/subject-slice';
+import { PayLoadCreateMessage } from '../../slicers/subject-slice-helper';
 
-const WriteResponse: FC<{
+type Props = {
     postId: string;
     subject: SubjectType;
     index: number;
-}> = ({ postId, subject, index }) => {
+};
+
+export default function WriteResponse(props: Props) {
+    const { postId, subject, index } = props;
     const [showPopup, setShowPopup] = useState(false);
     const fileRef = useRef(null) as { current: any };
     const [fileName, setFileName] = useState<string | null>(null);
@@ -41,19 +49,32 @@ const WriteResponse: FC<{
         }
 
         if (file && !fileId) {
-            const newFile = await forum.uploadFile(
-                file,
-                subject.folder_id,
-                subject.id,
+            const createdFilePayload = await dispatch(createFile(file));
+            const createdFile = createdFilePayload.payload as ModifiedFileType;
+            await dispatch(
+                updateFile({
+                    file: createdFile,
+                    subjectId: subject.id,
+                    folderId: subject.folder_id,
+                } as UpdateFilePayload),
             );
-            if (newFile)
-                await forum.createResponse(postId, responseMessage, newFile.id);
+            if (createdFile)
+                await dispatch(
+                    createResponseToPost({
+                        post_id: postId,
+                        message: responseMessage,
+                        file_id: createdFile.id,
+                    } as PayLoadCreateMessage),
+                );
         } else {
-            // dispatch(createResponseToPost({ post_id: postId, message: responseMessage, file_id: fileId }))
-            await forum.createResponse(postId, responseMessage, fileId);
+            await dispatch(
+                createResponseToPost({
+                    post_id: postId,
+                    message: responseMessage,
+                    file_id: fileId,
+                } as PayLoadCreateMessage),
+            );
         }
-
-        window.location.reload();
     }
 
     function getFileFromDrive(file: any) {
@@ -146,6 +167,4 @@ const WriteResponse: FC<{
                 )}
         </>
     );
-};
-
-export default WriteResponse;
+}
