@@ -11,16 +11,21 @@ type SubjectItemProps = {
 export default function SubjectItem(props: SubjectItemProps) {
     const { subject, index } = props;
     const dispatch = useAppDispatch();
-    const { currentSubjectDisplay } = useAppSelector(state => state.subject);
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
+        state => state.subject,
+    );
     const [isCurrentSubject, setIsCurrentSubject] = useState<boolean>(false);
 
     useEffect(() => {
-        if (currentSubjectDisplay && currentSubjectDisplay.id === subject.id) {
+        if (
+            currentSubjectDisplayWithAllRelatedData &&
+            currentSubjectDisplayWithAllRelatedData.id === subject.id
+        ) {
             setIsCurrentSubject(true);
         } else {
             setIsCurrentSubject(false);
         }
-    }, [currentSubjectDisplay, subject]);
+    }, [currentSubjectDisplayWithAllRelatedData, subject]);
 
     const handleChangeSelectedSubject = (subject: SubjectType) => {
         dispatch(setCurrentSubjectDisplay(subject));

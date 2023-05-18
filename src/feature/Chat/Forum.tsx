@@ -3,7 +3,9 @@ import SubjectNavbar from '../../components/Subject/SubjectNavbar';
 import Subject from './Subject';
 
 export default function Forum() {
-    const { currentSubjectDisplay } = useAppSelector(state => state.subject);
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
+        state => state.subject,
+    );
 
     return (
         <>
@@ -11,7 +13,7 @@ export default function Forum() {
                 <div className="w-1/4">
                     <SubjectNavbar />
                 </div>
-                {currentSubjectDisplay && (
+                {currentSubjectDisplayWithAllRelatedData && (
                     <div className="w-3/4">
                         <Subject />
                     </div>

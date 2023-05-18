@@ -4,30 +4,55 @@ import { PostType } from '../../type/PostType';
 import Post from '../../Component/Post';
 import '../../styles/Forum.css';
 import { createPortal } from 'react-dom';
-import folder from '../../lib/folder';
 import DisplayFiles from '../../components/Files/DisplayFiles';
 import { ModifiedFileType } from '../../type/ModifiedFileType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { updateFile } from '../../slicers/file-slice';
-import { updatePostListBySubjectId } from '../../slicers/subject-slice';
-
-const directusUrl = process.env.REACT_APP_DIRECTUS_URL as string;
-const subject_id = '28730aa8-275a-4b16-9ff2-1494f5342243';
-// const subject_id = "d7aa3244-4a37-4999-a716-9a0100eb20cc";
+import {
+    createPostToSubject,
+    setCurrentSubjectDisplayWithAllRelatedData,
+    updatePostListAndRelatedResponseBySubjectId,
+} from '../../slicers/subject-slice';
+import { PayLoadCreatePost } from '../../slicers/subject-slice-helper';
+import {
+    UpdateFilePayload,
+    createFile,
+    downloadFile,
+    downloadFileWithoutURL,
+    fetchFileById,
+    updateFile,
+} from '../../slicers/file-slice';
 
 export default function Subject() {
-    const { currentSubjectDisplay } = useAppSelector(state => state.subject);
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
+        state => state.subject,
+    );
     const dispatch = useAppDispatch();
+
+    type UploadedFile = {
+        file: ModifiedFileType | File;
+        uploadOrigin: 'computer' | 'drive';
+        name: string;
+    };
 
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
-    const fileRef = useRef(null) as { current: any };
-    const [file_name, setFileName] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
-    const [file_id, setFileId] = useState<string | null>(null);
+    // const fileRef = useRef(null) as { current: any };
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+
+    // const [fileName, setFileName] = useState<string | null>(null);
+    // const [file, setFile] = useState<File | null>(null);
+    // const [file_id, setFileId] = useState<string | null>(null);
+    // useEffect(() => {
+    //     if (currentSubjectDisplayWithAllRelatedData) {
+    //         dispatch(updatePostListAndRelatedResponseBySubjectId(currentSubjectDisplayWithAllRelatedData.id));
+    //     }
+    // }, [currentSubjectDisplayWithAllRelatedData, dispatch]);
+
+    const [sortedPost, setSortedPost] = useState<PostType[]>([]);
 
     function quitPopup() {
         setShowPopup(false);
+        setUploadedFile(null);
     }
 
     function quitPopup2() {
@@ -35,22 +60,45 @@ export default function Subject() {
     }
 
     useEffect(() => {
-        if (currentSubjectDisplay) {
-            dispatch(updatePostListBySubjectId(currentSubjectDisplay.id));
-        }
-    }, [dispatch, currentSubjectDisplay]);
-
-    useEffect(() => {
-        [...currentSubjectDisplay!.posts].sort((a: PostType, b: PostType) => {
+        const sortedPost = [
+            ...currentSubjectDisplayWithAllRelatedData!.posts,
+        ].sort((a: PostType, b: PostType) => {
             return (
                 new Date(b.date_created).getTime() -
                 new Date(a.date_created).getTime()
             );
         });
-    }, []);
+        setSortedPost(sortedPost);
+    }, [currentSubjectDisplayWithAllRelatedData]);
 
     function createPostButton() {
         setShowPopup(true);
+    }
+
+    async function uploadFile(
+        downloadedFile: File,
+        postTitle: string,
+        postMessage: string,
+    ) {
+        const createdFilePayload = await dispatch(createFile(downloadedFile));
+        const createdFile = createdFilePayload.payload as ModifiedFileType;
+        await dispatch(
+            updateFile({
+                file: createdFile,
+                subjectId: currentSubjectDisplayWithAllRelatedData!.id,
+                folderId: currentSubjectDisplayWithAllRelatedData!.folder_id,
+            } as UpdateFilePayload),
+        );
+        if (createdFile) {
+            await dispatch(
+                createPostToSubject({
+                    subject_id: currentSubjectDisplayWithAllRelatedData!.id,
+                    title: postTitle,
+                    message: postMessage,
+                    file_id: createdFile.id,
+                } as PayLoadCreatePost),
+            );
+        }
     }
 
     async function handleSubmit(e: {
@@ -66,87 +114,100 @@ export default function Subject() {
         };
         if (formJson.titlePost && formJson.message) {
             setShowPopup(false);
-            if (file && !file_id) {
-                if (file?.size !== 0 || file.name.length !== 0) {
-                    const newFile = await forum.uploadFile(
-                        file,
-                        currentSubjectDisplay!.folder_id,
-                        currentSubjectDisplay!.id,
+            if (
+                uploadedFile &&
+                uploadedFile.file instanceof File &&
+                uploadedFile.uploadOrigin === 'computer'
+            ) {
+                // if ((uploadedFile.file instanceof File) && uploadedFile.file?.size !== 0 || (uploadedFile.file instanceof File) && uploadedFile.file.name.length !== 0) {
+                await uploadFile(
+                    uploadedFile.file,
+                    formJson.titlePost,
+                    formJson.message,
+                );
+                setUploadedFile(null);
+                // }
+            } else if (
+                uploadedFile &&
+                !(uploadedFile.file instanceof File) &&
+                uploadedFile.uploadOrigin === 'drive'
+            ) {
+                const existingFilePayload = await dispatch(
+                    fetchFileById(uploadedFile.file.id),
+                );
+                const existingFile =
+                    existingFilePayload.payload as ModifiedFileType;
+                if (existingFile) {
+                    const downloadedFilePayload = await dispatch(
+                        downloadFileWithoutURL(existingFile),
                     );
-                    if (newFile)
-                        await forum.createPost(
-                            currentSubjectDisplay!.id,
+                    const downloadedFile =
+                        downloadedFilePayload.payload as File;
+                    if (downloadedFile) {
+                        await uploadFile(
+                            downloadedFile,
                             formJson.titlePost,
                             formJson.message,
-                            newFile.id,
                         );
+                    }
                 }
-            } else if (file_id) {
-                const existingFile = await folder.getfileById(file_id);
-                const response = await fetch(
-                    directusUrl + 'assets/' + file_id + '?download',
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': existingFile?.type as string,
-                            Authorization:
-                                'Bearer ' + localStorage.getItem('auth_token'),
-                        },
-                    },
-                );
-                const blob = await response.blob();
-                const newFile = new File(
-                    [blob],
-                    existingFile?.filename_download as string,
-                    { type: existingFile?.type as string },
-                );
-                let resFile = (await forum.uploadFile(
-                    newFile,
-                    currentSubjectDisplay!.folder_id,
-                    currentSubjectDisplay!.id,
-                )) as ModifiedFileType;
-                await forum.createPost(
-                    currentSubjectDisplay!.id,
-                    formJson.titlePost,
-                    formJson.message,
-                    resFile.id,
-                );
+                setUploadedFile(null);
             } else {
-                await forum.createPost(
-                    currentSubjectDisplay!.id,
-                    formJson.titlePost,
-                    formJson.message,
+                await dispatch(
+                    createPostToSubject({
+                        subject_id: currentSubjectDisplayWithAllRelatedData!.id,
+                        title: formJson.titlePost,
+                        message: formJson.message,
+                    } as PayLoadCreatePost),
                 );
             }
-            window.location.reload();
+            dispatch(
+                setCurrentSubjectDisplayWithAllRelatedData(
+                    currentSubjectDisplayWithAllRelatedData!.id,
+                ),
+            );
         } else {
             document.getElementById('errorMessage')?.classList.remove('hidden');
         }
     }
 
-    function getFileFromDrive(file: any) {
-        fileRef.current.value = '';
-        setFile(null);
-        setFileId(file.id);
-        setFileName(file.filename_download);
+    function getFileFromDrive(file: ModifiedFileType) {
+        // fileRef.current.value = '';
+
+        setUploadedFile({
+            file: file,
+            uploadOrigin: 'drive',
+            name: file.filename_download,
+        } as UploadedFile);
+
+        // setFile(null);
+        // setFileId(file.id);
+        // setFileName(file.filename_download);
         setShowPopup2(false);
     }
 
     function getFileFromComputer(e: { target: { files: any } }) {
         const f = e.target.files[0];
-        setFile(f);
-        setFileId(null);
-        setFileName(f.name);
+
+        setUploadedFile({
+            file: f,
+            uploadOrigin: 'computer',
+            name: f.name,
+        } as UploadedFile);
+
+        // setFile(f);
+        // setFileId(null);
+        // setFileName(f.name);
         setShowPopup2(false);
     }
 
     return (
         <>
-            {currentSubjectDisplay! && (
+            {currentSubjectDisplayWithAllRelatedData && (
                 <div>
                     <div className={'grid grid-cols-12'}>
                         <h1 className="col-span-6 mx-10 my-10 pb-10 text-4xl font-bold underline">
-                            {currentSubjectDisplay!['name']}
+                            {currentSubjectDisplayWithAllRelatedData!['name']}
                         </h1>
                         <div
                             className={
@@ -164,18 +225,18 @@ export default function Subject() {
                         </div>
                     </div>
                     <div>
-                        {currentSubjectDisplay!['posts'].map(
-                            (post: PostType, index: number) => {
-                                return (
-                                    <Post
-                                        post={post}
-                                        key={index}
-                                        subject={currentSubjectDisplay!}
-                                        index={index}
-                                    ></Post>
-                                );
-                            },
-                        )}
+                        {sortedPost.map((post: PostType, index: number) => {
+                            return (
+                                <Post
+                                    post={post}
+                                    key={index}
+                                    subject={
+                                        currentSubjectDisplayWithAllRelatedData!
+                                    }
+                                    index={index}
+                                ></Post>
+                            );
+                        })}
                     </div>
                 </div>
             )}
@@ -219,7 +280,9 @@ export default function Subject() {
                                     >
                                         Ajouter un fichier
                                     </button>
-                                    {file_name && <span>{file_name}</span>}
+                                    {uploadedFile?.name && (
+                                        <span>{uploadedFile?.name}</span>
+                                    )}
                                 </div>
                             </div>
                             <div
@@ -261,7 +324,8 @@ export default function Subject() {
                             <DisplayFiles
                                 callbackOnClick={getFileFromDrive}
                                 startingFolderId={
-                                    currentSubjectDisplay!.folder_id
+                                    currentSubjectDisplayWithAllRelatedData!
+                                        .folder_id
                                 }
                             />
                             <h1>
@@ -272,7 +336,7 @@ export default function Subject() {
                                     className={
                                         'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
                                     }
-                                    ref={fileRef}
+                                    // ref={fileRef}
                                     onChange={getFileFromComputer}
                                 />
                             </h1>

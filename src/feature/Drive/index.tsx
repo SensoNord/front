@@ -3,10 +3,16 @@ import DisplayFiles from '../../components/Files/DisplayFiles';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { fetchSubjectByFolderId } from '../../slicers/subject-slice';
-import { createFile, downloadFile, updateFile } from '../../slicers/file-slice';
+import {
+    UpdateFilePayload,
+    createFile,
+    downloadFile,
+    updateFile,
+} from '../../slicers/file-slice';
 import { setActualFolder } from '../../slicers/folder-slice';
 import '../../styles/Forum.css';
 import { FileType } from '@directus/sdk';
+import { ModifiedFileType } from '../../type/ModifiedFileType';
 
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);
@@ -66,15 +72,17 @@ export default function Drive() {
                 actualFolder.id !== '' &&
                 subjectListForFolder.length !== 0
             ) {
-                const formData = getFormData({ uploadedFile });
-                const createdFilePayload = await dispatch(createFile(formData));
-                const createdFile = createdFilePayload.payload as FileType;
+                const createdFilePayload = await dispatch(
+                    createFile(uploadedFile),
+                );
+                const createdFile =
+                    createdFilePayload.payload as ModifiedFileType;
                 await dispatch(
                     updateFile({
                         file: createdFile,
                         subjectId: subjectListForFolder[0].id,
                         folderId: actualFolder.id,
-                    }),
+                    } as UpdateFilePayload),
                 );
             }
         }
@@ -87,13 +95,7 @@ export default function Drive() {
         setUploadedFile(f);
     }
 
-    function getFormData(object: any) {
-        const formData = new FormData();
-        Object.keys(object).forEach(key => formData.append(key, object[key]));
-        return formData;
-    }
-
-    const handleDownloadFile = async (file: FileType) => {
+    const handleDownloadFile = async (file: ModifiedFileType) => {
         await dispatch(downloadFile(file));
     };
 

@@ -9,6 +9,7 @@ import {
     setActualFolder,
 } from '../../slicers/folder-slice';
 import { deleteFileById, fetchFileByFolder } from '../../slicers/file-slice';
+import { ModifiedFileType } from '../../type/ModifiedFileType';
 
 type Props = {
     callbackOnClick?: Function;
@@ -22,7 +23,7 @@ export default function DisplayFiles(props: Props) {
     const rootFolder = { id: '', name: 'Root', parent: '' } as FolderType;
     const [isLoading, setIsLoading] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
-    const [tmpFile, setTmpFile] = useState<FileType | null>(null);
+    const [tmpFile, setTmpFile] = useState<ModifiedFileType | null>(null);
 
     const dispatch = useAppDispatch();
     const { actualFolder, folderList } = useAppSelector(state => state.folder);
@@ -48,7 +49,6 @@ export default function DisplayFiles(props: Props) {
     }, []);
 
     const handleClickFolder = async (newFolder: FolderType) => {
-        console.log('pass');
         setIsLoading(true);
         await dispatch(fetchFolderByParent(newFolder.id));
         await dispatch(fetchFileByFolder(newFolder.id));

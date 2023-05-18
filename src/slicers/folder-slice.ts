@@ -21,14 +21,12 @@ const initialState: FolderState = {
 export const fetchFolderByParent = createAsyncThunk(
     'folder/fetchFolderByParent',
     async (parentId: string | null, { rejectWithValue }) => {
-        console.log(parentId);
         try {
             const response = await directus.folders.readByQuery({
                 filter: {
                     parent: parentId ? { _eq: parentId } : { _null: true },
                 },
             });
-            console.log(response);
             return response.data as Array<FolderType>;
         } catch (error: any) {
             return rejectWithValue({

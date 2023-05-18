@@ -1,17 +1,26 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PostType } from '../type/PostType';
 import { MessageResponseType } from '../type/MessageResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
 import { SubjectType } from '../type/SubjectType';
-import { emptyDirectusFileType } from '../type/ModifiedFileType';
+import {
+    ModifiedFileType,
+    emptyDirectusFileType,
+} from '../type/ModifiedFileType';
 import folder from '../lib/folder';
 import forum from '../lib/forum';
-import { RoleType, UserType } from '@directus/sdk';
 import { createPortal } from 'react-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '../App/hooks';
-import { updatePostListBySubjectId } from '../slicers/subject-slice';
+import {
+    deletePostById,
+    setCurrentSubjectDisplayWithAllRelatedData,
+    updatePostMessageById,
+} from '../slicers/subject-slice';
+import { fetchFileById } from '../slicers/file-slice';
+import { ErrorType, isErrorType } from '../types/Request/ErrorType';
+import { PayLoadUpdatePost } from '../slicers/subject-slice-helper';
 
 type Props = {
     post: PostType;
@@ -39,12 +48,7 @@ export default function Post(props: Props) {
     const [isLoaded, setIsLoaded] = useState(true);
 
     useEffect(() => {
-        // update post list
-        console.log('update post list');
-        dispatch(updatePostListBySubjectId(subject.id));
-    }, [post]);
-
-    useEffect(() => {
+        console.log(post.title + ' ' + 'useEffect');
         const timeout = setTimeout(async () => {
             if (connectedUser?.id === post.user_created.id) {
                 setShowDeleteButton(true);
@@ -62,14 +66,20 @@ export default function Post(props: Props) {
             if (
                 post.file_id !== '' &&
                 post.file_id !== null &&
-                !downloadButton
+                post.file_id !== undefined
             ) {
-                let files = await folder.getFilesList(post.file_id);
-                if (files.data.length !== 0) {
+                console.log(post.title + ' ' + 'fetchFileById');
+                let filesPayload = await dispatch(fetchFileById(post.file_id));
+                let files = filesPayload.payload as
+                    | ModifiedFileType
+                    | ErrorType;
+                if (!isErrorType(files)) {
+                    console.log(post.title + ' ' + files.filename_download);
                     setDownloadButton(true);
                     setShowFileDeleted(false);
-                    setFile(files.data[0]);
+                    setFile(files);
                 } else {
+                    console.log(post.title + ' ' + 'fail');
                     setShowFileDeleted(true);
                     setDownloadButton(false);
                     setFile(emptyDirectusFileType);
@@ -91,8 +101,10 @@ export default function Post(props: Props) {
     }
 
     async function deletePost() {
-        await forum.deletePost(post.id);
-        window.location.reload();
+        await dispatch(deletePostById(post.id));
+        console.log('pass', subject.id);
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+        quitPopup();
     }
 
     function editPost() {
@@ -101,8 +113,16 @@ export default function Post(props: Props) {
     }
 
     async function updatePost() {
-        await forum.updatePost(post.id, textAreaRef.current.value);
-        window.location.reload();
+        await dispatch(
+            updatePostMessageById({
+                id: post.id,
+                message: textAreaRef.current.value,
+            } as PayLoadUpdatePost),
+        );
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+        setPostIsBeingEdited(false);
+        // await forum.updatePost(post.id, textAreaRef.current.value);
+        // window.location.reload();
     }
 
     return (
@@ -239,7 +259,6 @@ export default function Post(props: Props) {
                                             response: MessageResponseType,
                                             index: number,
                                         ) => {
-                                            console.log(response);
                                             return (
                                                 <Response
                                                     response={response}

@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import {
-    fetchAllVisibleSubjectAndRelatedPost,
-    setCurrentSubjectDisplay,
-} from '../../slicers/subject-slice';
+import { fetchAllVisibleSubjectAndRelatedPost } from '../../slicers/subject-slice';
 import SubjectItem from './SubjectItem';
 
 export default function SubjectNavbar() {

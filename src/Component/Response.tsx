@@ -1,6 +1,9 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { MessageResponseType } from '../type/MessageResponseType';
-import { emptyDirectusFileType } from '../type/ModifiedFileType';
+import {
+    ModifiedFileType,
+    emptyDirectusFileType,
+} from '../type/ModifiedFileType';
 import folder from '../lib/folder';
 import forum from '../lib/forum';
 import { createPortal } from 'react-dom';
@@ -8,6 +11,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '../App/hooks';
 import { fetchFileById } from '../slicers/file-slice';
 import { FileType } from '@directus/sdk';
+import { deletePostById, deleteResponseById } from '../slicers/subject-slice';
+import { ErrorType, isErrorType } from '../types/Request/ErrorType';
 
 type Props = {
     response: MessageResponseType;
@@ -51,13 +56,19 @@ export default function Response(props: Props) {
             if (
                 response.file_id !== '' &&
                 response.file_id !== null &&
-                !downloadButton
+                response.file_id !== undefined &&
+                !downloadButton // [MAEL] Pourquoi cette condition ? Pb boucle infinie ?
             ) {
-                let files = await folder.getFilesList(response.file_id);
-                if (files.data.length !== 0) {
+                let filesPayload = await dispatch(
+                    fetchFileById(response.file_id),
+                );
+                let files = filesPayload.payload as
+                    | ModifiedFileType
+                    | ErrorType;
+                if (!isErrorType(files)) {
                     setDownloadButton(true);
                     setShowFileDeleted(false);
-                    setFile(files.data[0]);
+                    setFile(files);
                 } else {
                     setShowFileDeleted(true);
                     setDownloadButton(false);
@@ -81,8 +92,11 @@ export default function Response(props: Props) {
     }
 
     async function deleteResponse() {
-        await forum.deletePost(response.id);
-        window.location.reload();
+        // [MAEL] Pourquoi on utilise deletePost pour supprimer une réponse ?
+        await dispatch(deleteResponseById(response.id));
+        quitPopup();
+        // await forum.deletePost(response.id);
+        // window.location.reload();
     }
 
     function editResponse() {

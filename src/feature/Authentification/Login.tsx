@@ -5,6 +5,7 @@ import PasswordField from '../../components/Field/PasswordField';
 import TextField from '../../components/Field/TextField';
 import {
     fetchConnectedUser,
+    fetchConnectedUserRole,
     fetchLogin,
     loginWithToken,
 } from '../../slicers/auth-slice';
@@ -65,6 +66,7 @@ export default function Login() {
         };
         await dispatch(fetchLogin(credentials));
         await dispatch(fetchConnectedUser());
+        await dispatch(fetchConnectedUserRole());
     };
 
     return (

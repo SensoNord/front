@@ -4,26 +4,31 @@ import { ErrorType } from '../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../libraries/directus';
 import { TokenType } from '../types/Users/Credentials/TokenTypes';
+import { ModifiedFileType } from '../type/ModifiedFileType';
 
 interface FileState {
-    fileList: FileType[];
-    createdFile: FileType | null;
+    fileList: ModifiedFileType[];
     status: StatusEnum;
     error: ErrorType;
 }
 
 const initialState: FileState = {
-    fileList: [] as FileType[],
-    createdFile: null,
+    fileList: [] as ModifiedFileType[],
     status: StatusEnum.IDLE,
     error: {} as ErrorType,
 };
 
-type UpdateFilePayload = {
-    file: FileType;
+export type UpdateFilePayload = {
+    file: ModifiedFileType;
     subjectId: string | null;
     folderId: string;
 };
+
+function getFormData(object: any) {
+    const formData = new FormData();
+    Object.keys(object).forEach(key => formData.append(key, object[key]));
+    return formData;
+}
 
 export const fetchFileByFolder = createAsyncThunk(
     'file/fetchFileByFolder',
@@ -34,7 +39,7 @@ export const fetchFileByFolder = createAsyncThunk(
                     folder: folderId ? { _eq: folderId } : { _null: true },
                 },
             });
-            return response.data as unknown as Array<FileType>;
+            return response.data as unknown as Array<ModifiedFileType>;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -49,7 +54,8 @@ export const fetchFileById = createAsyncThunk(
     async (fileId: string, { rejectWithValue }) => {
         try {
             const response = await directus.files.readOne(fileId);
-            return response as unknown as FileType;
+            console.log('response', response);
+            return response as unknown as ModifiedFileType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -61,10 +67,11 @@ export const fetchFileById = createAsyncThunk(
 
 export const createFile = createAsyncThunk(
     'file/createFile',
-    async (file: FormData, { rejectWithValue }) => {
+    async (file: File, { rejectWithValue }) => {
         try {
-            const response = await directus.files.createOne(file);
-            return response as unknown as FileType;
+            const formData = getFormData({ file });
+            const response = await directus.files.createOne(formData);
+            return response as unknown as ModifiedFileType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -91,7 +98,38 @@ export const updateFile = createAsyncThunk(
                 updateFilePayload.file.id,
                 options,
             );
-            return response as unknown as FileType;
+            return response as unknown as ModifiedFileType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const downloadFileWithoutURL = createAsyncThunk(
+    'file/downloadFileWithoutURL',
+    async (file: ModifiedFileType, { rejectWithValue, getState }) => {
+        try {
+            const state = getState() as any;
+            const token = state.auth.token as TokenType;
+            const response = await fetch(
+                `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': file.type,
+                        Authorization: 'Bearer ' + token.access_token,
+                    },
+                },
+            );
+
+            const blob = await response.blob();
+            const newFile = new File([blob], file.filename_download as string, {
+                type: file.type as string,
+            });
+            return newFile;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -103,7 +141,7 @@ export const updateFile = createAsyncThunk(
 
 export const downloadFile = createAsyncThunk(
     'file/downloadFile',
-    async (file: FileType, { rejectWithValue, getState }) => {
+    async (file: ModifiedFileType, { rejectWithValue, getState }) => {
         try {
             const state = getState() as any;
             const token = state.auth.token as TokenType;
@@ -153,11 +191,7 @@ export const deleteFileById = createAsyncThunk(
 const fileSlice = createSlice({
     name: 'file',
     initialState,
-    reducers: {
-        resetCreatedFile: state => {
-            state.createdFile = null;
-        },
-    },
+    reducers: {},
     extraReducers: builder => {
         builder
             .addCase(fetchFileByFolder.pending, state => {
@@ -166,7 +200,7 @@ const fileSlice = createSlice({
             })
             .addCase(fetchFileByFolder.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.fileList = action.payload as Array<FileType>;
+                state.fileList = action.payload as Array<ModifiedFileType>;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFileByFolder.rejected, (state, action) => {
@@ -196,7 +230,6 @@ const fileSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.fileList.push(action.payload);
                 state.error = {} as ErrorType;
-                state.createdFile = action.payload as FileType;
             })
             .addCase(createFile.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
@@ -214,6 +247,18 @@ const fileSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(updateFile.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(downloadFileWithoutURL.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(downloadFileWithoutURL.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+            })
+            .addCase(downloadFileWithoutURL.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
@@ -248,4 +293,3 @@ const fileSlice = createSlice({
 });
 
 export default fileSlice.reducer;
-export const { resetCreatedFile } = fileSlice.actions;
