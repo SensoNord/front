@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { setCurrentSubjectDisplay } from '../../slicers/subject-slice';
-import { SubjectType } from '../../types/Chat/SubjectType';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import { setCurrentSubjectDisplay } from '../../../slicers/subject-slice';
+import { SubjectType } from '../../../types/Chat/SubjectType';
+import { ChatEnum } from '../../../types/Chat/ChatEnum';
 
 type SubjectItemProps = {
     subject: SubjectType;
-    index: number;
+    selectedChat: ChatEnum;
+    setSelectedChat: (selectedChat: ChatEnum) => void;
 };
 
 export default function SubjectItem(props: SubjectItemProps) {
-    const { subject, index } = props;
+    const { subject, setSelectedChat, selectedChat } = props;
     const dispatch = useAppDispatch();
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
         state => state.subject,
@@ -19,21 +21,23 @@ export default function SubjectItem(props: SubjectItemProps) {
     useEffect(() => {
         if (
             currentSubjectDisplayWithAllRelatedData &&
-            currentSubjectDisplayWithAllRelatedData.id === subject.id
+            currentSubjectDisplayWithAllRelatedData.id === subject.id &&
+            selectedChat === ChatEnum.SUBJECT
         ) {
             setIsCurrentSubject(true);
         } else {
             setIsCurrentSubject(false);
         }
-    }, [currentSubjectDisplayWithAllRelatedData, subject]);
+    }, [currentSubjectDisplayWithAllRelatedData, subject, selectedChat]);
 
     const handleChangeSelectedSubject = (subject: SubjectType) => {
+        setSelectedChat(ChatEnum.SUBJECT);
         dispatch(setCurrentSubjectDisplay(subject));
     };
 
     return (
         <div
-            key={index}
+            key={subject.id + 'item'}
             onClick={() => handleChangeSelectedSubject(subject)}
             className={`${
                 isCurrentSubject ? 'bg-blue-200' : ''

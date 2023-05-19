@@ -11,7 +11,6 @@ import {
 } from '../../slicers/file-slice';
 import { setActualFolder } from '../../slicers/folder-slice';
 import '../../styles/Forum.css';
-import { FileType } from '@directus/sdk';
 import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
 
 export default function Drive() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FileType, FolderType } from '@directus/sdk';
+import { FolderType } from '@directus/sdk';
 import LoadingSpinner from '../LoadingSpinner';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';

@@ -1,31 +1,17 @@
-import { useRef, useState } from 'react';
-import { SubjectType } from '../../types/Chat/SubjectType';
+import { ConversationType } from '../../../types/Chat/ConversationType';
+import { FC, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../Files/DisplayFiles';
-import { useAppDispatch } from '../../App/hooks';
-import {
-    UpdateFilePayload,
-    createFile,
-    updateFile,
-} from '../../slicers/file-slice';
-import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
-import { createResponseToPost } from '../../slicers/subject-slice';
-import { PayLoadCreateMessage } from '../../slicers/subject-slice-helper';
+import DisplayFiles from '../../Files/DisplayFiles';
+import folder from '../../../lib/folder';
+import conversation from '../../../lib/conversation';
+import '../../../styles/textarea.css';
 
-type Props = {
-    postId: string;
-    subject: SubjectType;
-    index: number;
-};
-
-export default function WriteResponse(props: Props) {
-    const { postId, subject, index } = props;
+const WriteMessage: FC<{ conv: ConversationType }> = ({ conv }) => {
     const [showPopup, setShowPopup] = useState(false);
     const fileRef = useRef(null) as { current: any };
     const [fileName, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [fileId, setFileId] = useState<string | null>(null);
-    const dispatch = useAppDispatch();
 
     function quitPopup() {
         setShowPopup(false);
@@ -49,32 +35,23 @@ export default function WriteResponse(props: Props) {
         }
 
         if (file && !fileId) {
-            const createdFilePayload = await dispatch(createFile(file));
-            const createdFile = createdFilePayload.payload as ModifiedFileType;
-            await dispatch(
-                updateFile({
-                    file: createdFile,
-                    subjectId: subject.id,
-                    folderId: subject.folder_id,
-                } as UpdateFilePayload),
+            const newFile = await folder.uploadFile(
+                file,
+                conv.folder_id,
+                null,
+                conv.id,
             );
-            if (createdFile)
-                await dispatch(
-                    createResponseToPost({
-                        post_id: postId,
-                        message: responseMessage,
-                        file_id: createdFile.id,
-                    } as PayLoadCreateMessage),
+            if (newFile)
+                await conversation.createMessage(
+                    conv.id,
+                    responseMessage,
+                    newFile.id,
                 );
         } else {
-            await dispatch(
-                createResponseToPost({
-                    post_id: postId,
-                    message: responseMessage,
-                    file_id: fileId,
-                } as PayLoadCreateMessage),
-            );
+            await conversation.createMessage(conv.id, responseMessage, fileId);
         }
+
+        window.location.reload();
     }
 
     function getFileFromDrive(file: any) {
@@ -95,13 +72,16 @@ export default function WriteResponse(props: Props) {
 
     return (
         <>
-            <form onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
+            <form
+                onSubmit={handleSubmit}
+                className={'grid grid-cols-12 bg-white pb-8 pt-6 w-full h-full'}
+            >
                 <span className={'inline col-span-10 flex flex-col'}>
-                    <label htmlFor={'response_' + index}>Réponse</label>
                     <textarea
-                        id={'response_' + index}
+                        id={'response'}
+                        placeholder={'Nouveau Message'}
                         className={
-                            'w-full p-2 mt-2 border-2 border-gray-700 rounded-md'
+                            'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-100 rounded-md'
                         }
                         rows={3}
                         cols={30}
@@ -109,7 +89,7 @@ export default function WriteResponse(props: Props) {
                 </span>
                 <span
                     className={
-                        'inline col-start-11 col-span-2 flex flex-col justify-end items-end'
+                        'inline col-start-11 col-span-2 flex flex-col justify-start items-center'
                     }
                 >
                     <button
@@ -139,7 +119,7 @@ export default function WriteResponse(props: Props) {
                             <h1>Drive</h1>
                             <DisplayFiles
                                 callbackOnClick={getFileFromDrive}
-                                startingFolderId={subject.folder_id}
+                                startingFolderId={conv.folder_id}
                             />
                             <h1>
                                 <input
@@ -167,4 +147,6 @@ export default function WriteResponse(props: Props) {
                 )}
         </>
     );
-}
+};
+
+export default WriteMessage;

@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { MessageResponseType } from '../../types/Chat/MessageResponseType';
+import { MessageResponseType } from '../../../types/Chat/MessageResponseType';
 import {
     ModifiedFileType,
     emptyDirectusFileType,
-} from '../../types/Chat/ModifiedFileType';
+} from '../../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from '../LoadingSpinner';
-import { useAppDispatch } from '../../App/hooks';
-import { downloadFile, fetchFileById } from '../../slicers/file-slice';
+import LoadingSpinner from '../../LoadingSpinner';
+import { useAppDispatch } from '../../../App/hooks';
+import { downloadFile, fetchFileById } from '../../../slicers/file-slice';
 import {
     deleteResponseById,
     updateResponseMessageById,
-} from '../../slicers/subject-slice';
-import { ErrorType, isErrorType } from '../../types/Request/ErrorType';
-import { PayLoadUpdateResponse } from '../../slicers/subject-slice-helper';
+} from '../../../slicers/subject-slice';
+import { ErrorType, isErrorType } from '../../../types/Request/ErrorType';
+import { PayLoadUpdateResponse } from '../../../slicers/subject-slice-helper';
 
 type Props = {
     response: MessageResponseType;
@@ -47,8 +47,8 @@ export default function Response(props: Props) {
         setConnectedUserRoleName(
             localStorage.getItem('connectedUserRoleName') as string,
         );
-        setIsAdministrator(connectedUserRoleName == 'Administrator');
-        setIsResponseOwner(connectedUserId == response.user_created.id);
+        setIsAdministrator(connectedUserRoleName === 'Administrator');
+        setIsResponseOwner(connectedUserId === response.user_created.id);
     }, [connectedUserId, connectedUserRoleName]);
 
     useEffect(() => {

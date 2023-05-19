@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { PostType } from '../../types/Chat/PostType';
-import Post from '../../components/Subject/Post';
+import Post from '../../components/Chat/Subject/Post';
 import '../../styles/Forum.css';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../../components/Files/DisplayFiles';

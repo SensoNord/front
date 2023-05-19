@@ -1,24 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { PostType } from '../../types/Chat/PostType';
-import { MessageResponseType } from '../../types/Chat/MessageResponseType';
+import { PostType } from '../../../types/Chat/PostType';
+import { MessageResponseType } from '../../../types/Chat/MessageResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import { SubjectType } from '../../types/Chat/SubjectType';
+import { SubjectType } from '../../../types/Chat/SubjectType';
 import {
     ModifiedFileType,
     emptyDirectusFileType,
-} from '../../types/Chat/ModifiedFileType';
+} from '../../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from '../LoadingSpinner';
-import { useAppDispatch } from '../../App/hooks';
+import LoadingSpinner from '../../LoadingSpinner';
+import { useAppDispatch } from '../../../App/hooks';
 import {
     deletePostById,
     setCurrentSubjectDisplayWithAllRelatedData,
     updatePostMessageById,
-} from '../../slicers/subject-slice';
-import { downloadFile, fetchFileById } from '../../slicers/file-slice';
-import { ErrorType, isErrorType } from '../../types/Request/ErrorType';
-import { PayLoadUpdatePost } from '../../slicers/subject-slice-helper';
+} from '../../../slicers/subject-slice';
+import { downloadFile, fetchFileById } from '../../../slicers/file-slice';
+import { ErrorType, isErrorType } from '../../../types/Request/ErrorType';
+import { PayLoadUpdatePost } from '../../../slicers/subject-slice-helper';
 
 type Props = {
     post: PostType;

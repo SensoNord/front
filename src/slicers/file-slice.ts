@@ -1,4 +1,3 @@
-import { FileType } from '@directus/sdk';
 import { StatusEnum } from '../types/Request/StatusEnum';
 import { ErrorType } from '../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
