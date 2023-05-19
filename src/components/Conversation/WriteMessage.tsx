@@ -58,7 +58,7 @@ const WriteMessage: FC<{ conv: ConversationType }> = ({conv}) => {
         <>
             <form onSubmit={handleSubmit} className={"grid grid-cols-12 bg-white pb-8 pt-6 w-full h-full"}>
                 <span className={"inline col-span-10 flex flex-col"}>
-                    <textarea id={"response"} placeholder={"Nouveau Message"} className={"w-10/12 p-2 mt-2 mx-auto border-2 border-gray-100 rounded-md"} rows={3} cols={30}>
+                    <textarea id={"response"} placeholder={"Nouveau Message"} className={"w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md"} rows={3} cols={30}>
                     </textarea>
                 </span>
                 <span className={"inline col-start-11 col-span-2 flex flex-col justify-start items-center"}>

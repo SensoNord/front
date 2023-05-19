@@ -46,7 +46,7 @@ const Conversation: FC<{ conv: ConversationType }> = ({conv}) => {
         <>
             {
                 conv && (
-                    <div style={{height: '100%'}} className={"overflow-hidden"}>
+                    <div style={{height: '100%', position: 'relative'}} className={"overflow-hidden"}>
                         <div className={'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white border-t-0'} style={{position: "absolute", maxWidth: 'max-content', right: 0, left: 0}}>
                             <h1>Conversation avec {otherUser?.first_name} {otherUser?.last_name}</h1>
                         </div>

@@ -1,21 +1,23 @@
-import { useAppSelector } from '../../App/hooks';
+import {useAppSelector} from '../../App/hooks';
 import SubjectNavbar from '../../components/Subject/SubjectNavbar';
 import Subject from './Subject';
 
 export default function Forum() {
-    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
+    const {currentSubjectDisplayWithAllRelatedData} = useAppSelector(
         state => state.subject,
     );
 
     return (
         <>
-            <div className="flex">
-                <div className="w-1/4">
-                    <SubjectNavbar />
+            <div className="grid grid-cols-12">
+                <div className="col-span-2">
+                    <SubjectNavbar/>
                 </div>
                 {currentSubjectDisplayWithAllRelatedData && (
-                    <div className="w-3/4">
-                        <Subject />
+                    <div className="col-span-10">
+                        <div style={{height: '800px', width: '80%'}} className={"mx-auto my-16 border-2 border-black"}>
+                            <Subject/>
+                        </div>
                     </div>
                 )}
             </div>
