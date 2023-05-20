@@ -14,7 +14,7 @@ import Drive from '../feature/Drive';
 import Chat from '../feature/Chat/Chat';
 import { useEffect } from 'react';
 import { useAppDispatch } from './hooks';
-import { fetchConnectedUser, fetchConnectedUserRole, loginWithToken } from '../slicers/auth-slice';
+import { fetchConnectedUser, fetchConnectedUserRole, loginWithToken, setIsConnecting } from '../slicers/auth-slice';
 
 function App() {
     return (
@@ -28,6 +28,10 @@ function AuthHandler() {
     const dispatch = useAppDispatch();
 
     async function loginCheck(token: string | null, expires: string | null) {
+        if (!token || !expires) {
+            dispatch(setIsConnecting(true));
+            return;
+        }
         dispatch(loginWithToken({ access_token: token, expires: expires }));
         await dispatch(fetchConnectedUser());
         await dispatch(fetchConnectedUserRole());
