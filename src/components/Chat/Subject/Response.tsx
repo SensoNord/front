@@ -1,24 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import { MessageResponseType } from '../../../types/Chat/MessageResponseType';
+import { ResponseType } from '../../../types/Chat/ResponseType';
 import {
     ModifiedFileType,
-    emptyDirectusFileType,
-} from '../../../types/Chat/ModifiedFileType';
+} from '../../../types/File/ModifiedFileType';
 import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { downloadFile, fetchFileById } from '../../../slicers/file-slice';
+import { downloadFile } from '../../../slicers/file/file-slice';
 import {
     deleteResponseById,
     setCurrentSubjectDisplayWithAllRelatedData,
     updateResponseMessageById,
-} from '../../../slicers/subject-slice';
-import { ErrorType, isErrorType } from '../../../types/Request/ErrorType';
-import { PayLoadUpdateResponse } from '../../../slicers/subject-slice-helper';
+} from '../../../slicers/chat/subject-slice';
+import { PayLoadUpdateSubjectResponse } from '../../../slicers/chat/subject-slice-helper';
+import { useFetchFile } from '../../../customHook/useFetchFile';
+import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
+import DownloadableFile from '../DownloadableFile';
+import NameAndDate from '../../Field/NameAndDate';
 
 type Props = {
     subjectId: string;
-    response: MessageResponseType;
+    response: ResponseType;
 };
 
 export default function Response(props: Props) {
@@ -26,9 +28,7 @@ export default function Response(props: Props) {
     const dispatch = useAppDispatch();
     const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
-    const [downloadButton, setDownloadButton] = useState(false);
-    const [showFileDeleted, setShowFileDeleted] = useState(false);
-    const [file, setFile] = useState(emptyDirectusFileType);
+    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [showPopup, setShowPopup] = useState(false);
 
     const [isAdministrator, setIsAdministrator] = useState(
@@ -41,40 +41,18 @@ export default function Response(props: Props) {
     const [responseIsBeingEdited, setResponseIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
-    const [isLoaded, setIsLoaded] = useState(true);
+    // const [isLoaded, setIsLoaded] = useState(true);
+    const isLoaded = true;
 
     useEffect(() => {
         setIsAdministrator(connectedUserRole.name === 'Administrator');
         setIsResponseOwner(connectedUser.id === response.user_created.id);
-    }, [connectedUser, connectedUserRole]);
+    }, [connectedUser, connectedUserRole, response.user_created.id]);
 
-    useEffect(() => {
-        async function fetchFile() {
-            if (
-                response.file_id !== '' &&
-                response.file_id !== null &&
-                response.file_id !== undefined
-            ) {
-                let filesPayload = await dispatch(
-                    fetchFileById(response.file_id),
-                );
-                let files = filesPayload.payload as
-                    | ModifiedFileType
-                    | ErrorType;
-                if (!isErrorType(files)) {
-                    setDownloadButton(true);
-                    setShowFileDeleted(false);
-                    setFile(files);
-                } else {
-                    setShowFileDeleted(true);
-                    setDownloadButton(false);
-                    setFile(emptyDirectusFileType);
-                }
-            }
-            setIsLoaded(true);
-        }
-        fetchFile();
-    }, []);
+    useFetchFile({
+        file_id: response.file_id,
+        setFile: setFile,
+    })
 
     function quitPopup() {
         setShowPopup(false);
@@ -86,23 +64,23 @@ export default function Response(props: Props) {
         quitPopup();
     }
 
-    function editResponse() {
-        setResponseIsBeingEdited(true);
-    }
-
     async function updateMessage() {
         await dispatch(
             updateResponseMessageById({
                 id: response.id,
                 message: textAreaRef.current.value,
-            } as PayLoadUpdateResponse),
+            } as PayLoadUpdateSubjectResponse),
         );
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subjectId))
         setResponseIsBeingEdited(false);
     }
 
+    function editResponse() {
+        setResponseIsBeingEdited(true);
+    }
+
     async function handleDownloadFile() {
-        await dispatch(downloadFile(file as ModifiedFileType));
+        await dispatch(downloadFile(file.file as ModifiedFileType));
     }
 
     return (
@@ -195,30 +173,15 @@ export default function Response(props: Props) {
                                     )}
                             </div>
                         </div>
-                        {downloadButton ? (
-                            <button
-                                onClick={handleDownloadFile}
-                                className={'underline underline-offset-4'}
-                            >
-                                Télécharger {file.filename_download}
-                            </button>
-                        ) : null}
-                        {showFileDeleted ? (
-                            <p className={'text-red-500'}>Fichier supprimé</p>
-                        ) : null}
+                        < DownloadableFile
+                            file={file}
+                            handleDownloadFile={handleDownloadFile}
+                        />
                         <div className={'text-right'}>
-                            le{' '}
-                            {new Date(
-                                response.date_created,
-                            ).toLocaleDateString()}{' '}
-                            à{' '}
-                            {new Date(
-                                response.date_created,
-                            ).toLocaleTimeString()}{' '}
-                            par{' '}
-                            {response.user_created.first_name +
-                                ' ' +
-                                response.user_created.last_name}
+                            < NameAndDate
+                                user_created={response.user_created}
+                                date_created={response.date_created}
+                            />
                         </div>
                     </div>
                     {showPopup &&

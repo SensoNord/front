@@ -12,12 +12,12 @@ import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
 import SendInvitation from '../feature/Authentification/SendInvitation';
 import Drive from '../feature/Drive';
 import Chat from '../feature/Chat/Chat';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAppDispatch } from './hooks';
-import { fetchConnectedUser, fetchConnectedUserRole, loginWithToken, setIsConnecting } from '../slicers/auth-slice';
+import { fetchConnectedUser, fetchConnectedUserRole, loginWithToken, setIsConnecting } from '../slicers/authentification/auth-slice';
 
 function App() {
-    return (
+    return ( 
         <Provider store={store}>
             <AuthHandler />
         </Provider>
@@ -27,7 +27,7 @@ function App() {
 function AuthHandler() {
     const dispatch = useAppDispatch();
 
-    async function loginCheck(token: string | null, expires: string | null) {
+    const loginCheck = useCallback(async (token: string | null, expires: string | null) => {
         if (!token || !expires) {
             dispatch(setIsConnecting(true));
             return;
@@ -35,13 +35,13 @@ function AuthHandler() {
         dispatch(loginWithToken({ access_token: token, expires: expires }));
         await dispatch(fetchConnectedUser());
         await dispatch(fetchConnectedUserRole());
-    }
+    }, [dispatch]);  // Ajoutez les dépendances ici si nécessaire.
 
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         const expires = localStorage.getItem('auth_expires');
         loginCheck(token, expires);
-    }, [dispatch]);
+    }, [dispatch, loginCheck]);
 
     return (
         <BrowserRouter>

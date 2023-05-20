@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import PasswordField from '../../components/Field/PasswordField';
@@ -8,7 +8,7 @@ import {
     fetchConnectedUserRole,
     fetchLogin,
     setIsConnecting,
-} from '../../slicers/auth-slice';
+} from '../../slicers/authentification/auth-slice';
 import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 
@@ -34,6 +34,12 @@ export default function Login() {
         dispatch(setIsConnecting(true))
     }, [dispatch])
 
+    const fetchUserData = useCallback(async () => {
+        await dispatch(fetchConnectedUser());
+        await dispatch(fetchConnectedUserRole());
+        navigate('/home');
+    }, [dispatch, navigate]);
+    
     useEffect(() => {
         switch (status) {
             case StatusEnum.IDLE || StatusEnum.LOADING:
@@ -50,7 +56,7 @@ export default function Login() {
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
                 break;
         }
-    }, [status, navigate, isConnecting, dispatch]);
+    }, [status, navigate, isConnecting, dispatch, fetchUserData]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -60,12 +66,6 @@ export default function Login() {
         };
         await dispatch(fetchLogin(credentials));
     };
-
-    async function fetchUserData() {
-        await dispatch(fetchConnectedUser());
-        await dispatch(fetchConnectedUserRole());
-        navigate('/home');
-    }
 
     return (
         <>

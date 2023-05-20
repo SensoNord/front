@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { CredentialsType } from '../types/Users/Credentials/CredentialsType';
-import { TokenType } from '../types/Users/Credentials/TokenTypes';
-import { ErrorType } from '../types/Request/ErrorType';
-import { StatusEnum } from '../types/Request/StatusEnum';
+import { directus } from '../../libraries/directus';
+import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
+import { TokenType } from '../../types/Users/Credentials/TokenTypes';
+import { ErrorType } from '../../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
 import { RoleItem, UserType } from '@directus/sdk';
 
 interface LoginState {

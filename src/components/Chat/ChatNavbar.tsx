@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { fetchAllVisibleSubjectAndRelatedPost } from '../../slicers/subject-slice';
+import { fetchAllVisibleSubjectAndRelatedPost } from '../../slicers/chat/subject-slice';
 import SubjectItem from './Subject/SubjectItem';
-import { fetchAllVisibleConversationAndRelatedMessage } from '../../slicers/conversation-slice';
+import { fetchAllVisibleConversationAndRelatedMessage } from '../../slicers/chat/conversation-slice';
 import { ConversationType } from '../../types/Chat/ConversationType';
 import ConversationItem from './Conversation/ConversationItem';
 import { SubjectType } from '../../types/Chat/SubjectType';

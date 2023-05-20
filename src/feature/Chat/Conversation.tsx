@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import WriteMessage from '../../components/Chat/Conversation/WriteMessage';
 import Message from '../../components/Chat/Conversation/Message';
-import { MessageResponseType } from '../../types/Chat/MessageResponseType';
 import { useAppSelector } from '../../App/hooks';
 import { UserType } from '@directus/sdk';
+import { MessageType } from '../../types/Chat/MessageType';
 
 export default function Conversation() {
     const { currentConversationDisplayWithAllRelatedData } = useAppSelector(
@@ -12,7 +12,7 @@ export default function Conversation() {
     const { connectedUser } = useAppSelector(state => state.auth);
     const [otherUser, setOtherUser] = useState<UserType | null>(null);
 
-    const [sortedMessages, setSortedMessages] = useState<MessageResponseType[]>(
+    const [sortedMessages, setSortedMessages] = useState<MessageType[]>(
         [],
     );
 
@@ -21,10 +21,10 @@ export default function Conversation() {
     useEffect(() => {
         const sortedMessages = [
             ...currentConversationDisplayWithAllRelatedData!.messages_list,
-        ].sort((a: MessageResponseType, b: MessageResponseType) => {
+        ].sort((a: MessageType, b: MessageType) => {
             return (
-                new Date(b.date_created).getTime() -
-                new Date(a.date_created).getTime()
+                new Date(a.date_created).getTime() -
+                new Date(b.date_created).getTime()
             );
         });
         setSortedMessages(sortedMessages);
@@ -40,7 +40,7 @@ export default function Conversation() {
                 setOtherUser(otherUserCandidate.directus_users_id);
             }
         }
-    }, [currentConversationDisplayWithAllRelatedData]);    
+    }, [currentConversationDisplayWithAllRelatedData, connectedUser?.id]);    
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -83,7 +83,7 @@ export default function Conversation() {
                             style={{ overflowAnchor: 'auto' }}
                         >
                             {sortedMessages.map(
-                                (message: MessageResponseType) => {
+                                (message: MessageType) => {
                                     return (
                                         <div
                                             className={`flex ${message.user_created.id ===
@@ -94,8 +94,10 @@ export default function Conversation() {
                                         >
                                             <div className={'w-7/12'}>
                                                 <Message
+                                                    conversation={
+                                                        currentConversationDisplayWithAllRelatedData
+                                                    }
                                                     message={message}
-                                                    currentUser={connectedUser}
                                                     align={
                                                         message.user_created
                                                             .id ===
@@ -103,6 +105,7 @@ export default function Conversation() {
                                                             ? 'right'
                                                             : 'end'
                                                     }
+                                                    key={message.id}
                                                 />
                                             </div>
                                         </div>
@@ -113,7 +116,7 @@ export default function Conversation() {
                         </div>
                         <div className={'row-span-2 h-full'}>
                             <WriteMessage
-                                conv={
+                                conversation={
                                     currentConversationDisplayWithAllRelatedData
                                 }
                             />

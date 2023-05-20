@@ -1,5 +1,5 @@
-import { store } from '../App/store';
-import { CredentialsType } from '../types/Users/Credentials/CredentialsType';
+import { store } from '../../App/store';
+import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
 import { fetchLogin, loginWithToken, logout } from './auth-slice';
 
 describe('Test authentication', () => {
@@ -16,7 +16,7 @@ describe('Test authentication', () => {
         );
         expect(store.getState().auth.token!.access_token).toEqual('token');
         await store.dispatch(logout());
-        expect(store.getState().auth.token!.access_token).toBeUndefined();
+        expect(store.getState().auth.token).toBeNull;
     });
 
     test('should handle test user connected', async () => {

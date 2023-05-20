@@ -1,21 +1,38 @@
 import { ConversationType } from '../../../types/Chat/ConversationType';
-import { FC, useRef, useState } from 'react';
+import {  useRef } from 'react';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../../Files/DisplayFiles';
-import folder from '../../../lib/folder';
-import conversation from '../../../lib/conversation';
 import '../../../styles/textarea.css';
+import { useAppDispatch } from '../../../App/hooks';
+import { createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData } from '../../../slicers/chat/conversation-slice';
+import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
+import { useFileManagement } from '../../../customHook/useFileManagement';
 
-const WriteMessage: FC<{ conv: ConversationType }> = ({ conv }) => {
-    const [showPopup, setShowPopup] = useState(false);
-    const fileRef = useRef(null) as { current: any };
-    const [fileName, setFileName] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
-    const [fileId, setFileId] = useState<string | null>(null);
+type WriteMessageProps = {
+    conversation: ConversationType;
+};
 
-    function quitPopup() {
-        setShowPopup(false);
-    }
+export default function WriteMessage(props: WriteMessageProps) {
+    const { conversation } = props;
+    const dispatch = useAppDispatch();
+    const formRef = useRef(null) as { current: any };  
+
+    const {
+        fileRef,
+        fileName,
+        file,
+        fileId,
+        handleFileUpload,
+        getFileFromDrive,
+        getFileFromComputer,
+        clearFile,
+        showPopup,
+        setShowPopup,
+        quitPopup,
+    } = useFileManagement({
+        chat: conversation,
+        chatType: 'conversation',  
+    })
 
     async function handleSubmit(e: {
         preventDefault: () => void;
@@ -34,45 +51,35 @@ const WriteMessage: FC<{ conv: ConversationType }> = ({ conv }) => {
             return;
         }
 
-        if (file && !fileId) {
-            const newFile = await folder.uploadFile(
-                file,
-                conv.folder_id,
-                null,
-                conv.id,
-            );
-            if (newFile)
-                await conversation.createMessage(
-                    conv.id,
-                    responseMessage,
-                    newFile.id,
+        const createdFile = await handleFileUpload();
+
+        if (createdFile) {
+                await dispatch(
+                    createMessageToConversation({
+                        conversation_id: conversation.id,
+                        message: responseMessage,
+                        fileId: createdFile.id,
+                    } as PayLoadCreateConversationMessage)
                 );
         } else {
-            await conversation.createMessage(conv.id, responseMessage, fileId);
+            await dispatch (
+                createMessageToConversation({
+                    conversation_id: conversation.id,
+                    message: responseMessage,
+                    fileId: fileId,
+                } as PayLoadCreateConversationMessage)
+            );
         }
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
 
-        window.location.reload();
-    }
-
-    function getFileFromDrive(file: any) {
-        fileRef.current.value = '';
-        setFile(null);
-        setFileId(file.id);
-        setFileName(file.filename_download);
-        setShowPopup(false);
-    }
-
-    function getFileFromComputer(e: { target: { files: any } }) {
-        const f = e.target.files[0];
-        setFile(f);
-        setFileId(null);
-        setFileName(f.name);
-        setShowPopup(false);
+        clearFile();
+        formRef.current.reset();
     }
 
     return (
         <>
             <form
+                ref={formRef}
                 onSubmit={handleSubmit}
                 className={'grid grid-cols-12 bg-white pb-8 pt-6 w-full h-full'}
             >
@@ -119,7 +126,7 @@ const WriteMessage: FC<{ conv: ConversationType }> = ({ conv }) => {
                             <h1>Drive</h1>
                             <DisplayFiles
                                 callbackOnClick={getFileFromDrive}
-                                startingFolderId={conv.folder_id}
+                                startingFolderId={conversation.folder_id}
                             />
                             <h1>
                                 <input
@@ -148,5 +155,3 @@ const WriteMessage: FC<{ conv: ConversationType }> = ({ conv }) => {
         </>
     );
 };
-
-export default WriteMessage;

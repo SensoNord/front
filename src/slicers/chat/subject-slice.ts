@@ -1,21 +1,21 @@
 // For testing purposes
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { ErrorType } from '../types/Request/ErrorType';
-import { StatusEnum } from '../types/Request/StatusEnum';
-import { SubjectType } from '../types/Chat/SubjectType';
-import { PostType } from '../types/Chat/PostType';
-import { MessageResponseType } from '../types/Chat/MessageResponseType';
+import { directus } from '../../libraries/directus';
+import { ErrorType } from '../../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
+import { SubjectType } from '../../types/Chat/SubjectType';
+import { PostType } from '../../types/Chat/PostType';
+import { ResponseType } from '../../types/Chat/ResponseType';
 import {
-    PayLoadCreateMessage,
-    PayLoadCreatePost,
-    PayLoadUpdatePost,
-    PayLoadUpdateResponse,
+    PayLoadCreateSubjectMessage,
+    PayLoadCreateSubjectPost,
+    PayLoadUpdateSubjectPost,
+    PayLoadUpdateSubjectResponse,
     postFields,
     responseFields,
     subjectFields,
-} from '../slicers/subject-slice-helper';
+} from './subject-slice-helper';
 
 interface SubjectState {
     subjectListDisplay: SubjectType[];
@@ -97,7 +97,7 @@ export const updatePostListAndRelatedResponseBySubjectId = createAsyncThunk(
 
 export const createResponseToPost = createAsyncThunk(
     'items/createResponseToPost',
-    async (payLoadMessage: PayLoadCreateMessage, { rejectWithValue }) => {
+    async (payLoadMessage: PayLoadCreateSubjectMessage, { rejectWithValue }) => {
         try {
             const response = await directus.items('responses').createOne(
                 {
@@ -109,7 +109,7 @@ export const createResponseToPost = createAsyncThunk(
                     fields: responseFields,
                 },
             );
-            return response as MessageResponseType;
+            return response as ResponseType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -121,7 +121,7 @@ export const createResponseToPost = createAsyncThunk(
 
 export const createPostToSubject = createAsyncThunk(
     'items/createPostToSubject',
-    async (payloadPost: PayLoadCreatePost, { rejectWithValue }) => {
+    async (payloadPost: PayLoadCreateSubjectPost, { rejectWithValue }) => {
         try {
             const response = await directus.items('posts').createOne(
                 {
@@ -146,7 +146,7 @@ export const createPostToSubject = createAsyncThunk(
 
 export const updatePostMessageById = createAsyncThunk(
     'items/updatePostMessageById',
-    async (payloadUpdatePost: PayLoadUpdatePost, { rejectWithValue }) => {
+    async (payloadUpdatePost: PayLoadUpdateSubjectPost, { rejectWithValue }) => {
         try {
             const response = await directus.items('posts').updateOne(
                 payloadUpdatePost.id,
@@ -170,7 +170,7 @@ export const updatePostMessageById = createAsyncThunk(
 export const updateResponseMessageById = createAsyncThunk(
     'items/updateResponseMessageById',
     async (
-        payloadUpdateResponse: PayLoadUpdateResponse,
+        payloadUpdateResponse: PayLoadUpdateSubjectResponse,
         { rejectWithValue },
     ) => {
         try {
@@ -183,7 +183,7 @@ export const updateResponseMessageById = createAsyncThunk(
                     fields: responseFields,
                 },
             );
-            return response as MessageResponseType;
+            return response as ResponseType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -344,7 +344,7 @@ const subjectSlice = createSlice({
                                         return {
                                             ...post,
                                             responses: [
-                                                ...(post.responses as MessageResponseType[]),
+                                                ...(post.responses as ResponseType[]),
                                                 action.payload,
                                             ],
                                         };
@@ -461,10 +461,10 @@ const subjectSlice = createSlice({
                                             return {
                                                 ...post,
                                                 responses: (
-                                                    post.responses as MessageResponseType[]
+                                                    post.responses as ResponseType[]
                                                 ).filter(
                                                     (
-                                                        response: MessageResponseType,
+                                                        response: ResponseType,
                                                     ) =>
                                                         response.id !==
                                                         responseId,
@@ -496,9 +496,9 @@ const subjectSlice = createSlice({
                                     return {
                                         ...post,
                                         responses: (
-                                            post.responses as MessageResponseType[]
+                                            post.responses as ResponseType[]
                                         ).map(
-                                            (response: MessageResponseType) => {
+                                            (response: ResponseType) => {
                                                 if (
                                                     response.id ===
                                                     action.payload.id

@@ -1,5 +1,5 @@
-import {MessageResponseType} from "./MessageResponseType";
 import { UserType } from "@directus/sdk";
+import { MessageType } from "./MessageType";
 
 export type ConversationType = {
     id: string
@@ -15,6 +15,6 @@ export type ConversationType = {
             directus_users_id: UserType;
         }
     ];
-    messages_list: MessageResponseType[] | [];
+    messages_list: MessageType[] | [];
     folder_id: string
 }

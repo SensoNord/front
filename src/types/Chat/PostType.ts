@@ -1,4 +1,4 @@
-import { MessageResponseType } from './MessageResponseType';
+import { ResponseType } from './ResponseType';
 import { UserType } from '@directus/sdk';
 
 export type PostType = {
@@ -9,7 +9,7 @@ export type PostType = {
     date_updated: Date;
     title: string;
     message: string;
-    responses: MessageResponseType[];
+    responses: ResponseType[];
     file_id: string;
     subject_id: string;
 };

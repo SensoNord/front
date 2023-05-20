@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { setCurrentSubjectDisplay } from '../../../slicers/subject-slice';
+import { setCurrentSubjectDisplay } from '../../../slicers/chat/subject-slice';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 

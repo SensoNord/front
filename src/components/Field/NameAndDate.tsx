@@ -16,7 +16,7 @@ export default function NameAndDate(props: NameAndDateProps) {
                 </b>
                 &nbsp;&nbsp;
                 <span>
-                {(new Date(date_created)).toLocaleDateString('fr-FR', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) + ', ' + (new Date(date_created)).toLocaleTimeString()}
+                    {(new Date(date_created)).toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) + ', ' + (new Date(date_created)).toLocaleTimeString()}
                 </span>
             </div>
         </>

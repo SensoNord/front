@@ -1,78 +1,72 @@
-import { FC, useEffect, useRef, useState } from 'react';
-import { MessageResponseType } from '../../../types/Chat/MessageResponseType';
-import { emptyDirectusFileType } from '../../../types/Chat/ModifiedFileType';
-import folder from '../../../lib/folder';
+import { useEffect, useRef, useState } from 'react';
+import { ModifiedFileType } from '../../../types/File/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import conversation from '../../../lib/conversation';
 import NameAndDate from '../../Field/NameAndDate';
-import { UserType } from '@directus/sdk';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import { downloadFile } from '../../../slicers/file/file-slice';
+import { deleteMessageById, setCurrentConversationDisplayWithAllRelatedData, updateMessageById } from '../../../slicers/chat/conversation-slice';
+import { ConversationType } from '../../../types/Chat/ConversationType';
+import { PayLoadUpdateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
+import { MessageType } from '../../../types/Chat/MessageType';
+import { useFetchFile } from '../../../customHook/useFetchFile';
+import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
+import DownloadableFile from '../DownloadableFile';
 
-const Message: FC<{
-    message: MessageResponseType;
-    currentUser: UserType;
+type ResponseProps = {
+    conversation: ConversationType;
+    message: MessageType;
     align: string;
-}> = ({ message, currentUser, align }) => {
-    const [downloadButton, setDownloadButton] = useState(false);
-    const [showFileDeleted, setShowFileDeleted] = useState(false);
-    const [file, setFile] = useState(emptyDirectusFileType);
+};
 
+export default function Response(props: ResponseProps) {
+    const { conversation, message, align } = props;
+    const dispatch = useAppDispatch();
+    const { connectedUser } = useAppSelector(state => state.auth);
+
+    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [showPopup, setShowPopup] = useState(false);
 
-    const [showDeleteButton, setShowDeleteButton] = useState(false);
-    const [showEditButton, setShowEditButton] = useState(false);
+    const [isResponseOwner, setIsResponseOwner] = useState(
+        null as boolean | null,
+    );
     const [messageIsBeingEdited, setMessageIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
-    const [isLoaded, setIsLoaded] = useState(false);
+    // const [isLoaded, setIsLoaded] = useState(true);
+    const isLoaded = true;
 
     useEffect(() => {
-        const timeout = setTimeout(async () => {
-            if (currentUser?.id === message.user_created.id) {
-                setShowDeleteButton(true);
-                setShowEditButton(true);
-            } else {
-                setShowDeleteButton(false);
-                setShowEditButton(false);
-            }
-            if (
-                message.file_id !== '' &&
-                message.file_id !== null &&
-                !downloadButton
-            ) {
-                let files = await folder.getFilesList(message.file_id);
-                if (files.data.length !== 0) {
-                    setDownloadButton(true);
-                    setShowFileDeleted(false);
-                    setFile(files.data[0]);
-                } else {
-                    console.log('file deleted');
-                    setDownloadButton(false);
-                    setShowFileDeleted(true);
-                    setFile(emptyDirectusFileType);
-                }
-            }
-            setIsLoaded(true);
-        }, 500);
-        return () => clearTimeout(timeout);
-    }, [
-        currentUser?.id,
-        downloadButton,
-        message.file_id,
-        message.user_created.id,
-    ]);
+        setIsResponseOwner(connectedUser.id === message.user_created.id);
+    }, [connectedUser, message.user_created.id]);
+
+    useFetchFile({
+        file_id: message.file_id,
+        setFile: setFile,
+    })
 
     function quitPopup() {
         setShowPopup(false);
     }
 
     async function deleteMessage() {
-        await conversation.deleteMessage(message.id);
-        window.location.reload();
+        await dispatch(deleteMessageById(message.id));
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id))
+        quitPopup();
     }
 
     async function updateMessage() {
-        await conversation.updateMessage(message.id, textAreaRef.current.value);
-        window.location.reload();
+        await dispatch(
+            updateMessageById({
+                messageId: message.id,
+                message: textAreaRef.current.value,
+            } as PayLoadUpdateConversationMessage)
+        );
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id))
+        setMessageIsBeingEdited(false);
+    }
+
+    async function handleDownloadFile() {
+        await dispatch(downloadFile(file.file as ModifiedFileType));
     }
 
     return (
@@ -83,16 +77,15 @@ const Message: FC<{
                 <>
                     <div className={'m-4'}>
                         <div
-                            className={`flex flex-col ${
-                                align === 'right' ? 'items-end' : 'items-start'
-                            }`}
+                            className={`flex flex-col ${align === 'right' ? 'items-end' : 'items-start'
+                                }`}
                         >
                             <div className={'flex'}>
                                 <NameAndDate
                                     date_created={message.date_created}
                                     user_created={message.user_created}
                                 />
-                                {showEditButton && !messageIsBeingEdited && (
+                                {isResponseOwner && !messageIsBeingEdited && (
                                     //  Bouton modifier
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +105,7 @@ const Message: FC<{
                                         />
                                     </svg>
                                 )}
-                                {showDeleteButton && !messageIsBeingEdited && (
+                                {isResponseOwner && !messageIsBeingEdited && (
                                     // Bouton supprimer
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -206,20 +199,10 @@ const Message: FC<{
                                     ></textarea>
                                 </div>
                             )}
-
-                            {downloadButton ? (
-                                <button
-                                    onClick={() => folder.downloadFile(file)}
-                                    className={'underline underline-offset-4'}
-                                >
-                                    Télécharger {file.filename_download}
-                                </button>
-                            ) : null}
-                            {showFileDeleted ? (
-                                <p className={'text-red-500'}>
-                                    Fichier supprimé
-                                </p>
-                            ) : null}
+                            < DownloadableFile
+                                file={file}
+                                handleDownloadFile={handleDownloadFile}
+                            />
                         </div>
                         {/*<div className={"grid grid-cols-12"}>*/}
                         {/*    <div className={"col-span-11"}>*/}
@@ -286,19 +269,4 @@ const Message: FC<{
             )}
         </>
     );
-
-    return (
-        <div>
-            <p>{message.message}</p>
-            <p>
-                le {new Date(message.date_created).toLocaleDateString()} à{' '}
-                {new Date(message.date_created).toLocaleTimeString()} par{' '}
-                {message.user_created.first_name +
-                    ' ' +
-                    message.user_created.last_name}
-            </p>
-        </div>
-    );
 };
-
-export default Message;

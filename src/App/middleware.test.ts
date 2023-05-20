@@ -1,5 +1,5 @@
 import { store } from './store';
-import { loginWithToken } from '../slicers/auth-slice';
+import { loginWithToken } from '../slicers/authentification/auth-slice';
 
 describe('Middleware', () => {
     beforeEach(() => {

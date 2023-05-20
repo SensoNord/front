@@ -1,8 +1,8 @@
 import { FolderType } from '@directus/sdk';
-import { StatusEnum } from '../types/Request/StatusEnum';
-import { ErrorType } from '../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
+import { ErrorType } from '../../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
+import { directus } from '../../libraries/directus';
 
 interface FolderState {
     actualFolder: FolderType;

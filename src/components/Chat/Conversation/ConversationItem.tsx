@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
-import { setCurrentConversationDisplay } from '../../../slicers/conversation-slice';
+import { setCurrentConversationDisplay } from '../../../slicers/chat/conversation-slice';
 
 type ConversationItemProps = {
     conversation: ConversationType;
@@ -32,7 +32,7 @@ export default function ConversationItem(props: ConversationItemProps) {
                 setDisplayableConversationName(otherUserCandidate.directus_users_id.first_name + ' ' + otherUserCandidate.directus_users_id.last_name);
             }
         }
-    }, [conversation]);    
+    }, [conversation, connectedUser?.id]);    
 
     useEffect(() => {
         if (

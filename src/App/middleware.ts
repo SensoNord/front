@@ -1,7 +1,6 @@
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
-import { fetchConnectedUser, logout } from '../slicers/auth-slice';
+import { fetchConnectedUser, logout } from '../slicers/authentification/auth-slice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { useAppDispatch, useAppSelector } from './hooks';
 
 export const errorMiddleware: Middleware =
     ({ dispatch }: MiddlewareAPI) =>
