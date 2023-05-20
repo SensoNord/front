@@ -12,38 +12,61 @@ import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
 import SendInvitation from '../feature/Authentification/SendInvitation';
 import Drive from '../feature/Drive';
 import Chat from '../feature/Chat/Chat';
+import { useEffect } from 'react';
+import { useAppDispatch } from './hooks';
+import { fetchConnectedUser, fetchConnectedUserRole, loginWithToken } from '../slicers/auth-slice';
 
 function App() {
     return (
         <Provider store={store}>
-            <BrowserRouter>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={
-                            <PrivateRoute>
-                                <Layout />
-                            </PrivateRoute>
-                        }
-                    >
-                        <Route path="home" element={<Home />} />
-                        <Route path="home2" element={<Home2 />} />
-                        <Route
-                            path="send-invitation"
-                            element={<SendInvitation />}
-                        />
-                        <Route path="chat" element={<Chat />} />
-                        <Route path="drive" element={<Drive />} />
-                    </Route>
-                    <Route path="login" element={<Login />} />
-                    <Route
-                        path="accept-invitation"
-                        element={<AcceptInvitation />}
-                    />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
+            <AuthHandler />
         </Provider>
+    );
+}
+
+function AuthHandler() {
+    const dispatch = useAppDispatch();
+
+    async function loginCheck(token: string | null, expires: string | null) {
+        dispatch(loginWithToken({ access_token: token, expires: expires }));
+        await dispatch(fetchConnectedUser());
+        await dispatch(fetchConnectedUserRole());
+    }
+
+    useEffect(() => {
+        const token = localStorage.getItem('auth_token');
+        const expires = localStorage.getItem('auth_expires');
+        loginCheck(token, expires);
+    }, [dispatch]);
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <PrivateRoute>
+                            <Layout />
+                        </PrivateRoute>
+                    }
+                >
+                    <Route path="home" element={<Home />} />
+                    <Route path="home2" element={<Home2 />} />
+                    <Route
+                        path="send-invitation"
+                        element={<SendInvitation />}
+                    />
+                    <Route path="chat" element={<Chat />} />
+                    <Route path="drive" element={<Drive />} />
+                </Route>
+                <Route path="login" element={<Login />} />
+                <Route
+                    path="accept-invitation"
+                    element={<AcceptInvitation />}
+                />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 

@@ -6,22 +6,25 @@ import {
 } from '../../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
-import { useAppDispatch } from '../../../App/hooks';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { downloadFile, fetchFileById } from '../../../slicers/file-slice';
 import {
     deleteResponseById,
+    setCurrentSubjectDisplayWithAllRelatedData,
     updateResponseMessageById,
 } from '../../../slicers/subject-slice';
 import { ErrorType, isErrorType } from '../../../types/Request/ErrorType';
 import { PayLoadUpdateResponse } from '../../../slicers/subject-slice-helper';
 
 type Props = {
+    subjectId: string;
     response: MessageResponseType;
 };
 
 export default function Response(props: Props) {
-    const { response } = props;
+    const { response, subjectId } = props;
     const dispatch = useAppDispatch();
+    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
     const [downloadButton, setDownloadButton] = useState(false);
     const [showFileDeleted, setShowFileDeleted] = useState(false);
@@ -34,8 +37,6 @@ export default function Response(props: Props) {
     const [isResponseOwner, setIsResponseOwner] = useState(
         null as boolean | null,
     );
-    const [connectedUserId, setConnectedUserId] = useState('');
-    const [connectedUserRoleName, setConnectedUserRoleName] = useState('');
 
     const [responseIsBeingEdited, setResponseIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
@@ -43,13 +44,9 @@ export default function Response(props: Props) {
     const [isLoaded, setIsLoaded] = useState(true);
 
     useEffect(() => {
-        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
-        setConnectedUserRoleName(
-            localStorage.getItem('connectedUserRoleName') as string,
-        );
-        setIsAdministrator(connectedUserRoleName === 'Administrator');
-        setIsResponseOwner(connectedUserId === response.user_created.id);
-    }, [connectedUserId, connectedUserRoleName]);
+        setIsAdministrator(connectedUserRole.name === 'Administrator');
+        setIsResponseOwner(connectedUser.id === response.user_created.id);
+    }, [connectedUser, connectedUserRole]);
 
     useEffect(() => {
         async function fetchFile() {
@@ -85,6 +82,7 @@ export default function Response(props: Props) {
 
     async function deleteResponse() {
         await dispatch(deleteResponseById(response.id));
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subjectId))
         quitPopup();
     }
 
@@ -99,6 +97,8 @@ export default function Response(props: Props) {
                 message: textAreaRef.current.value,
             } as PayLoadUpdateResponse),
         );
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subjectId))
+        setResponseIsBeingEdited(false);
     }
 
     async function handleDownloadFile() {

@@ -1,5 +1,5 @@
-import { emptyUser, UserType } from './UserType';
 import { MessageResponseType } from './MessageResponseType';
+import { UserType } from '@directus/sdk';
 
 export type PostType = {
     id: string;
@@ -16,9 +16,9 @@ export type PostType = {
 
 const emptyPost: PostType = {
     id: '',
-    user_created: emptyUser,
+    user_created: {} as UserType,
     date_created: new Date(),
-    user_updated: emptyUser,
+    user_updated: {} as UserType,
     date_updated: new Date(),
     title: '',
     message: '',

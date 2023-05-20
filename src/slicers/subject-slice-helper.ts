@@ -1,4 +1,5 @@
 export type PayLoadCreateMessage = {
+    subject_id: string;
     post_id: string;
     message: string;
     file_id: string | null;

@@ -7,7 +7,7 @@ import {
     fetchConnectedUser,
     fetchConnectedUserRole,
     fetchLogin,
-    loginWithToken,
+    setIsConnecting,
 } from '../../slicers/auth-slice';
 import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
@@ -15,7 +15,6 @@ import { StatusEnum } from '../../types/Request/StatusEnum';
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [token, setToken] = useState<string>('');
     const [inputColor, setInputColor] = useState<string>(
         'bg-blue-200 tablet:bg-blue-100',
     );
@@ -27,18 +26,13 @@ export default function Login() {
     const passwordFieldHandleChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => setPassword(event.target.value);
-    const { status } = useAppSelector(state => state.auth);
+    const { status, isConnecting } = useAppSelector(state => state.auth);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const token = localStorage.getItem('auth_token');
-        const expires = localStorage.getItem('auth_expires');
-        if (token) {
-            setToken(token);
-            dispatch(loginWithToken({ access_token: token, expires: expires }));
-        }
-    }, [dispatch]);
+        dispatch(setIsConnecting(true))
+    }, [dispatch])
 
     useEffect(() => {
         switch (status) {
@@ -47,7 +41,7 @@ export default function Login() {
                 break;
             case StatusEnum.SUCCEEDED:
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
-                navigate('/home');
+                fetchUserData();
                 break;
             case StatusEnum.FAILED:
                 setInputColor('bg-red-200 tablet:bg-red-100');
@@ -56,7 +50,7 @@ export default function Login() {
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
                 break;
         }
-    }, [status, token, navigate]);
+    }, [status, navigate, isConnecting, dispatch]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -65,9 +59,13 @@ export default function Login() {
             password,
         };
         await dispatch(fetchLogin(credentials));
+    };
+
+    async function fetchUserData() {
         await dispatch(fetchConnectedUser());
         await dispatch(fetchConnectedUserRole());
-    };
+        navigate('/home');
+    }
 
     return (
         <>

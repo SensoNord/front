@@ -17,20 +17,22 @@ export default function ConversationItem(props: ConversationItemProps) {
         useState<boolean>(false);
     const [displayableConversationName, setDisplayableConversationName] =
         useState<string>('');
-    const [connectedUserId, setConnectedUserId] = useState<string>('');
     const { currentConversationDisplayWithAllRelatedData } = useAppSelector(
         state => state.conversation,
     );
+    const { connectedUser } = useAppSelector(state => state.auth);
 
     useEffect(() => {
-        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
-
-        setDisplayableConversationName(
-            conversation.user_list[0].directus_users_id.id === connectedUserId
-                ? conversation.user_list[1].directus_users_id.first_name
-                : conversation.user_list[0].directus_users_id.first_name,
-        );
-    }, [conversation, connectedUserId]);
+        if (conversation) {
+            const otherUserCandidate = conversation.user_list.find(
+                user => user.directus_users_id.id !== connectedUser?.id
+            );
+    
+            if (otherUserCandidate) {
+                setDisplayableConversationName(otherUserCandidate.directus_users_id.first_name + ' ' + otherUserCandidate.directus_users_id.last_name);
+            }
+        }
+    }, [conversation]);    
 
     useEffect(() => {
         if (

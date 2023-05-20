@@ -10,7 +10,7 @@ import {
 } from '../../../types/Chat/ModifiedFileType';
 import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
-import { useAppDispatch } from '../../../App/hooks';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import {
     deletePostById,
     setCurrentSubjectDisplayWithAllRelatedData,
@@ -29,6 +29,7 @@ type Props = {
 export default function Post(props: Props) {
     const { post, subject, index } = props;
     const dispatch = useAppDispatch();
+    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
 
@@ -42,17 +43,11 @@ export default function Post(props: Props) {
         null as boolean | null,
     );
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
-    const [connectedUserId, setConnectedUserId] = useState('');
-    const [connectedUserRoleName, setConnectedUserRoleName] = useState('');
 
     useEffect(() => {
-        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
-        setConnectedUserRoleName(
-            localStorage.getItem('connectedUserRoleName') as string,
-        );
-        setIsAdministrator(connectedUserRoleName === 'Administrator');
-        setIsPostOwner(connectedUserId === post.user_created.id);
-    }, [connectedUserId, connectedUserRoleName, post.user_created.id]);
+        setIsAdministrator(connectedUserRole.name === 'Administrator');
+        setIsPostOwner(connectedUser.id === post.user_created.id);
+    }, [connectedUser, connectedUserRole]);
 
     useEffect(() => {
         async function fetchFile() {
@@ -248,6 +243,7 @@ export default function Post(props: Props) {
                                             return (
                                                 <Response
                                                     response={response}
+                                                    subjectId={subject.id}
                                                     key={index}
                                                 />
                                             );

@@ -1,5 +1,5 @@
-import {emptyUser, UserType} from "./UserType";
 import {MessageResponseType} from "./MessageResponseType";
+import { UserType } from "@directus/sdk";
 
 export type ConversationType = {
     id: string
@@ -18,23 +18,3 @@ export type ConversationType = {
     messages_list: MessageResponseType[] | [];
     folder_id: string
 }
-
-const emptyConversation: ConversationType = {
-    id: "",
-    user_created: emptyUser,
-    date_created: new Date(),
-    user_updated: emptyUser,
-    date_updated: new Date(),
-    user_list: [
-        {
-            directus_users_id: emptyUser
-        },
-        {
-            directus_users_id: emptyUser
-        }
-    ],
-    messages_list: [],
-    folder_id: ""
-};
-
-export {emptyConversation};

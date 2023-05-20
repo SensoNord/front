@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import WriteMessage from '../../components/Chat/Conversation/WriteMessage';
-import { UserType } from '../../types/Chat/UserType';
-import { directus } from '../../libraries/directus';
 import Message from '../../components/Chat/Conversation/Message';
 import { MessageResponseType } from '../../types/Chat/MessageResponseType';
 import { useAppSelector } from '../../App/hooks';
+import { UserType } from '@directus/sdk';
 
 export default function Conversation() {
     const { currentConversationDisplayWithAllRelatedData } = useAppSelector(
         state => state.conversation,
     );
-    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+    const { connectedUser } = useAppSelector(state => state.auth);
     const [otherUser, setOtherUser] = useState<UserType | null>(null);
+
     const [sortedMessages, setSortedMessages] = useState<MessageResponseType[]>(
         [],
     );
@@ -32,35 +32,15 @@ export default function Conversation() {
 
     useEffect(() => {
         if (currentConversationDisplayWithAllRelatedData) {
-            // folder.getfileById('2c176079-3aec-4559-95e7-729e4833a68d').then((file) => {
-            //     console.log(file);
-            // });
-            directus.users.me
-                .read({
-                    fields: ['id', 'first_name', 'last_name'],
-                })
-                .then(tmpUser => {
-                    setCurrentUser(tmpUser as UserType);
-                    let otherUserId =
-                        tmpUser.id ===
-                        currentConversationDisplayWithAllRelatedData
-                            .user_list[0].directus_users_id.id
-                            ? currentConversationDisplayWithAllRelatedData
-                                  .user_list[1].directus_users_id.id
-                            : currentConversationDisplayWithAllRelatedData
-                                  .user_list[0].directus_users_id.id;
-                    directus.users
-                        .readOne(otherUserId, {
-                            fields: ['id', 'first_name', 'last_name'],
-                        })
-                        .then(tmpUser => {
-                            setOtherUser(tmpUser as unknown as UserType);
-                        });
-                });
-        } else {
-            window.alert('Invalid conversation');
+            const otherUserCandidate = currentConversationDisplayWithAllRelatedData.user_list.find(
+                user => user.directus_users_id.id !== connectedUser?.id
+            );
+    
+            if (otherUserCandidate) {
+                setOtherUser(otherUserCandidate.directus_users_id);
+            }
         }
-    }, [currentConversationDisplayWithAllRelatedData]);
+    }, [currentConversationDisplayWithAllRelatedData]);    
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -106,21 +86,20 @@ export default function Conversation() {
                                 (message: MessageResponseType) => {
                                     return (
                                         <div
-                                            className={`flex ${
-                                                message.user_created.id ===
-                                                currentUser?.id
+                                            className={`flex ${message.user_created.id ===
+                                                connectedUser.id
                                                     ? 'justify-end'
                                                     : 'justify-start'
-                                            }`}
+                                                }`}
                                         >
                                             <div className={'w-7/12'}>
                                                 <Message
                                                     message={message}
-                                                    currentUser={currentUser}
+                                                    currentUser={connectedUser}
                                                     align={
                                                         message.user_created
                                                             .id ===
-                                                        currentUser?.id
+                                                            connectedUser?.id
                                                             ? 'right'
                                                             : 'end'
                                                     }

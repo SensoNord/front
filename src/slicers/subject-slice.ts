@@ -331,7 +331,30 @@ const subjectSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(createResponseToPost.fulfilled, (state, action) => {
+                const subject_Id = action.meta.arg.subject_id;
+
                 state.status = StatusEnum.SUCCEEDED;
+                state.subjectListDisplay = state.subjectListDisplay.map(
+                    (subject: SubjectType) => {
+                        if (subject.id === subject_Id) {
+                            return {
+                                ...subject,
+                                posts: (subject.posts as PostType[]).map(
+                                    (post: PostType) => {
+                                        return {
+                                            ...post,
+                                            responses: [
+                                                ...(post.responses as MessageResponseType[]),
+                                                action.payload,
+                                            ],
+                                        };
+                                    },
+                                ),
+                            };
+                        }
+                        return subject;
+                    },
+                );
                 state.error = {} as ErrorType;
             })
             .addCase(createResponseToPost.rejected, (state, action) => {

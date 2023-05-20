@@ -9,7 +9,7 @@ import {
     updateFile,
 } from '../../../slicers/file-slice';
 import { ModifiedFileType } from '../../../types/Chat/ModifiedFileType';
-import { createResponseToPost } from '../../../slicers/subject-slice';
+import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/subject-slice';
 import { PayLoadCreateMessage } from '../../../slicers/subject-slice-helper';
 
 type Props = {
@@ -21,6 +21,7 @@ type Props = {
 export default function WriteResponse(props: Props) {
     const { postId, subject, index } = props;
     const [showPopup, setShowPopup] = useState(false);
+    const formRef = useRef(null) as { current: any };  
     const fileRef = useRef(null) as { current: any };
     const [fileName, setFileName] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
@@ -61,6 +62,7 @@ export default function WriteResponse(props: Props) {
             if (createdFile)
                 await dispatch(
                     createResponseToPost({
+                        subject_id: subject.id,
                         post_id: postId,
                         message: responseMessage,
                         file_id: createdFile.id,
@@ -69,12 +71,16 @@ export default function WriteResponse(props: Props) {
         } else {
             await dispatch(
                 createResponseToPost({
+                    subject_id: subject.id,
                     post_id: postId,
                     message: responseMessage,
                     file_id: fileId,
                 } as PayLoadCreateMessage),
             );
         }
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+
+        formRef.current.reset();
     }
 
     function getFileFromDrive(file: any) {
@@ -95,7 +101,7 @@ export default function WriteResponse(props: Props) {
 
     return (
         <>
-            <form onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
+            <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
                 <span className={'inline col-span-10 flex flex-col'}>
                     <label htmlFor={'response_' + index}>Réponse</label>
                     <textarea

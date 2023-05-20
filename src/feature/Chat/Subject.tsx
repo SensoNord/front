@@ -45,6 +45,8 @@ export default function Subject() {
             );
         });
         setSortedPost(sortedPost);
+
+        console.log("pass")
     }, [currentSubjectDisplayWithAllRelatedData]);
 
     function quitPopup() {

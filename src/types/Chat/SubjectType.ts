@@ -1,4 +1,4 @@
-import { emptyUser, UserType } from './UserType';
+import { UserType } from '@directus/sdk';
 import { PostType } from './PostType';
 
 export type SubjectType = {
@@ -19,14 +19,14 @@ export type SubjectType = {
 
 const emptySubject: SubjectType = {
     id: '',
-    user_created: emptyUser,
+    user_created: {} as UserType,
     date_created: new Date(),
-    user_updated: emptyUser,
+    user_updated: {} as UserType,
     date_updated: new Date(),
     name: '',
     user_list: [
         {
-            directus_users_id: emptyUser,
+            directus_users_id: {} as UserType,
         },
     ],
     posts: [],
