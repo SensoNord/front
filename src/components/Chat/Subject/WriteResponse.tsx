@@ -1,16 +1,11 @@
-import { useRef, useState } from 'react';
-import { SubjectType } from '../../types/Chat/SubjectType';
+import { useRef } from 'react';
+import { SubjectType } from '../../../types/Chat/SubjectType';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../Files/DisplayFiles';
-import { useAppDispatch } from '../../App/hooks';
-import {
-    UpdateFilePayload,
-    createFile,
-    updateFile,
-} from '../../slicers/file-slice';
-import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
-import { createResponseToPost } from '../../slicers/subject-slice';
-import { PayLoadCreateMessage } from '../../slicers/subject-slice-helper';
+import DisplayFiles from '../../Files/DisplayFiles';
+import { useAppDispatch } from '../../../App/hooks';
+import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
+import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
+import { useFileManagement } from '../../../customHook/useFileManagement';
 
 type Props = {
     postId: string;
@@ -20,16 +15,25 @@ type Props = {
 
 export default function WriteResponse(props: Props) {
     const { postId, subject, index } = props;
-    const [showPopup, setShowPopup] = useState(false);
-    const fileRef = useRef(null) as { current: any };
-    const [fileName, setFileName] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
-    const [fileId, setFileId] = useState<string | null>(null);
     const dispatch = useAppDispatch();
+    const formRef = useRef(null) as { current: any };  
 
-    function quitPopup() {
-        setShowPopup(false);
-    }
+    const {
+        fileRef,
+        fileName,
+        file,
+        fileId,
+        handleFileUpload,
+        getFileFromDrive,
+        getFileFromComputer,
+        clearFile,
+        showPopup,
+        setShowPopup,
+        quitPopup,
+    } = useFileManagement({
+        chat: subject,
+        chatType: 'subject',  
+    })
 
     async function handleSubmit(e: {
         preventDefault: () => void;
@@ -48,54 +52,36 @@ export default function WriteResponse(props: Props) {
             return;
         }
 
-        if (file && !fileId) {
-            const createdFilePayload = await dispatch(createFile(file));
-            const createdFile = createdFilePayload.payload as ModifiedFileType;
-            await dispatch(
-                updateFile({
-                    file: createdFile,
-                    subjectId: subject.id,
-                    folderId: subject.folder_id,
-                } as UpdateFilePayload),
-            );
-            if (createdFile)
+        const createdFile = await handleFileUpload();
+
+        if (createdFile) {
                 await dispatch(
                     createResponseToPost({
+                        subject_id: subject.id,
                         post_id: postId,
                         message: responseMessage,
                         file_id: createdFile.id,
-                    } as PayLoadCreateMessage),
+                    } as PayLoadCreateSubjectMessage),
                 );
         } else {
             await dispatch(
                 createResponseToPost({
+                    subject_id: subject.id,
                     post_id: postId,
                     message: responseMessage,
                     file_id: fileId,
-                } as PayLoadCreateMessage),
+                } as PayLoadCreateSubjectMessage),
             );
         }
-    }
+        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
 
-    function getFileFromDrive(file: any) {
-        fileRef.current.value = '';
-        setFile(null);
-        setFileId(file.id);
-        setFileName(file.filename_download);
-        setShowPopup(false);
-    }
-
-    function getFileFromComputer(e: { target: { files: any } }) {
-        const f = e.target.files[0];
-        setFile(f);
-        setFileId(null);
-        setFileName(f.name);
-        setShowPopup(false);
+        clearFile();
+        formRef.current.reset();
     }
 
     return (
         <>
-            <form onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
+            <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
                 <span className={'inline col-span-10 flex flex-col'}>
                     <label htmlFor={'response_' + index}>Réponse</label>
                     <textarea

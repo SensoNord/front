@@ -1,22 +1,23 @@
-export type PayLoadCreateMessage = {
+export type PayLoadCreateSubjectMessage = {
+    subject_id: string;
     post_id: string;
     message: string;
     file_id: string | null;
 };
 
-export type PayLoadCreatePost = {
+export type PayLoadCreateSubjectPost = {
     subject_id: string;
     title: string;
     message: string;
     file_id: string | null;
 };
 
-export type PayLoadUpdatePost = {
+export type PayLoadUpdateSubjectPost = {
     id: string;
     message: string;
 };
 
-export type PayLoadUpdateResponse = PayLoadUpdatePost;
+export type PayLoadUpdateSubjectResponse = PayLoadUpdateSubjectPost;
 
 export const subjectFields = [
     'id',

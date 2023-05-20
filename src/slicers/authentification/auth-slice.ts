@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { CredentialsType } from '../types/Users/Credentials/CredentialsType';
-import { TokenType } from '../types/Users/Credentials/TokenTypes';
-import { ErrorType } from '../types/Request/ErrorType';
-import { StatusEnum } from '../types/Request/StatusEnum';
+import { directus } from '../../libraries/directus';
+import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
+import { TokenType } from '../../types/Users/Credentials/TokenTypes';
+import { ErrorType } from '../../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
 import { RoleItem, UserType } from '@directus/sdk';
 
 interface LoginState {
-    token: TokenType;
+    isConnecting: boolean;
+    token: TokenType | null;
     connectedUser: UserType;
     connectedUserRole: RoleItem;
     status: StatusEnum;
@@ -15,7 +16,8 @@ interface LoginState {
 }
 
 const initialState: LoginState = {
-    token: {} as TokenType,
+    isConnecting: false,
+    token: null,
     connectedUser: {} as UserType,
     connectedUserRole: {} as RoleItem,
     status: StatusEnum.IDLE,
@@ -85,6 +87,10 @@ const authSlice = createSlice({
             localStorage.clear();
             return initialState;
         },
+        setIsConnecting: (state, action) => {
+            state.isConnecting = action.payload;
+            state.status = StatusEnum.IDLE;
+        }
     },
     extraReducers: builder => {
         builder
@@ -112,15 +118,13 @@ const authSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.connectedUser = action.payload as UserType;
                 state.error = {} as ErrorType;
-                localStorage.setItem(
-                    'connectedUserId',
-                    state.connectedUser.id.toString(),
-                );
+                state.isConnecting = false;
             })
             .addCase(fetchConnectedUser.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.connectedUser = {} as UserType;
                 state.error = action.payload as ErrorType;
+                state.isConnecting = true;
             })
             .addCase(fetchConnectedUserRole.pending, state => {
                 state.status = StatusEnum.LOADING;
@@ -131,10 +135,6 @@ const authSlice = createSlice({
                 state.status = StatusEnum.SUCCEEDED;
                 state.connectedUserRole = action.payload as RoleItem;
                 state.error = {} as ErrorType;
-                localStorage.setItem(
-                    'connectedUserRoleName',
-                    state.connectedUserRole.name.toString(),
-                );
             })
             .addCase(fetchConnectedUserRole.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
@@ -144,5 +144,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout, loginWithToken } = authSlice.actions;
+export const { logout, loginWithToken, setIsConnecting } = authSlice.actions;
 export default authSlice.reducer;

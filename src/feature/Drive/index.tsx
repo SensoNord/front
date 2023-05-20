@@ -2,17 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import DisplayFiles from '../../components/Files/DisplayFiles';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { fetchSubjectByFolderId } from '../../slicers/subject-slice';
+import { fetchSubjectByFolderId } from '../../slicers/chat/subject-slice';
 import {
     UpdateFilePayload,
     createFile,
     downloadFile,
     updateFile,
-} from '../../slicers/file-slice';
-import { setActualFolder } from '../../slicers/folder-slice';
+} from '../../slicers/file/file-slice';
+import { setActualFolder } from '../../slicers/file/folder-slice';
 import '../../styles/Forum.css';
-import { FileType } from '@directus/sdk';
-import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
+import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);
@@ -80,8 +79,9 @@ export default function Drive() {
                 await dispatch(
                     updateFile({
                         file: createdFile,
-                        subjectId: subjectListForFolder[0].id,
+                        chatId: subjectListForFolder[0].id,
                         folderId: actualFolder.id,
+                        chatType: 'subject',
                     } as UpdateFilePayload),
                 );
             }

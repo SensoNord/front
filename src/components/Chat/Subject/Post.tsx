@@ -1,24 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import { PostType } from '../../types/Chat/PostType';
-import { MessageResponseType } from '../../types/Chat/MessageResponseType';
+import { PostType } from '../../../types/Chat/PostType';
+import { ResponseType } from '../../../types/Chat/ResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import { SubjectType } from '../../types/Chat/SubjectType';
+import { SubjectType } from '../../../types/Chat/SubjectType';
 import {
     ModifiedFileType,
-    emptyDirectusFileType,
-} from '../../types/Chat/ModifiedFileType';
+} from '../../../types/File/ModifiedFileType';
 import { createPortal } from 'react-dom';
-import LoadingSpinner from '../LoadingSpinner';
-import { useAppDispatch } from '../../App/hooks';
+import LoadingSpinner from '../../LoadingSpinner';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import {
     deletePostById,
     setCurrentSubjectDisplayWithAllRelatedData,
     updatePostMessageById,
-} from '../../slicers/subject-slice';
-import { downloadFile, fetchFileById } from '../../slicers/file-slice';
-import { ErrorType, isErrorType } from '../../types/Request/ErrorType';
-import { PayLoadUpdatePost } from '../../slicers/subject-slice-helper';
+} from '../../../slicers/chat/subject-slice';
+import { downloadFile } from '../../../slicers/file/file-slice';
+import { PayLoadUpdateSubjectPost } from '../../../slicers/chat/subject-slice-helper';
+import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
+import { useFetchFile } from '../../../customHook/useFetchFile';
+import DownloadableFile from '../DownloadableFile';
+import NameAndDate from '../../Field/NameAndDate';
 
 type Props = {
     post: PostType;
@@ -29,56 +31,28 @@ type Props = {
 export default function Post(props: Props) {
     const { post, subject, index } = props;
     const dispatch = useAppDispatch();
+    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
-
-    const [downloadButton, setDownloadButton] = useState(false);
-    const [showFileDeleted, setShowFileDeleted] = useState(false);
-    const [file, setFile] = useState(emptyDirectusFileType);
+    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
-    const [isLoaded, setIsLoaded] = useState(true);
+    // const [isLoaded, setIsLoaded] = useState(true);
+    const isLoaded = true;
     const [isAdministrator, setIsAdministrator] = useState(
         null as boolean | null,
     );
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
-    const [connectedUserId, setConnectedUserId] = useState('');
-    const [connectedUserRoleName, setConnectedUserRoleName] = useState('');
 
     useEffect(() => {
-        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
-        setConnectedUserRoleName(
-            localStorage.getItem('connectedUserRoleName') as string,
-        );
-        setIsAdministrator(connectedUserRoleName === 'Administrator');
-        setIsPostOwner(connectedUserId === post.user_created.id);
-    }, [connectedUserId, connectedUserRoleName, post.user_created.id]);
+        setIsAdministrator(connectedUserRole.name === 'Administrator');
+        setIsPostOwner(connectedUser.id === post.user_created.id);
+    }, [connectedUser, connectedUserRole, post.user_created.id]);
 
-    useEffect(() => {
-        async function fetchFile() {
-            if (
-                post.file_id !== '' &&
-                post.file_id !== null &&
-                post.file_id !== undefined
-            ) {
-                let filesPayload = await dispatch(fetchFileById(post.file_id));
-                let files = filesPayload.payload as
-                    | ModifiedFileType
-                    | ErrorType;
-                if (!isErrorType(files)) {
-                    setDownloadButton(true);
-                    setShowFileDeleted(false);
-                    setFile(files);
-                } else {
-                    setShowFileDeleted(true);
-                    setDownloadButton(false);
-                    setFile(emptyDirectusFileType);
-                }
-                setIsLoaded(true);
-            }
-        }
-        fetchFile();
-    }, [dispatch, post.file_id]);
+    useFetchFile({
+        file_id: post.file_id,
+        setFile: setFile,
+    })
 
     function quitPopup() {
         setShowPopup(false);
@@ -100,14 +74,14 @@ export default function Post(props: Props) {
             updatePostMessageById({
                 id: post.id,
                 message: textAreaRef.current.value,
-            } as PayLoadUpdatePost),
+            } as PayLoadUpdateSubjectPost),
         );
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
         setPostIsBeingEdited(false);
     }
 
     async function handleDownloadFile() {
-        await dispatch(downloadFile(file as ModifiedFileType));
+        await dispatch(downloadFile(file.file as ModifiedFileType));
     }
 
     return (
@@ -194,32 +168,15 @@ export default function Post(props: Props) {
                                     </div>
                                 </div>
                             )}
-                            {downloadButton ? (
-                                <button
-                                    onClick={handleDownloadFile}
-                                    className={'underline underline-offset-4'}
-                                >
-                                    Télécharger {file.filename_download}
-                                </button>
-                            ) : null}
-                            {showFileDeleted ? (
-                                <p className={'text-red-500'}>
-                                    Fichier supprimé
-                                </p>
-                            ) : null}
+                            < DownloadableFile
+                                file={file}
+                                handleDownloadFile={handleDownloadFile}
+                            />
                             <div className={'text-right'}>
-                                le{' '}
-                                {new Date(
-                                    post.date_created,
-                                ).toLocaleDateString()}{' '}
-                                à{' '}
-                                {new Date(
-                                    post.date_created,
-                                ).toLocaleTimeString()}{' '}
-                                par{' '}
-                                {post.user_created.first_name +
-                                    ' ' +
-                                    post.user_created.last_name}
+                                < NameAndDate
+                                    user_created={post.user_created}
+                                    date_created={post.date_created}
+                                />
                             </div>
                         </div>
                         <div className={'mx-10 flex flex-row justify-end'}>
@@ -227,8 +184,8 @@ export default function Post(props: Props) {
                                 {[...post['responses']]
                                     .sort(
                                         (
-                                            a: MessageResponseType,
-                                            b: MessageResponseType,
+                                            a: ResponseType,
+                                            b: ResponseType,
                                         ) => {
                                             return (
                                                 new Date(
@@ -242,12 +199,13 @@ export default function Post(props: Props) {
                                     )
                                     .map(
                                         (
-                                            response: MessageResponseType,
+                                            response: ResponseType,
                                             index: number,
                                         ) => {
                                             return (
                                                 <Response
                                                     response={response}
+                                                    subjectId={subject.id}
                                                     key={index}
                                                 />
                                             );

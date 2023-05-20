@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../App/hooks';
-import { logout } from '../../slicers/auth-slice';
+import { logout } from '../../slicers/authentification/auth-slice';
 
 export default function Navbar() {
     const dispatch = useAppDispatch();
