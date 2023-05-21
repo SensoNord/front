@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FolderType } from '@directus/sdk';
 import LoadingSpinner from '../LoadingSpinner';
 import { createPortal } from 'react-dom';
@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import {
     fetchFolderById,
     fetchFolderByParent,
-    setActualFolder,
 } from '../../slicers/file/folder-slice';
 import { deleteFileById, fetchFileByFolder } from '../../slicers/file/file-slice';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
@@ -20,53 +19,39 @@ type Props = {
 export default function DisplayFiles(props: Props) {
     const { callbackOnClick, showDelete, startingFolderId } = props;
 
-    const rootFolder = { id: '', name: 'Root', parent: '' } as FolderType;
-    const [isLoading, setIsLoading] = useState(false);
+    const rootFolder = useMemo(() => {
+        return { id: '', name: 'Root', parent: '' } as FolderType;
+    }, []);
+
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [tmpFile, setTmpFile] = useState<ModifiedFileType | null>(null);
+    const [actualFolder, setActualFolder] = useState<FolderType>(rootFolder);
 
     const dispatch = useAppDispatch();
-    const { actualFolder, folderList } = useAppSelector(state => state.folder);
+    const { folderList } = useAppSelector(state => state.folder);
     const { fileList } = useAppSelector(state => state.file);
 
-    // const [showPopup2, setShowPopup2] = useState(false);
-    // const [tmpFolder, setTmpFolder] = useState(emptyFolderType);
+    const getFolderById = useCallback(async (id: string) => {
+        const folderPayload = await dispatch(fetchFolderById(id));
+        const newFolder = folderPayload.payload as FolderType;
+        return newFolder;
+    }, [dispatch]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            let parentId = null;
-            if (startingFolderId) {
-                await dispatch(fetchFolderById(startingFolderId));
-                parentId = actualFolder.id;
-            }
-            await dispatch(fetchFolderByParent(parentId));
-            await dispatch(fetchFileByFolder(parentId));
-            setIsLoading(false);
-        };
-
-        fetchData();
-    }, [actualFolder.id, dispatch, startingFolderId]);
-
-    const handleClickFolder = async (newFolder: FolderType) => {
-        setIsLoading(true);
-        await dispatch(fetchFolderByParent(newFolder.id));
-        await dispatch(fetchFileByFolder(newFolder.id));
-        dispatch(setActualFolder(newFolder));
-        setIsLoading(false);
+    const handleClickFolder = (newFolder: FolderType) => {
+        setIsDataLoaded(false);
+        setActualFolder(newFolder);
     };
 
     const handleClickBack = async () => {
         if (actualFolder.parent === '') return;
-        setIsLoading(true);
-        await dispatch(fetchFolderByParent(actualFolder.parent));
-        await dispatch(fetchFileByFolder(actualFolder.parent));
         if (actualFolder.parent === null) {
-            dispatch(setActualFolder(rootFolder));
+            setIsDataLoaded(false);
+            setActualFolder(rootFolder);
         } else {
-            await dispatch(fetchFolderById(actualFolder.parent));
+            setIsDataLoaded(false);
+            setActualFolder(await getFolderById(actualFolder.parent));
         }
-        setIsLoading(false);
     };
 
     const quitPopup = () => {
@@ -79,20 +64,43 @@ export default function DisplayFiles(props: Props) {
         setShowPopup(false);
     };
 
+    useEffect(() => {
+        const getActualFolder = async () => {
+            setIsDataLoaded(false);
+            if (startingFolderId) {
+                setActualFolder(await getFolderById(startingFolderId));
+            } else {
+                setActualFolder(rootFolder);
+            }
+        };
+
+        getActualFolder();
+    }, [dispatch, startingFolderId, rootFolder, getFolderById]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await dispatch(fetchFolderByParent(actualFolder.id));
+            await dispatch(fetchFileByFolder(actualFolder.id));
+            setIsDataLoaded(true);
+        };
+
+        fetchData();
+    }, [dispatch, actualFolder])
+
     return (
         <>
-            {isLoading ? (
+            {!isDataLoaded ? (
                 <LoadingSpinner />
             ) : (
                 <div>
                     <div onClick={handleClickBack} className={'cursor-pointer'}>
-                        Dossier actuel : {actualFolder.name}
+                        Dossier actuel : {actualFolder?.name}
                     </div>
                     {folderList && (
                         <div>
-                            {folderList.map(folder => {
+                            {folderList.map((folder) => {
                                 return (
-                                    <>
+                                    <div key={folder.id}>
                                         <div
                                             onClick={() =>
                                                 handleClickFolder(folder)
@@ -101,16 +109,16 @@ export default function DisplayFiles(props: Props) {
                                         >
                                             Dossier : {folder.name}
                                         </div>
-                                    </>
+                                    </div>
                                 );
                             })}
                         </div>
                     )}
                     {fileList && (
                         <div>
-                            {fileList.map(file => {
+                            {fileList.map((file) => {
                                 return (
-                                    <>
+                                    <div key={file.id}>
                                         <div
                                             onClick={() => {
                                                 if (callbackOnClick)
@@ -135,7 +143,7 @@ export default function DisplayFiles(props: Props) {
                                                 </button>
                                             </div>
                                         )}
-                                    </>
+                                    </div>
                                 );
                             })}
                         </div>
