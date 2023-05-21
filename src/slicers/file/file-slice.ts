@@ -2,8 +2,8 @@ import { StatusEnum } from '../../types/Request/StatusEnum';
 import { ErrorType } from '../../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../../libraries/directus';
-import { TokenType } from '../../types/Users/Credentials/TokenTypes';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
+import { AuthResult } from '@directus/sdk';
 
 interface FileState {
     fileList: ModifiedFileType[];
@@ -113,7 +113,7 @@ export const downloadFileWithoutURL = createAsyncThunk(
     async (file: ModifiedFileType, { rejectWithValue, getState }) => {
         try {
             const state = getState() as any;
-            const token = state.auth.token as TokenType;
+            const token = state.auth.token as AuthResult;
             const response = await fetch(
                 `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
                 {
@@ -144,7 +144,7 @@ export const downloadFile = createAsyncThunk(
     async (file: ModifiedFileType, { rejectWithValue, getState }) => {
         try {
             const state = getState() as any;
-            const token = state.auth.token as TokenType;
+            const token = state.auth.token as AuthResult;
             const response = await fetch(
                 `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
                 {

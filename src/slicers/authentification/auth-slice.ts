@@ -1,14 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../../libraries/directus';
-import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
-import { TokenType } from '../../types/Users/Credentials/TokenTypes';
+import { CredentialsType } from '../../types/Users/CredentialsType';
 import { ErrorType } from '../../types/Request/ErrorType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { RoleItem, UserType } from '@directus/sdk';
+import { AuthResult } from '@directus/sdk';
 
 interface LoginState {
     isConnecting: boolean;
-    token: TokenType | null;
+    token: AuthResult | null;
     connectedUser: UserType;
     connectedUserRole: RoleItem;
     status: StatusEnum;
@@ -29,7 +29,7 @@ export const fetchLogin = createAsyncThunk(
     async (credentials: CredentialsType, { rejectWithValue }) => {
         try {
             const response = await directus.auth.login(credentials);
-            return response;
+            return response as AuthResult;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -96,17 +96,17 @@ const authSlice = createSlice({
         builder
             .addCase(fetchLogin.pending, state => {
                 state.status = StatusEnum.LOADING;
-                state.token = {} as TokenType;
+                state.token = {} as AuthResult;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchLogin.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.token = action.payload as TokenType;
+                state.token = action.payload as AuthResult;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchLogin.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
-                state.token = {} as TokenType;
+                state.token = {} as AuthResult;
                 state.error = action.payload as ErrorType;
             })
             .addCase(fetchConnectedUser.pending, state => {

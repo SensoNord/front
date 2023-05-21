@@ -9,7 +9,7 @@ import {
     fetchLogin,
     setIsConnecting,
 } from '../../slicers/authentification/auth-slice';
-import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
+import { CredentialsType } from '../../types/Users/CredentialsType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 
 export default function Login() {
