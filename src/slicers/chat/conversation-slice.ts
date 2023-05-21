@@ -235,7 +235,6 @@ const conversationSlice = createSlice({
                             return conversation;
                         },
                     );
-                    console.log(state.conversationListDisplay)
                     state.error = {} as ErrorType;
                 }
             )
