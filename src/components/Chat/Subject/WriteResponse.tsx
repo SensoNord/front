@@ -10,11 +10,10 @@ import { useFileManagement } from '../../../customHook/useFileManagement';
 type Props = {
     postId: string;
     subject: SubjectType;
-    index: number;
 };
 
 export default function WriteResponse(props: Props) {
-    const { postId, subject, index } = props;
+    const { postId, subject } = props;
     const dispatch = useAppDispatch();
     const formRef = useRef(null) as { current: any };
 

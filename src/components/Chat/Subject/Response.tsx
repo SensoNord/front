@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { ResponseType } from '../../../types/Chat/ResponseType';
 import {
     ModifiedFileType,
-    emptyDirectusFileType
 } from '../../../types/File/ModifiedFileType';
 import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { downloadFile, fetchFileById } from '../../../slicers/file/file-slice';
+import { downloadFile } from '../../../slicers/file/file-slice';
 import {
     deleteResponseById,
     setCurrentSubjectDisplayWithAllRelatedData,
@@ -26,7 +25,7 @@ type Props = {
 };
 
 export default function Response(props: Props) {
-    const { response, subjectId, align } = props;
+    const { response, subjectId } = props;
     const dispatch = useAppDispatch();
     const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
@@ -75,10 +74,6 @@ export default function Response(props: Props) {
         );
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subjectId))
         setResponseIsBeingEdited(false);
-    }
-
-    function editResponse() {
-        setResponseIsBeingEdited(true);
     }
 
     async function handleDownloadFile() {

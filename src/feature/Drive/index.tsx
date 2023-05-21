@@ -9,7 +9,6 @@ import {
     downloadFile,
     updateFile,
 } from '../../slicers/file/file-slice';
-import { setActualFolder } from '../../slicers/file/folder-slice';
 import '../../styles/Forum.css';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
@@ -22,10 +21,6 @@ export default function Drive() {
     const { subjectListForFolder } = useAppSelector(state => state.subject);
 
     const fileRef = useRef(null) as { current: any };
-
-    useEffect(() => {
-        dispatch(setActualFolder({ id: '', name: 'Root', parent: '' }));
-    }, [dispatch]);
 
     useEffect(() => {
         const doFetchSubjectByFolderId = async () => {

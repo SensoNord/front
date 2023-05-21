@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PostType } from '../../types/Chat/PostType';
 import Post from '../../components/Chat/Subject/Post';
 import '../../styles/Forum.css';
@@ -54,10 +54,6 @@ export default function Subject() {
 
     function quitPopup2() {
         setShowPopup2(false);
-    }
-
-    function createPostButton() {
-        setShowPopup(true);
     }
 
     async function uploadFile(
@@ -190,14 +186,15 @@ export default function Subject() {
                             {sortedPost.map((post: PostType, index: number) => {
                                 return (
                                     <>
-                                        <div className={"bg-white w-10/12 mx-auto rounded-3xl drop-shadow-xl p-6 my-14"}>
+                                        <div className={"bg-white w-10/12 mx-auto rounded-3xl drop-shadow-xl p-6 my-14"}
+                                            key={post.id}
+                                        >
                                             <Post
                                                 post={post}
-                                                key={index}
+                                                key={post.id}
                                                 subject={
                                                     currentSubjectDisplayWithAllRelatedData!
                                                 }
-                                                index={index}
                                             ></Post>
                                         </div>
                                     </>

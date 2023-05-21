@@ -86,6 +86,7 @@ export default function Conversation() {
                                 (message: MessageType) => {
                                     return (
                                         <div
+                                            key={message.id}
                                             className={`flex ${message.user_created.id ===
                                                 connectedUser.id
                                                     ? 'justify-end'

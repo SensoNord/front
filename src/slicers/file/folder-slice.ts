@@ -35,7 +35,7 @@ export const fetchFolderByParent = createAsyncThunk(
             });
         }
     },
-);
+); 
 
 export const fetchFolderById = createAsyncThunk(
     'folder/fetchFolderById',
@@ -82,7 +82,6 @@ const folderSlice = createSlice({
             })
             .addCase(fetchFolderById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.actualFolder = action.payload as FolderType;
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFolderById.rejected, (state, action) => {

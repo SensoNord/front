@@ -25,11 +25,10 @@ import NameAndDate from '../../Field/NameAndDate';
 type Props = {
     post: PostType;
     subject: SubjectType;
-    index: number;
 };
 
 export default function Post(props: Props) {
-    const {post, subject, index} = props;
+    const {post, subject} = props;
     const dispatch = useAppDispatch();
     const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
@@ -177,7 +176,6 @@ export default function Post(props: Props) {
                                 .map(
                                     (
                                         response: ResponseType,
-                                        index: number,
                                     ) => {
                                         return (
                                             <div className={`flex ${response.user_created.id === connectedUser.id ? 'justify-end' : 'justify-start'}`}>
@@ -185,7 +183,7 @@ export default function Post(props: Props) {
                                                     <Response
                                                         response={response}
                                                         subjectId={subject.id}
-                                                        key={index}
+                                                        key={response.id}
                                                         align={response.user_created.id === connectedUser.id ? 'right' : 'end'}
                                                     />
                                                 </div>
@@ -196,7 +194,7 @@ export default function Post(props: Props) {
                             <WriteResponse
                                 postId={post.id}
                                 subject={subject}
-                                index={index}
+                                key={post.id + 'writeResponse'}
                             />
                         </div>
                     </div>
