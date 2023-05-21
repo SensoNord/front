@@ -1,7 +1,8 @@
 export default function Home() {
     return (
-        <>
-            <h1 className="">Home</h1>
-        </>
+        <div
+            style={{ backgroundImage: `url(/logo.svg)` }}
+            className="absolute tablet:inset-40 bg-center bg-no-repeat bg-contain opacity-20 portable:inset-16 inset-10"
+        />
     );
 }
