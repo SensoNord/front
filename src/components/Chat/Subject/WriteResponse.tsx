@@ -16,7 +16,7 @@ type Props = {
 export default function WriteResponse(props: Props) {
     const { postId, subject, index } = props;
     const dispatch = useAppDispatch();
-    const formRef = useRef(null) as { current: any };  
+    const formRef = useRef(null) as { current: any };
 
     const {
         fileRef,
@@ -32,7 +32,7 @@ export default function WriteResponse(props: Props) {
         quitPopup,
     } = useFileManagement({
         chat: subject,
-        chatType: 'subject',  
+        chatType: 'subject',
     })
 
     async function handleSubmit(e: {
@@ -81,14 +81,8 @@ export default function WriteResponse(props: Props) {
 
     return (
         <>
-<<<<<<< HEAD:src/components/Subject/WriteResponse.tsx
-            <form onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
-                <span className={'inline col-span-9 flex flex-col'}>
-=======
             <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
-                <span className={'inline col-span-10 flex flex-col'}>
-                    <label htmlFor={'response_' + index}>Réponse</label>
->>>>>>> main:src/components/Chat/Subject/WriteResponse.tsx
+                <span className={'inline col-span-9 flex flex-col'}>
                     <textarea
                         className={
                             'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'

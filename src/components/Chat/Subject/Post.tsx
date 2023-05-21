@@ -180,13 +180,13 @@ export default function Post(props: Props) {
                                         index: number,
                                     ) => {
                                         return (
-                                            <div className={`flex ${response.user_created.id === connectedUserId ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`flex ${response.user_created.id === connectedUser.id ? 'justify-end' : 'justify-start'}`}>
                                                 <div className={"w-7/12"}>
                                                     <Response
                                                         response={response}
                                                         subjectId={subject.id}
                                                         key={index}
-                                                        align={response.user_created.id === connectedUserId ? 'right' : 'end'}
+                                                        align={response.user_created.id === connectedUser.id ? 'right' : 'end'}
                                                     />
                                                 </div>
                                             </div>

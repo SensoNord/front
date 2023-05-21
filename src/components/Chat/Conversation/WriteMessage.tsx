@@ -88,7 +88,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                         id={'response'}
                         placeholder={'Nouveau Message'}
                         className={
-                            'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-100 rounded-md'
+                            'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md'
                         }
                         rows={3}
                         cols={30}

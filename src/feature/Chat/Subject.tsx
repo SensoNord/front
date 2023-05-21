@@ -180,7 +180,7 @@ export default function Subject() {
         <>
             {currentSubjectDisplayWithAllRelatedData && (
                 <div style={{height: '100%', position: 'relative'}} className={"overflow-hidden"}>
-                    <div className={'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white border-t-0 z-10'} style={{position: "absolute", maxWidth: 'max-content', right: 0, left: 0}}>
+                    <div className={'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white z-10'} style={{position: "absolute", maxWidth: 'max-content', right: 0, left: 0}}>
                         <h1>
                             {currentSubjectDisplayWithAllRelatedData!['name']}
                         </h1>
