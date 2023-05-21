@@ -53,10 +53,10 @@ export default function Conversation() {
     return (
         <>
             {currentConversationDisplayWithAllRelatedData && (
-                <div style={{ height: '100%' }} className={'overflow-hidden'}>
+                <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
                     <div
                         className={
-                            'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white border-t-0'
+                            'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white'
                         }
                         style={{
                             position: 'absolute',

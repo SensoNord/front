@@ -16,7 +16,7 @@ type Props = {
 export default function WriteResponse(props: Props) {
     const { postId, subject, index } = props;
     const dispatch = useAppDispatch();
-    const formRef = useRef(null) as { current: any };  
+    const formRef = useRef(null) as { current: any };
 
     const {
         fileRef,
@@ -32,7 +32,7 @@ export default function WriteResponse(props: Props) {
         quitPopup,
     } = useFileManagement({
         chat: subject,
-        chatType: 'subject',  
+        chatType: 'subject',
     })
 
     async function handleSubmit(e: {
@@ -82,26 +82,25 @@ export default function WriteResponse(props: Props) {
     return (
         <>
             <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
-                <span className={'inline col-span-10 flex flex-col'}>
-                    <label htmlFor={'response_' + index}>Réponse</label>
+                <span className={'inline col-span-9 flex flex-col'}>
                     <textarea
-                        id={'response_' + index}
                         className={
-                            'w-full p-2 mt-2 border-2 border-gray-700 rounded-md'
+                            'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'
                         }
-                        rows={3}
+                        rows={2}
                         cols={30}
+                        placeholder={'Nouveau Message'}
                     ></textarea>
                 </span>
                 <span
                     className={
-                        'inline col-start-11 col-span-2 flex flex-col justify-end items-end'
+                        'col-start-10 col-span-3 flex flex-col justify-start items-center'
                     }
                 >
                     <button
                         type={'button'}
                         className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
+                            'w-12/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
                         }
                         onClick={() => setShowPopup(true)}
                     >
@@ -111,7 +110,7 @@ export default function WriteResponse(props: Props) {
                     <button
                         type="submit"
                         className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                            'w-12/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
                         }
                     >
                         Envoyer
