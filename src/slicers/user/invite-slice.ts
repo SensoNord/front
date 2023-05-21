@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { ErrorType } from '../types/Request/ErrorType';
-import { StatusEnum } from '../types/Request/StatusEnum';
-import { InvitationType } from '../types/Users/InvitationType';
+import { directus } from '../../libraries/directus';
+import { ErrorType } from '../../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
+import { InvitationType } from '../../types/Users/InvitationType';
 
 interface InviteState {
     invitationList: Array<InvitationType>;

@@ -1,10 +1,9 @@
-import { FileType } from '@directus/sdk';
-import { StatusEnum } from '../types/Request/StatusEnum';
-import { ErrorType } from '../types/Request/ErrorType';
+import { StatusEnum } from '../../types/Request/StatusEnum';
+import { ErrorType } from '../../types/Request/ErrorType';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../libraries/directus';
-import { TokenType } from '../types/Users/Credentials/TokenTypes';
-import { ModifiedFileType } from '../types/Chat/ModifiedFileType';
+import { directus } from '../../libraries/directus';
+import { TokenType } from '../../types/Users/Credentials/TokenTypes';
+import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
 interface FileState {
     fileList: ModifiedFileType[];
@@ -20,7 +19,8 @@ const initialState: FileState = {
 
 export type UpdateFilePayload = {
     file: ModifiedFileType;
-    subjectId: string | null;
+    chatType: 'subject' | 'conversation';
+    chatId: string | null;
     folderId: string;
 };
 
@@ -84,14 +84,15 @@ export const updateFile = createAsyncThunk(
     'file/updateFile',
     async (updateFilePayload: UpdateFilePayload, { rejectWithValue }) => {
         try {
+            const chatType = updateFilePayload.chatType === 'subject' ? 'subjects_id' : 'conversations_id';
             const options =
-                updateFilePayload.subjectId !== null
+                updateFilePayload.chatId !== null
                     ? {
-                          subject: [
-                              { subjects_id: updateFilePayload.subjectId },
-                          ],
-                          folder: updateFilePayload.folderId,
-                      }
+                        [updateFilePayload.chatType]: [
+                            { [chatType]: updateFilePayload.chatId },
+                        ],
+                        folder: updateFilePayload.folderId,
+                    }
                     : { folder: updateFilePayload.folderId };
             const response = await directus.files.updateOne(
                 updateFilePayload.file.id,

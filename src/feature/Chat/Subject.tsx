@@ -1,23 +1,23 @@
-import {useEffect, useRef, useState} from 'react';
-import {PostType} from '../../types/Chat/PostType';
-import Post from '../../components/Subject/Post';
+import { useEffect, useRef, useState } from 'react';
+import { PostType } from '../../types/Chat/PostType';
+import Post from '../../components/Chat/Subject/Post';
 import '../../styles/Forum.css';
 import {createPortal} from 'react-dom';
 import DisplayFiles from '../../components/Files/DisplayFiles';
-import {ModifiedFileType} from '../../types/Chat/ModifiedFileType';
-import {useAppDispatch, useAppSelector} from '../../App/hooks';
+import { ModifiedFileType } from '../../types/File/ModifiedFileType';
+import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import {
     createPostToSubject,
     setCurrentSubjectDisplayWithAllRelatedData,
-} from '../../slicers/subject-slice';
-import {PayLoadCreatePost} from '../../slicers/subject-slice-helper';
+} from '../../slicers/chat/subject-slice';
+import { PayLoadCreateSubjectPost } from '../../slicers/chat/subject-slice-helper';
 import {
     UpdateFilePayload,
     createFile,
     downloadFileWithoutURL,
     fetchFileById,
     updateFile,
-} from '../../slicers/file-slice';
+} from '../../slicers/file/file-slice';
 
 type UploadedFile = {
     file: ModifiedFileType | File;
@@ -70,8 +70,9 @@ export default function Subject() {
         await dispatch(
             updateFile({
                 file: createdFile,
-                subjectId: currentSubjectDisplayWithAllRelatedData!.id,
+                chatId: currentSubjectDisplayWithAllRelatedData!.id,
                 folderId: currentSubjectDisplayWithAllRelatedData!.folder_id,
+                chatType: 'subject',
             } as UpdateFilePayload),
         );
         if (createdFile) {
@@ -81,7 +82,7 @@ export default function Subject() {
                     title: postTitle,
                     message: postMessage,
                     file_id: createdFile.id,
-                } as PayLoadCreatePost),
+                } as PayLoadCreateSubjectPost),
             );
         }
     }
@@ -143,7 +144,7 @@ export default function Subject() {
                         subject_id: currentSubjectDisplayWithAllRelatedData!.id,
                         title: formJson.titlePost,
                         message: formJson.message,
-                    } as PayLoadCreatePost),
+                    } as PayLoadCreateSubjectPost),
                 );
             }
             dispatch(

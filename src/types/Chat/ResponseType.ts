@@ -1,6 +1,6 @@
-import { UserType, emptyUser } from './UserType';
+import { UserType } from '@directus/sdk';
 
-export type MessageResponseType = {
+export type ResponseType = {
     id: string;
     user_created: UserType;
     date_created: Date;
@@ -11,11 +11,11 @@ export type MessageResponseType = {
     post_id: string;
 };
 
-const emptyMessageResponse: MessageResponseType = {
+const emptyMessageResponse: ResponseType = {
     id: '',
-    user_created: emptyUser,
+    user_created: {} as UserType,
     date_created: new Date(),
-    user_updated: emptyUser,
+    user_updated: {} as UserType,
     date_updated: new Date(),
     message: '',
     file_id: '',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FileType, FolderType } from '@directus/sdk';
+import { FolderType } from '@directus/sdk';
 import LoadingSpinner from '../LoadingSpinner';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
@@ -7,9 +7,9 @@ import {
     fetchFolderById,
     fetchFolderByParent,
     setActualFolder,
-} from '../../slicers/folder-slice';
-import { deleteFileById, fetchFileByFolder } from '../../slicers/file-slice';
-import { ModifiedFileType } from '../../types/Chat/ModifiedFileType';
+} from '../../slicers/file/folder-slice';
+import { deleteFileById, fetchFileByFolder } from '../../slicers/file/file-slice';
+import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
 type Props = {
     callbackOnClick?: Function;
@@ -46,7 +46,7 @@ export default function DisplayFiles(props: Props) {
         };
 
         fetchData();
-    }, []);
+    }, [actualFolder.id, dispatch, startingFolderId]);
 
     const handleClickFolder = async (newFolder: FolderType) => {
         setIsLoading(true);

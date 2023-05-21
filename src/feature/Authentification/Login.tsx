@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import PasswordField from '../../components/Field/PasswordField';
@@ -7,15 +7,14 @@ import {
     fetchConnectedUser,
     fetchConnectedUserRole,
     fetchLogin,
-    loginWithToken,
-} from '../../slicers/auth-slice';
+    setIsConnecting,
+} from '../../slicers/authentification/auth-slice';
 import { CredentialsType } from '../../types/Users/Credentials/CredentialsType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [token, setToken] = useState<string>('');
     const [inputColor, setInputColor] = useState<string>(
         'bg-blue-200 tablet:bg-blue-100',
     );
@@ -27,19 +26,20 @@ export default function Login() {
     const passwordFieldHandleChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => setPassword(event.target.value);
-    const { status } = useAppSelector(state => state.auth);
+    const { status, isConnecting } = useAppSelector(state => state.auth);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const token = localStorage.getItem('auth_token');
-        const expires = localStorage.getItem('auth_expires');
-        if (token) {
-            setToken(token);
-            dispatch(loginWithToken({ access_token: token, expires: expires }));
-        }
-    }, [dispatch]);
+        dispatch(setIsConnecting(true))
+    }, [dispatch])
 
+    const fetchUserData = useCallback(async () => {
+        await dispatch(fetchConnectedUser());
+        await dispatch(fetchConnectedUserRole());
+        navigate('/home');
+    }, [dispatch, navigate]);
+    
     useEffect(() => {
         switch (status) {
             case StatusEnum.IDLE || StatusEnum.LOADING:
@@ -47,7 +47,7 @@ export default function Login() {
                 break;
             case StatusEnum.SUCCEEDED:
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
-                navigate('/home');
+                fetchUserData();
                 break;
             case StatusEnum.FAILED:
                 setInputColor('bg-red-200 tablet:bg-red-100');
@@ -56,7 +56,7 @@ export default function Login() {
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
                 break;
         }
-    }, [status, token, navigate]);
+    }, [status, navigate, isConnecting, dispatch, fetchUserData]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -65,8 +65,6 @@ export default function Login() {
             password,
         };
         await dispatch(fetchLogin(credentials));
-        await dispatch(fetchConnectedUser());
-        await dispatch(fetchConnectedUserRole());
     };
 
     return (
