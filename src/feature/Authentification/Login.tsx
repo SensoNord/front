@@ -31,15 +31,15 @@ export default function Login() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(setIsConnecting(true))
-    }, [dispatch])
+        dispatch(setIsConnecting(true));
+    }, [dispatch]);
 
     const fetchUserData = useCallback(async () => {
         await dispatch(fetchConnectedUser());
         await dispatch(fetchConnectedUserRole());
-        navigate('/home');
+        navigate('/');
     }, [dispatch, navigate]);
-    
+
     useEffect(() => {
         switch (status) {
             case StatusEnum.IDLE || StatusEnum.LOADING:
