@@ -6,7 +6,6 @@ const PrivateRoute: FC<{ children: React.ReactElement }> = ({ children }) => {
     const { token, isConnecting } = useAppSelector(state => state.auth);
 
     if (!token && isConnecting) {
-        console.log(token, isConnecting)
         return <Navigate to="/login" />;
     }
     
