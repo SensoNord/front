@@ -5,6 +5,9 @@ import { ErrorType } from '../../types/Request/ErrorType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { RoleItem, UserType } from '@directus/sdk';
 import { AuthResult } from '@directus/sdk';
+import { UserInformationType } from '../../types/Users/UserInformationType';
+
+export const fetchLoginType = 'auth/fetchLogin';
 
 interface LoginState {
     isConnecting: boolean;
@@ -25,7 +28,7 @@ const initialState: LoginState = {
 };
 
 export const fetchLogin = createAsyncThunk(
-    'auth/fetchLogin',
+    fetchLoginType,
     async (credentials: CredentialsType, { rejectWithValue }) => {
         try {
             const response = await directus.auth.login(credentials);
@@ -75,6 +78,23 @@ export const fetchConnectedUserRole = createAsyncThunk(
     },
 );
 
+export const updateCurrentUser = createAsyncThunk(
+    'auth/updateCurrentUser',
+    async (userInformation: UserInformationType, { rejectWithValue }) => {
+        try {
+            await directus.users.me.update({
+                first_name: userInformation.first_name,
+                last_name: userInformation.last_name,
+            });
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -90,7 +110,7 @@ const authSlice = createSlice({
         setIsConnecting: (state, action) => {
             state.isConnecting = action.payload;
             state.status = StatusEnum.IDLE;
-        }
+        },
     },
     extraReducers: builder => {
         builder
@@ -139,6 +159,18 @@ const authSlice = createSlice({
             .addCase(fetchConnectedUserRole.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.connectedUserRole = {} as RoleItem;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(updateCurrentUser.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updateCurrentUser.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updateCurrentUser.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });
     },
