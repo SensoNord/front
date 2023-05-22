@@ -97,7 +97,10 @@ export const updatePostListAndRelatedResponseBySubjectId = createAsyncThunk(
 
 export const createResponseToPost = createAsyncThunk(
     'items/createResponseToPost',
-    async (payLoadMessage: PayLoadCreateSubjectMessage, { rejectWithValue }) => {
+    async (
+        payLoadMessage: PayLoadCreateSubjectMessage,
+        { rejectWithValue },
+    ) => {
         try {
             const response = await directus.items('responses').createOne(
                 {
@@ -129,6 +132,7 @@ export const createPostToSubject = createAsyncThunk(
                     title: payloadPost.title,
                     message: payloadPost.message,
                     file_id: payloadPost.file_id,
+                    sondage_id: payloadPost.sondage_id,
                 },
                 {
                     fields: postFields,
@@ -146,7 +150,10 @@ export const createPostToSubject = createAsyncThunk(
 
 export const updatePostMessageById = createAsyncThunk(
     'items/updatePostMessageById',
-    async (payloadUpdatePost: PayLoadUpdateSubjectPost, { rejectWithValue }) => {
+    async (
+        payloadUpdatePost: PayLoadUpdateSubjectPost,
+        { rejectWithValue },
+    ) => {
         try {
             const response = await directus.items('posts').updateOne(
                 payloadUpdatePost.id,
@@ -463,9 +470,7 @@ const subjectSlice = createSlice({
                                                 responses: (
                                                     post.responses as ResponseType[]
                                                 ).filter(
-                                                    (
-                                                        response: ResponseType,
-                                                    ) =>
+                                                    (response: ResponseType) =>
                                                         response.id !==
                                                         responseId,
                                                 ),
@@ -497,17 +502,15 @@ const subjectSlice = createSlice({
                                         ...post,
                                         responses: (
                                             post.responses as ResponseType[]
-                                        ).map(
-                                            (response: ResponseType) => {
-                                                if (
-                                                    response.id ===
-                                                    action.payload.id
-                                                ) {
-                                                    return action.payload;
-                                                }
-                                                return response;
-                                            },
-                                        ),
+                                        ).map((response: ResponseType) => {
+                                            if (
+                                                response.id ===
+                                                action.payload.id
+                                            ) {
+                                                return action.payload;
+                                            }
+                                            return response;
+                                        }),
                                     };
                                 },
                             ),
