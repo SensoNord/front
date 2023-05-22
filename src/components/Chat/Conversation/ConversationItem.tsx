@@ -8,10 +8,11 @@ type ConversationItemProps = {
     conversation: ConversationType;
     selectedChat: ChatEnum;
     setSelectedChat: (selectedChat: ChatEnum) => void;
+    className: string;
 };
 
 export default function ConversationItem(props: ConversationItemProps) {
-    const { conversation, selectedChat, setSelectedChat } = props;
+    const { conversation, selectedChat, setSelectedChat, className } = props;
     const dispatch = useAppDispatch();
     const [isCurrentConversation, setIsCurrentConversation] =
         useState<boolean>(false);
@@ -27,7 +28,6 @@ export default function ConversationItem(props: ConversationItemProps) {
             const otherUserCandidate = conversation.user_list.find(
                 user => user.directus_users_id.id !== connectedUser?.id,
             );
-
             if (otherUserCandidate) {
                 setDisplayableConversationName(
                     otherUserCandidate.directus_users_id.first_name +
@@ -68,7 +68,7 @@ export default function ConversationItem(props: ConversationItemProps) {
             onClick={() => handleChangeSelectedConversation(conversation)}
             className={`${
                 isCurrentConversation ? 'bg-blue-200' : ''
-            } cursor-pointer`}
+            } cursor-pointer ${className}`}
         >
             <h1>{displayableConversationName}</h1>
         </div>

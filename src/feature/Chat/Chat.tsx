@@ -15,27 +15,21 @@ export default function Chat() {
     );
 
     return (
-        <>
-            <div className="flex">
-                <div className="w-1/4">
-                    <ChatNavbar
-                        selectedChat={selectedChat}
-                        setSelectedChat={setSelectedChat}
-                    />
-                </div>
+        <div className="flex">
+            <div className="laptop:w-60">
+                <ChatNavbar
+                    selectedChat={selectedChat}
+                    setSelectedChat={setSelectedChat}
+                />
+            </div>
+            <div className="flex-1">
                 {selectedChat === ChatEnum.SUBJECT &&
-                    currentSubjectDisplayWithAllRelatedData && (
-                        <div className="w-3/4">
-                            <Subject />
-                        </div>
-                    )}
+                    currentSubjectDisplayWithAllRelatedData && <Subject />}
                 {selectedChat === ChatEnum.CONVERSATION &&
                     currentConversationDisplayWithAllRelatedData && (
-                        <div className="w-3/4">
-                            <Conversation />
-                        </div>
+                        <Conversation />
                     )}
             </div>
-        </>
+        </div>
     );
 }

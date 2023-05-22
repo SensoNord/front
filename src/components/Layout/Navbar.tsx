@@ -34,7 +34,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="bg-white p-4 flex justify-between items-center border-b-2 border-gray-300">
+        <nav className="sticky top-0 z-50 bg-white p-4 flex justify-between items-center border-b-2 border-gray-300">
             <div className="tablet:hidden">
                 <Menu as="div" className="relative inline-block text-left">
                     <div>

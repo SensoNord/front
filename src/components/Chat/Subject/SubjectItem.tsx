@@ -8,10 +8,11 @@ type SubjectItemProps = {
     subject: SubjectType;
     selectedChat: ChatEnum;
     setSelectedChat: (selectedChat: ChatEnum) => void;
+    className: string;
 };
 
 export default function SubjectItem(props: SubjectItemProps) {
-    const { subject, setSelectedChat, selectedChat } = props;
+    const { subject, setSelectedChat, selectedChat, className } = props;
     const dispatch = useAppDispatch();
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
         state => state.subject,
@@ -41,7 +42,7 @@ export default function SubjectItem(props: SubjectItemProps) {
             onClick={() => handleChangeSelectedSubject(subject)}
             className={`${
                 isCurrentSubject ? 'bg-blue-200' : ''
-            } cursor-pointer`}
+            } cursor-pointer ${className}`}
         >
             <h1>{subject.name}</h1>
         </div>
