@@ -1,5 +1,5 @@
 import { store } from './store';
-import { loginWithToken } from '../slicers/auth-slice';
+import { loginWithToken } from '../slicers/authentification/auth-slice';
 
 describe('Middleware', () => {
     beforeEach(() => {
@@ -29,6 +29,6 @@ describe('Middleware', () => {
             error: 'Internal Server Error',
         };
         store.dispatch(action);
-        expect(store.getState().auth.token.access_token).toEqual('token');
+        expect(store.getState().auth.token!.access_token).toEqual('token');
     });
 });
