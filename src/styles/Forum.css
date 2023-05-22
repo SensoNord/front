@@ -1,7 +1,7 @@
 .alertContainer {
     overflow-y: auto;
     grid-template-columns: auto minmax(0, 1fr) auto;
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, 0.4);
     -webkit-tap-highlight-color: transparent;
     display: grid;
     position: fixed;
@@ -11,13 +11,18 @@
     bottom: 0;
     left: 0;
     box-sizing: border-box;
-    grid-template-areas: "top-start top top-end" "center-start center center-end" "bottom-start bottom-center bottom-end";
-    grid-template-rows: minmax(-webkit-min-content, auto) minmax(-webkit-min-content, auto) minmax(-webkit-min-content, auto);
-    grid-template-rows: minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);
+    grid-template-areas: 'top-start top top-end' 'center-start center center-end' 'bottom-start bottom-center bottom-end';
+    grid-template-rows:
+        minmax(-webkit-min-content, auto) minmax(-webkit-min-content, auto)
+        minmax(-webkit-min-content, auto);
+    grid-template-rows: minmax(min-content, auto) minmax(min-content, auto) minmax(
+            min-content,
+            auto
+        );
     height: 100%;
-    padding: .625em;
+    padding: 0.625em;
     overflow-x: hidden;
-    transition: background-color .1s;
+    transition: background-color 0.1s;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -27,12 +32,12 @@
     grid-row: 2;
     align-self: center;
     justify-self: center;
-    -webkit-animation: swal2-show .3s;
-    animation: swal2-show .3s;
+    -webkit-animation: swal2-show 0.3s;
+    animation: swal2-show 0.3s;
     -webkit-tap-highlight-color: transparent;
     position: relative;
     box-sizing: border-box;
-    grid-template-columns: minmax(0,100%);
+    grid-template-columns: minmax(0, 100%);
     width: 32em;
     max-width: 100%;
     padding: 0 0 1.25em;

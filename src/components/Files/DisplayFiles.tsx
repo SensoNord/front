@@ -7,7 +7,10 @@ import {
     fetchFolderById,
     fetchFolderByParent,
 } from '../../slicers/file/folder-slice';
-import { deleteFileById, fetchFileByFolder } from '../../slicers/file/file-slice';
+import {
+    deleteFileById,
+    fetchFileByFolder,
+} from '../../slicers/file/file-slice';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
 type Props = {
@@ -32,11 +35,14 @@ export default function DisplayFiles(props: Props) {
     const { folderList } = useAppSelector(state => state.folder);
     const { fileList } = useAppSelector(state => state.file);
 
-    const getFolderById = useCallback(async (id: string) => {
-        const folderPayload = await dispatch(fetchFolderById(id));
-        const newFolder = folderPayload.payload as FolderType;
-        return newFolder;
-    }, [dispatch]);
+    const getFolderById = useCallback(
+        async (id: string) => {
+            const folderPayload = await dispatch(fetchFolderById(id));
+            const newFolder = folderPayload.payload as FolderType;
+            return newFolder;
+        },
+        [dispatch],
+    );
 
     const handleClickFolder = (newFolder: FolderType) => {
         setIsDataLoaded(false);
@@ -85,7 +91,7 @@ export default function DisplayFiles(props: Props) {
         };
 
         fetchData();
-    }, [dispatch, actualFolder])
+    }, [dispatch, actualFolder]);
 
     return (
         <>
@@ -98,7 +104,7 @@ export default function DisplayFiles(props: Props) {
                     </div>
                     {folderList && (
                         <div>
-                            {folderList.map((folder) => {
+                            {folderList.map(folder => {
                                 return (
                                     <div key={folder.id}>
                                         <div
@@ -116,7 +122,7 @@ export default function DisplayFiles(props: Props) {
                     )}
                     {fileList && (
                         <div>
-                            {fileList.map((file) => {
+                            {fileList.map(file => {
                                 return (
                                     <div key={file.id}>
                                         <div

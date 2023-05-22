@@ -1,10 +1,13 @@
 import { ConversationType } from '../../../types/Chat/ConversationType';
-import {  useRef } from 'react';
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../../Files/DisplayFiles';
 import '../../../styles/textarea.css';
 import { useAppDispatch } from '../../../App/hooks';
-import { createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData } from '../../../slicers/chat/conversation-slice';
+import {
+    createMessageToConversation,
+    setCurrentConversationDisplayWithAllRelatedData,
+} from '../../../slicers/chat/conversation-slice';
 import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 
@@ -15,7 +18,7 @@ type WriteMessageProps = {
 export default function WriteMessage(props: WriteMessageProps) {
     const { conversation } = props;
     const dispatch = useAppDispatch();
-    const formRef = useRef(null) as { current: any };  
+    const formRef = useRef(null) as { current: any };
 
     const {
         fileRef,
@@ -31,8 +34,8 @@ export default function WriteMessage(props: WriteMessageProps) {
         quitPopup,
     } = useFileManagement({
         chat: conversation,
-        chatType: 'conversation',  
-    })
+        chatType: 'conversation',
+    });
 
     async function handleSubmit(e: {
         preventDefault: () => void;
@@ -54,23 +57,25 @@ export default function WriteMessage(props: WriteMessageProps) {
         const createdFile = await handleFileUpload();
 
         if (createdFile) {
-                await dispatch(
-                    createMessageToConversation({
-                        conversation_id: conversation.id,
-                        message: responseMessage,
-                        fileId: createdFile.id,
-                    } as PayLoadCreateConversationMessage)
-                );
+            await dispatch(
+                createMessageToConversation({
+                    conversation_id: conversation.id,
+                    message: responseMessage,
+                    fileId: createdFile.id,
+                } as PayLoadCreateConversationMessage),
+            );
         } else {
-            await dispatch (
+            await dispatch(
                 createMessageToConversation({
                     conversation_id: conversation.id,
                     message: responseMessage,
                     fileId: fileId,
-                } as PayLoadCreateConversationMessage)
+                } as PayLoadCreateConversationMessage),
             );
         }
-        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
+        dispatch(
+            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
+        );
 
         clearFile();
         formRef.current.reset();
@@ -154,4 +159,4 @@ export default function WriteMessage(props: WriteMessageProps) {
                 )}
         </>
     );
-};
+}

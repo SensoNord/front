@@ -12,9 +12,7 @@ export default function Conversation() {
     const { connectedUser } = useAppSelector(state => state.auth);
     const [otherUser, setOtherUser] = useState<UserType | null>(null);
 
-    const [sortedMessages, setSortedMessages] = useState<MessageType[]>(
-        [],
-    );
+    const [sortedMessages, setSortedMessages] = useState<MessageType[]>([]);
 
     const messagesEndRef = useRef(null) as { current: any };
 
@@ -32,15 +30,16 @@ export default function Conversation() {
 
     useEffect(() => {
         if (currentConversationDisplayWithAllRelatedData) {
-            const otherUserCandidate = currentConversationDisplayWithAllRelatedData.user_list.find(
-                user => user.directus_users_id.id !== connectedUser?.id
-            );
-    
+            const otherUserCandidate =
+                currentConversationDisplayWithAllRelatedData.user_list.find(
+                    user => user.directus_users_id.id !== connectedUser?.id,
+                );
+
             if (otherUserCandidate) {
                 setOtherUser(otherUserCandidate.directus_users_id);
             }
         }
-    }, [currentConversationDisplayWithAllRelatedData, connectedUser?.id]);    
+    }, [currentConversationDisplayWithAllRelatedData, connectedUser?.id]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -53,7 +52,10 @@ export default function Conversation() {
     return (
         <>
             {currentConversationDisplayWithAllRelatedData && (
-                <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
+                <div
+                    style={{ height: '100%', position: 'relative' }}
+                    className={'overflow-hidden'}
+                >
                     <div
                         className={
                             'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white'
@@ -82,37 +84,35 @@ export default function Conversation() {
                             }
                             style={{ overflowAnchor: 'auto' }}
                         >
-                            {sortedMessages.map(
-                                (message: MessageType) => {
-                                    return (
-                                        <div
-                                            key={message.id}
-                                            className={`flex ${message.user_created.id ===
-                                                connectedUser.id
-                                                    ? 'justify-end'
-                                                    : 'justify-start'
-                                                }`}
-                                        >
-                                            <div className={'w-7/12'}>
-                                                <Message
-                                                    conversation={
-                                                        currentConversationDisplayWithAllRelatedData
-                                                    }
-                                                    message={message}
-                                                    align={
-                                                        message.user_created
-                                                            .id ===
-                                                            connectedUser?.id
-                                                            ? 'right'
-                                                            : 'end'
-                                                    }
-                                                    key={message.id}
-                                                />
-                                            </div>
+                            {sortedMessages.map((message: MessageType) => {
+                                return (
+                                    <div
+                                        key={message.id}
+                                        className={`flex ${
+                                            message.user_created.id ===
+                                            connectedUser.id
+                                                ? 'justify-end'
+                                                : 'justify-start'
+                                        }`}
+                                    >
+                                        <div className={'w-7/12'}>
+                                            <Message
+                                                conversation={
+                                                    currentConversationDisplayWithAllRelatedData
+                                                }
+                                                message={message}
+                                                align={
+                                                    message.user_created.id ===
+                                                    connectedUser?.id
+                                                        ? 'right'
+                                                        : 'end'
+                                                }
+                                                key={message.id}
+                                            />
                                         </div>
-                                    );
-                                },
-                            )}
+                                    </div>
+                                );
+                            })}
                             <div ref={messagesEndRef} />
                         </div>
                         <div className={'row-span-2 h-full'}>

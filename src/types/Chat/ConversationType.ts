@@ -1,8 +1,8 @@
-import { UserType } from "@directus/sdk";
-import { MessageType } from "./MessageType";
+import { UserType } from '@directus/sdk';
+import { MessageType } from './MessageType';
 
 export type ConversationType = {
-    id: string
+    id: string;
     user_created: UserType;
     date_created: Date;
     user_updated: UserType;
@@ -13,8 +13,8 @@ export type ConversationType = {
         },
         {
             directus_users_id: UserType;
-        }
+        },
     ];
     messages_list: MessageType[] | [];
-    folder_id: string
-}
+    folder_id: string;
+};

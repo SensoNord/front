@@ -35,7 +35,7 @@ export const fetchFolderByParent = createAsyncThunk(
             });
         }
     },
-); 
+);
 
 export const fetchFolderById = createAsyncThunk(
     'folder/fetchFolderById',
