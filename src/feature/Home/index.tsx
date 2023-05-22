@@ -2,7 +2,10 @@
 
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../App/hooks';
+import CreerSondage from '../../components/Sondage/creerSondage';
+import Sondage from '../../components/Sondage/Sondage';
 import { fetchSubject } from '../../slicers/subject-slice';
+
 
 export default function Home() {
     const dispatch = useAppDispatch();
@@ -14,6 +17,9 @@ export default function Home() {
     return (
         <>
             <h1 className="">Home</h1>
+
+            <Sondage sondage_id={10} />
+            
         </>
     );
 }
