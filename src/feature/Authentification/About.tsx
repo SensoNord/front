@@ -21,7 +21,8 @@ type AboutProps = {
 
 export const About = (props: AboutProps) => {
     const { isInsriptionSuccess, password, setPassword } = props;
-
+    const [isErrorDisplayable, setIsErrorDisplayable] =
+        useState<boolean>(false);
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
@@ -103,6 +104,7 @@ export const About = (props: AboutProps) => {
                 break;
             case StatusEnum.FAILED:
                 setInputColor('bg-red-200 tablet:bg-red-100');
+                setIsErrorDisplayable(true);
                 break;
             default:
                 setInputColor('bg-blue-200 tablet:bg-blue-100');
@@ -112,6 +114,7 @@ export const About = (props: AboutProps) => {
 
     useEffect(() => {
         setInputColor('bg-blue-200 tablet:bg-blue-100');
+        setIsErrorDisplayable(false);
     }, [email]);
 
     const handleSubmit = async (event: any) => {
@@ -174,7 +177,7 @@ export const About = (props: AboutProps) => {
                         label="Nom"
                         className={`w-4/5 placeholder-inherit text-lg tablet:text-xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none bg-blue-200 tablet:bg-blue-100`}
                     />
-                    {status === StatusEnum.FAILED ? (
+                    {isErrorDisplayable && status === StatusEnum.FAILED ? (
                         <p className="mt-4 mb-4 text-red-500 text-sm">
                             {status === StatusEnum.FAILED && !password
                                 ? 'Une erreur est survenue, veuillez inscrire le mot de passe précédant'
