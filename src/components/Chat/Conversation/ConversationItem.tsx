@@ -25,14 +25,18 @@ export default function ConversationItem(props: ConversationItemProps) {
     useEffect(() => {
         if (conversation) {
             const otherUserCandidate = conversation.user_list.find(
-                user => user.directus_users_id.id !== connectedUser?.id
+                user => user.directus_users_id.id !== connectedUser?.id,
             );
-    
+
             if (otherUserCandidate) {
-                setDisplayableConversationName(otherUserCandidate.directus_users_id.first_name + ' ' + otherUserCandidate.directus_users_id.last_name);
+                setDisplayableConversationName(
+                    otherUserCandidate.directus_users_id.first_name +
+                        ' ' +
+                        otherUserCandidate.directus_users_id.last_name,
+                );
             }
         }
-    }, [conversation, connectedUser?.id]);    
+    }, [conversation, connectedUser?.id]);
 
     useEffect(() => {
         if (

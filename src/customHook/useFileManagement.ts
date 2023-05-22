@@ -1,6 +1,10 @@
 // useFileManagement.js
 import { useRef, useState } from 'react';
-import { UpdateFilePayload, createFile, updateFile } from '../slicers/file/file-slice';
+import {
+    UpdateFilePayload,
+    createFile,
+    updateFile,
+} from '../slicers/file/file-slice';
 import { ModifiedFileType } from '../types/File/ModifiedFileType';
 import { useAppDispatch } from '../App/hooks';
 import { SubjectType } from '../types/Chat/SubjectType';
@@ -9,7 +13,7 @@ import { ConversationType } from '../types/Chat/ConversationType';
 type useFileManagementProps = {
     chat: SubjectType | ConversationType;
     chatType: 'subject' | 'conversation';
-}
+};
 
 export const useFileManagement = (props: useFileManagementProps) => {
     const { chat, chatType } = props;
@@ -41,7 +45,7 @@ export const useFileManagement = (props: useFileManagementProps) => {
         setFile(null);
         setFileId(file.id);
         setFileName(file.filename_download);
-        setShowPopup(false)
+        setShowPopup(false);
     }
 
     function getFileFromComputer(e: { target: { files: any } }) {
@@ -49,7 +53,7 @@ export const useFileManagement = (props: useFileManagementProps) => {
         setFile(f);
         setFileId(null);
         setFileName(f.name);
-        setShowPopup(false)
+        setShowPopup(false);
     }
 
     function clearFile() {

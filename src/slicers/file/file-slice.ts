@@ -84,15 +84,18 @@ export const updateFile = createAsyncThunk(
     'file/updateFile',
     async (updateFilePayload: UpdateFilePayload, { rejectWithValue }) => {
         try {
-            const chatType = updateFilePayload.chatType === 'subject' ? 'subjects_id' : 'conversations_id';
+            const chatType =
+                updateFilePayload.chatType === 'subject'
+                    ? 'subjects_id'
+                    : 'conversations_id';
             const options =
                 updateFilePayload.chatId !== null
                     ? {
-                        [updateFilePayload.chatType]: [
-                            { [chatType]: updateFilePayload.chatId },
-                        ],
-                        folder: updateFilePayload.folderId,
-                    }
+                          [updateFilePayload.chatType]: [
+                              { [chatType]: updateFilePayload.chatId },
+                          ],
+                          folder: updateFilePayload.folderId,
+                      }
                     : { folder: updateFilePayload.folderId };
             const response = await directus.files.updateOne(
                 updateFilePayload.file.id,

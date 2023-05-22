@@ -3,7 +3,10 @@ import { SubjectType } from '../../../types/Chat/SubjectType';
 import { createPortal } from 'react-dom';
 import DisplayFiles from '../../Files/DisplayFiles';
 import { useAppDispatch } from '../../../App/hooks';
-import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
+import {
+    createResponseToPost,
+    setCurrentSubjectDisplayWithAllRelatedData,
+} from '../../../slicers/chat/subject-slice';
 import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 
@@ -32,7 +35,7 @@ export default function WriteResponse(props: Props) {
     } = useFileManagement({
         chat: subject,
         chatType: 'subject',
-    })
+    });
 
     async function handleSubmit(e: {
         preventDefault: () => void;
@@ -54,14 +57,14 @@ export default function WriteResponse(props: Props) {
         const createdFile = await handleFileUpload();
 
         if (createdFile) {
-                await dispatch(
-                    createResponseToPost({
-                        subject_id: subject.id,
-                        post_id: postId,
-                        message: responseMessage,
-                        file_id: createdFile.id,
-                    } as PayLoadCreateSubjectMessage),
-                );
+            await dispatch(
+                createResponseToPost({
+                    subject_id: subject.id,
+                    post_id: postId,
+                    message: responseMessage,
+                    file_id: createdFile.id,
+                } as PayLoadCreateSubjectMessage),
+            );
         } else {
             await dispatch(
                 createResponseToPost({
@@ -80,7 +83,11 @@ export default function WriteResponse(props: Props) {
 
     return (
         <>
-            <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
+            <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                className={'grid grid-cols-12 mt-10'}
+            >
                 <span className={'inline col-span-9 flex flex-col'}>
                     <textarea
                         className={

@@ -8,7 +8,7 @@ const PrivateRoute: FC<{ children: React.ReactElement }> = ({ children }) => {
     if (!token && isConnecting) {
         return <Navigate to="/login" />;
     }
-    
+
     return children;
 };
 
