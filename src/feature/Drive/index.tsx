@@ -33,7 +33,7 @@ export default function Drive() {
             if (currentDisplayedFolder && currentDisplayedFolder.id !== '') {
                 let currentSubject = (await dispatch(fetchSubjectByFolderId(currentDisplayedFolder.id))).payload as SubjectType[];
                 if (currentSubject.length !== 0) {
-                    if (currentSubject['0'].user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
+                    if (currentSubject['0']?.user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
                         setUploadIsEnabled(true);
                     } else {
                         setUploadIsEnabled(false);
@@ -41,7 +41,7 @@ export default function Drive() {
                 } else {
                     let currentConv = (await dispatch(fetchConversationByFolderId(currentDisplayedFolder.id))).payload as ConversationType[];
                     if (currentConv.length !== 0) {
-                        if (currentConv['0'].user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
+                        if (currentConv['0']?.user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
                             setUploadIsEnabled(true);
                         } else {
                             setUploadIsEnabled(false);
@@ -56,7 +56,7 @@ export default function Drive() {
         };
 
         doFetchSubjectByFolderId();
-    }, [dispatch, currentDisplayedFolder, connectedUser.id]);
+    }, [dispatch, connectedUser.id]);
 
     function newFile() {
         setShowPopup(true);

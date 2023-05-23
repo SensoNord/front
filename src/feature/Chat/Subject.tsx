@@ -147,11 +147,10 @@ export default function Subject() {
                 >
                     <div
                         className={
-                            'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white z-10'
+                            'text-3xl justify-center flex border-b-2 border-gray-300 mx-auto px-10 pb-2 bg-white z-10'
                         }
                         style={{
                             position: 'absolute',
-                            maxWidth: 'max-content',
                             right: 0,
                             left: 0,
                         }}
