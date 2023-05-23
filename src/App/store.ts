@@ -6,6 +6,7 @@ import invitationReducer from '../slicers/user/invite-slice';
 import folderReducer from '../slicers/file/folder-slice';
 import fileReducer from '../slicers/file/file-slice';
 import conversationReducer from '../slicers/chat/conversation-slice';
+import userReducer from '../slicers/user/user-slice';
 import { errorMiddleware } from './middleware';
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
         folder: folderReducer,
         file: fileReducer,
         conversation: conversationReducer,
+        user: userReducer,
     },
     middleware: getDefaultMiddleware => [
         ...getDefaultMiddleware(),

@@ -7,12 +7,12 @@ import { ChatEnum } from '../../../types/Chat/ChatEnum';
 type SubjectItemProps = {
     subject: SubjectType;
     selectedChat: ChatEnum;
-    setSelectedChat: (selectedChat: ChatEnum) => void;
+    handleSetSelectedChat: (selectedChat: ChatEnum) => void;
     className: string;
 };
 
 export default function SubjectItem(props: SubjectItemProps) {
-    const { subject, setSelectedChat, selectedChat, className } = props;
+    const { subject, handleSetSelectedChat, selectedChat, className } = props;
     const dispatch = useAppDispatch();
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
         state => state.subject,
@@ -32,7 +32,7 @@ export default function SubjectItem(props: SubjectItemProps) {
     }, [currentSubjectDisplayWithAllRelatedData, subject, selectedChat]);
 
     const handleChangeSelectedSubject = (subject: SubjectType) => {
-        setSelectedChat(ChatEnum.SUBJECT);
+        handleSetSelectedChat(ChatEnum.SUBJECT);
         dispatch(setCurrentSubjectDisplay(subject));
     };
 

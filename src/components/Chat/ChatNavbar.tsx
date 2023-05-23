@@ -17,11 +17,18 @@ import { Transition } from '@headlessui/react';
 
 type ChatNavbarProps = {
     selectedChat: ChatEnum;
-    setSelectedChat: (selectedChat: ChatEnum) => void;
+    handleSetSelectedChat: (selectedChat: ChatEnum) => void;
+    handleSubjectButtonClick: () => void;
+    handleConversationButtonClick: () => void;
 };
 
 export default function ChatNavbar(props: ChatNavbarProps) {
-    const { selectedChat, setSelectedChat } = props;
+    const {
+        selectedChat,
+        handleSetSelectedChat,
+        handleSubjectButtonClick,
+        handleConversationButtonClick,
+    } = props;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const dispatch = useAppDispatch();
@@ -32,14 +39,6 @@ export default function ChatNavbar(props: ChatNavbarProps) {
     const [connectedUserId, setConnectedUserId] = useState<string>('');
     const [connectedUserRoleName, setConnectedUserRoleName] =
         useState<string>('');
-
-    const handleSubjectButtonClick = () => {
-        console.log('Bouton de sujet cliqué');
-    };
-
-    const handleConversationButtonClick = () => {
-        console.log('Bouton de conversation cliqué');
-    };
 
     useEffect(() => {
         setConnectedUserId(localStorage.getItem('connectedUserId') as string);
@@ -100,7 +99,10 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                             </h1>
                             <PlusCircleIcon
                                 className="h-8 w-8 cursor-pointer hover:text-gray-500"
-                                onClick={handleSubjectButtonClick}
+                                onClick={() => {
+                                    handleSubjectButtonClick();
+                                    setIsMenuOpen(!isMenuOpen);
+                                }}
                             />
                         </div>
                         {subjectListDisplay.map((subject: SubjectType) => (
@@ -108,7 +110,9 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                                 <SubjectItem
                                     subject={subject}
                                     selectedChat={selectedChat}
-                                    setSelectedChat={setSelectedChat}
+                                    handleSetSelectedChat={
+                                        handleSetSelectedChat
+                                    }
                                     key={subject.id + 'chatNavbar'}
                                     className={className}
                                 />
@@ -120,7 +124,10 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                             </h1>
                             <PlusCircleIcon
                                 className="h-8 w-8 cursor-pointer hover:text-gray-500"
-                                onClick={handleConversationButtonClick}
+                                onClick={() => {
+                                    handleConversationButtonClick();
+                                    setIsMenuOpen(!isMenuOpen);
+                                }}
                             />
                         </div>
                         {conversationListDisplay.map(
@@ -129,7 +136,9 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                                     <ConversationItem
                                         conversation={conversation}
                                         selectedChat={selectedChat}
-                                        setSelectedChat={setSelectedChat}
+                                        handleSetSelectedChat={
+                                            handleSetSelectedChat
+                                        }
                                         key={conversation.id + 'chatNavbar'}
                                         className={className}
                                     />
@@ -154,7 +163,7 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                         <SubjectItem
                             subject={subject}
                             selectedChat={selectedChat}
-                            setSelectedChat={setSelectedChat}
+                            handleSetSelectedChat={handleSetSelectedChat}
                             key={subject.id + 'chatNavbar'}
                             className={className}
                         />
@@ -173,7 +182,7 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                             <ConversationItem
                                 conversation={conversation}
                                 selectedChat={selectedChat}
-                                setSelectedChat={setSelectedChat}
+                                handleSetSelectedChat={handleSetSelectedChat}
                                 key={conversation.id + 'chatNavbar'}
                                 className={className}
                             />

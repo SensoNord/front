@@ -7,12 +7,13 @@ import { setCurrentConversationDisplay } from '../../../slicers/chat/conversatio
 type ConversationItemProps = {
     conversation: ConversationType;
     selectedChat: ChatEnum;
-    setSelectedChat: (selectedChat: ChatEnum) => void;
+    handleSetSelectedChat: (selectedChat: ChatEnum) => void;
     className: string;
 };
 
 export default function ConversationItem(props: ConversationItemProps) {
-    const { conversation, selectedChat, setSelectedChat, className } = props;
+    const { conversation, selectedChat, handleSetSelectedChat, className } =
+        props;
     const dispatch = useAppDispatch();
     const [isCurrentConversation, setIsCurrentConversation] =
         useState<boolean>(false);
@@ -58,7 +59,7 @@ export default function ConversationItem(props: ConversationItemProps) {
     const handleChangeSelectedConversation = (
         conversation: ConversationType,
     ) => {
-        setSelectedChat(ChatEnum.CONVERSATION);
+        handleSetSelectedChat(ChatEnum.CONVERSATION);
         dispatch(setCurrentConversationDisplay(conversation));
     };
 
