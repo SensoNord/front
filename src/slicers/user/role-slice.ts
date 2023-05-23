@@ -16,22 +16,19 @@ const initialState: RoleState = {
     error: {} as ErrorType,
 };
 
-export const fetchRoles = createAsyncThunk(
-    'roles/fetchRoles',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await directus.roles.readByQuery({
-                limit: -1,
-            });
-            return response.data as Array<RoleType>;
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejectWithValue }) => {
+    try {
+        const response = await directus.roles.readByQuery({
+            limit: -1,
+        });
+        return response.data as Array<RoleType>;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 const roleSlice = createSlice({
     name: 'roles',

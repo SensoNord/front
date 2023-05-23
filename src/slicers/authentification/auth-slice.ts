@@ -42,20 +42,17 @@ export const fetchLogin = createAsyncThunk(
     },
 );
 
-export const fetchConnectedUser = createAsyncThunk(
-    'auth/fetchConnectedUser',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await directus.users.me.read();
-            return response as UserType;
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const fetchConnectedUser = createAsyncThunk('auth/fetchConnectedUser', async (_, { rejectWithValue }) => {
+    try {
+        const response = await directus.users.me.read();
+        return response as UserType;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 export const fetchConnectedUserRole = createAsyncThunk(
     'auth/fetchConnectedUserRole',

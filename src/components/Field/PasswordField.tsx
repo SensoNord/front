@@ -12,8 +12,7 @@ type PasswordFieldProps = {
 };
 
 function PasswordField(props: PasswordFieldProps) {
-    const { customKey, password, handleChange, required, label, className } =
-        props;
+    const { customKey, password, handleChange, required, label, className } = props;
     const [showPassword, setShowPassword] = useState(false);
     const inputType = showPassword ? 'text' : 'password';
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -31,12 +30,7 @@ function PasswordField(props: PasswordFieldProps) {
                     placeholder={label}
                     className={className}
                 />
-                <button
-                    tabIndex={-1}
-                    type="button"
-                    title="Show password"
-                    onClick={handleClickShowPassword}
-                >
+                <button tabIndex={-1} type="button" title="Show password" onClick={handleClickShowPassword}>
                     {showPassword ? (
                         <EyeSlashIcon className="h-7 w-7 text-gray-500 hover:text-gray-900 -mx-10 absolute top-1/2 transform -translate-y-1/2" />
                     ) : (

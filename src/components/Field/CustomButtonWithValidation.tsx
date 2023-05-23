@@ -11,15 +11,7 @@ type CustomButtonProps = {
 };
 
 export default function CustomButtonWithValidation(props: CustomButtonProps) {
-    const {
-        type,
-        disabled,
-        children,
-        validationStates,
-        errorMessages,
-        classNameButton,
-        formId,
-    } = props;
+    const { type, disabled, children, validationStates, errorMessages, classNameButton, formId } = props;
 
     const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
@@ -33,13 +25,7 @@ export default function CustomButtonWithValidation(props: CustomButtonProps) {
 
     return (
         <>
-            <button
-                type={type}
-                disabled={disabled}
-                onClick={handleClick}
-                className={classNameButton}
-                form={formId}
-            >
+            <button type={type} disabled={disabled} onClick={handleClick} className={classNameButton} form={formId}>
                 {children}
             </button>
             {buttonClicked &&

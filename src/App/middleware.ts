@@ -1,14 +1,5 @@
-import {
-    fetchConnectedUser,
-    logout,
-} from '../slicers/authentification/auth-slice';
-import {
-    AnyAction,
-    Dispatch,
-    Middleware,
-    MiddlewareAPI,
-    ThunkDispatch,
-} from '@reduxjs/toolkit';
+import { fetchConnectedUser, logout } from '../slicers/authentification/auth-slice';
+import { AnyAction, Dispatch, Middleware, MiddlewareAPI, ThunkDispatch } from '@reduxjs/toolkit';
 
 export const errorMiddleware: Middleware =
     ({ dispatch }: MiddlewareAPI) =>
@@ -29,9 +20,7 @@ export const errorMiddleware: Middleware =
                 } else {
                     // pour les autres types d'erreur, essayons de récupérer l'utilisateur connecté
                     if (!type.startsWith('auth/fetchLogin')) {
-                        await (dispatch as ThunkDispatch<{}, {}, AnyAction>)(
-                            fetchConnectedUser(),
-                        );
+                        await (dispatch as ThunkDispatch<{}, {}, AnyAction>)(fetchConnectedUser());
                     } else {
                         console.error('Login error occurred');
                     }

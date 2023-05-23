@@ -97,10 +97,7 @@ export const updatePostListAndRelatedResponseBySubjectId = createAsyncThunk(
 
 export const createResponseToPost = createAsyncThunk(
     'items/createResponseToPost',
-    async (
-        payLoadMessage: PayLoadCreateSubjectMessage,
-        { rejectWithValue },
-    ) => {
+    async (payLoadMessage: PayLoadCreateSubjectMessage, { rejectWithValue }) => {
         try {
             const response = await directus.items('responses').createOne(
                 {
@@ -150,10 +147,7 @@ export const createPostToSubject = createAsyncThunk(
 
 export const updatePostMessageById = createAsyncThunk(
     'items/updatePostMessageById',
-    async (
-        payloadUpdatePost: PayLoadUpdateSubjectPost,
-        { rejectWithValue },
-    ) => {
+    async (payloadUpdatePost: PayLoadUpdateSubjectPost, { rejectWithValue }) => {
         try {
             const response = await directus.items('posts').updateOne(
                 payloadUpdatePost.id,
@@ -176,10 +170,7 @@ export const updatePostMessageById = createAsyncThunk(
 
 export const updateResponseMessageById = createAsyncThunk(
     'items/updateResponseMessageById',
-    async (
-        payloadUpdateResponse: PayLoadUpdateSubjectResponse,
-        { rejectWithValue },
-    ) => {
+    async (payloadUpdateResponse: PayLoadUpdateSubjectResponse, { rejectWithValue }) => {
         try {
             const response = await directus.items('responses').updateOne(
                 payloadUpdateResponse.id,
@@ -200,19 +191,16 @@ export const updateResponseMessageById = createAsyncThunk(
     },
 );
 
-export const deletePostById = createAsyncThunk(
-    'items/deletePostById',
-    async (postId: string, { rejectWithValue }) => {
-        try {
-            await directus.items('posts').deleteOne(postId);
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const deletePostById = createAsyncThunk('items/deletePostById', async (postId: string, { rejectWithValue }) => {
+    try {
+        await directus.items('posts').deleteOne(postId);
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 export const deleteResponseById = createAsyncThunk(
     'items/deleteResponseById',
@@ -236,9 +224,7 @@ const subjectSlice = createSlice({
             state.currentSubjectDisplayWithAllRelatedData = action.payload;
         },
         setCurrentSubjectDisplayWithAllRelatedData: (state, action) => {
-            const foundSubject = state.subjectListDisplay.find(
-                subject => subject.id === action.payload,
-            );
+            const foundSubject = state.subjectListDisplay.find(subject => subject.id === action.payload);
             if (foundSubject) {
                 state.currentSubjectDisplayWithAllRelatedData = foundSubject;
             }
@@ -263,76 +249,54 @@ const subjectSlice = createSlice({
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(
-                fetchAllVisibleSubjectAndRelatedPost.fulfilled,
-                (state, action) => {
-                    state.status = StatusEnum.SUCCEEDED;
-                    state.subjectListDisplay = action.payload as SubjectType[];
-                    state.error = {} as ErrorType;
-                },
-            )
-            .addCase(
-                fetchAllVisibleSubjectAndRelatedPost.rejected,
-                (state, action) => {
-                    state.status = StatusEnum.FAILED;
-                    state.error = action.payload as ErrorType;
-                },
-            )
-            .addCase(
-                updatePostListAndRelatedResponseBySubjectId.pending,
-                state => {
-                    state.status = StatusEnum.LOADING;
-                    state.error = {} as ErrorType;
-                },
-            )
-            .addCase(
-                updatePostListAndRelatedResponseBySubjectId.fulfilled,
-                (state, action) => {
-                    state.status = StatusEnum.SUCCEEDED;
-                    state.error = {} as ErrorType;
+            .addCase(fetchAllVisibleSubjectAndRelatedPost.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.subjectListDisplay = action.payload as SubjectType[];
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchAllVisibleSubjectAndRelatedPost.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(updatePostListAndRelatedResponseBySubjectId.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updatePostListAndRelatedResponseBySubjectId.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
 
-                    const subjectId = action.meta.arg;
-                    const newPosts = action.payload as PostType[];
+                const subjectId = action.meta.arg;
+                const newPosts = action.payload as PostType[];
 
-                    const subjectIndex = state.subjectListDisplay.findIndex(
-                        (subject: SubjectType) => subject.id === subjectId,
-                    );
+                const subjectIndex = state.subjectListDisplay.findIndex(
+                    (subject: SubjectType) => subject.id === subjectId,
+                );
 
-                    if (subjectIndex !== -1) {
-                        const oldPosts = state.subjectListDisplay[subjectIndex]
-                            .posts as PostType[];
-                        const mergedPosts = [
-                            ...oldPosts,
-                            ...newPosts.filter(
-                                (newPost: PostType) =>
-                                    !oldPosts.some(
-                                        (oldPost: PostType) =>
-                                            oldPost.id === newPost.id,
-                                    ),
-                            ),
-                        ];
+                if (subjectIndex !== -1) {
+                    const oldPosts = state.subjectListDisplay[subjectIndex].posts as PostType[];
+                    const mergedPosts = [
+                        ...oldPosts,
+                        ...newPosts.filter(
+                            (newPost: PostType) => !oldPosts.some((oldPost: PostType) => oldPost.id === newPost.id),
+                        ),
+                    ];
 
-                        state.subjectListDisplay = state.subjectListDisplay.map(
-                            (subject, index) => {
-                                if (index !== subjectIndex) {
-                                    return subject;
-                                }
-                                return {
-                                    ...subject,
-                                    posts: mergedPosts,
-                                };
-                            },
-                        );
-                    }
-                },
-            )
-            .addCase(
-                updatePostListAndRelatedResponseBySubjectId.rejected,
-                (state, action) => {
-                    state.status = StatusEnum.FAILED;
-                    state.error = action.payload as ErrorType;
-                },
-            )
+                    state.subjectListDisplay = state.subjectListDisplay.map((subject, index) => {
+                        if (index !== subjectIndex) {
+                            return subject;
+                        }
+                        return {
+                            ...subject,
+                            posts: mergedPosts,
+                        };
+                    });
+                }
+            })
+            .addCase(updatePostListAndRelatedResponseBySubjectId.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
             .addCase(createResponseToPost.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
@@ -341,27 +305,20 @@ const subjectSlice = createSlice({
                 const subject_Id = action.meta.arg.subject_id;
 
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        if (subject.id === subject_Id) {
-                            return {
-                                ...subject,
-                                posts: (subject.posts as PostType[]).map(
-                                    (post: PostType) => {
-                                        return {
-                                            ...post,
-                                            responses: [
-                                                ...(post.responses as ResponseType[]),
-                                                action.payload,
-                                            ],
-                                        };
-                                    },
-                                ),
-                            };
-                        }
-                        return subject;
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.id === subject_Id) {
+                        return {
+                            ...subject,
+                            posts: (subject.posts as PostType[]).map((post: PostType) => {
+                                return {
+                                    ...post,
+                                    responses: [...(post.responses as ResponseType[]), action.payload],
+                                };
+                            }),
+                        };
+                    }
+                    return subject;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(createResponseToPost.rejected, (state, action) => {
@@ -374,20 +331,15 @@ const subjectSlice = createSlice({
             })
             .addCase(createPostToSubject.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        if (subject.id === action.payload.subject_id) {
-                            return {
-                                ...subject,
-                                posts: [
-                                    ...(subject.posts as PostType[]),
-                                    action.payload,
-                                ],
-                            };
-                        }
-                        return subject;
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.id === action.payload.subject_id) {
+                        return {
+                            ...subject,
+                            posts: [...(subject.posts as PostType[]), action.payload],
+                        };
+                    }
+                    return subject;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(createPostToSubject.rejected, (state, action) => {
@@ -400,24 +352,20 @@ const subjectSlice = createSlice({
             })
             .addCase(updatePostMessageById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        if (subject.id === action.payload.subject_id) {
-                            return {
-                                ...subject,
-                                posts: (subject.posts as PostType[]).map(
-                                    (post: PostType) => {
-                                        if (post.id === action.payload.id) {
-                                            return action.payload;
-                                        }
-                                        return post;
-                                    },
-                                ),
-                            };
-                        }
-                        return subject;
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.id === action.payload.subject_id) {
+                        return {
+                            ...subject,
+                            posts: (subject.posts as PostType[]).map((post: PostType) => {
+                                if (post.id === action.payload.id) {
+                                    return action.payload;
+                                }
+                                return post;
+                            }),
+                        };
+                    }
+                    return subject;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(updatePostMessageById.rejected, (state, action) => {
@@ -431,19 +379,15 @@ const subjectSlice = createSlice({
             .addCase(deletePostById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 const postId = action.meta.arg;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        if (subject.posts) {
-                            return {
-                                ...subject,
-                                posts: (subject.posts as PostType[]).filter(
-                                    (post: PostType) => post.id !== postId,
-                                ),
-                            };
-                        }
-                        return subject;
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.posts) {
+                        return {
+                            ...subject,
+                            posts: (subject.posts as PostType[]).filter((post: PostType) => post.id !== postId),
+                        };
+                    }
+                    return subject;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(deletePostById.rejected, (state, action) => {
@@ -457,33 +401,25 @@ const subjectSlice = createSlice({
             .addCase(deleteResponseById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 const responseId = action.meta.arg;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        if (subject.posts) {
-                            return {
-                                ...subject,
-                                posts: (subject.posts as PostType[]).map(
-                                    (post: PostType) => {
-                                        if (post.responses) {
-                                            return {
-                                                ...post,
-                                                responses: (
-                                                    post.responses as ResponseType[]
-                                                ).filter(
-                                                    (response: ResponseType) =>
-                                                        response.id !==
-                                                        responseId,
-                                                ),
-                                            };
-                                        }
-                                        return post;
-                                    },
-                                ),
-                            };
-                        }
-                        return subject;
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.posts) {
+                        return {
+                            ...subject,
+                            posts: (subject.posts as PostType[]).map((post: PostType) => {
+                                if (post.responses) {
+                                    return {
+                                        ...post,
+                                        responses: (post.responses as ResponseType[]).filter(
+                                            (response: ResponseType) => response.id !== responseId,
+                                        ),
+                                    };
+                                }
+                                return post;
+                            }),
+                        };
+                    }
+                    return subject;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(updateResponseMessageById.pending, state => {
@@ -492,31 +428,22 @@ const subjectSlice = createSlice({
             })
             .addCase(updateResponseMessageById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map(
-                    (subject: SubjectType) => {
-                        return {
-                            ...subject,
-                            posts: (subject.posts as PostType[]).map(
-                                (post: PostType) => {
-                                    return {
-                                        ...post,
-                                        responses: (
-                                            post.responses as ResponseType[]
-                                        ).map((response: ResponseType) => {
-                                            if (
-                                                response.id ===
-                                                action.payload.id
-                                            ) {
-                                                return action.payload;
-                                            }
-                                            return response;
-                                        }),
-                                    };
-                                },
-                            ),
-                        };
-                    },
-                );
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    return {
+                        ...subject,
+                        posts: (subject.posts as PostType[]).map((post: PostType) => {
+                            return {
+                                ...post,
+                                responses: (post.responses as ResponseType[]).map((response: ResponseType) => {
+                                    if (response.id === action.payload.id) {
+                                        return action.payload;
+                                    }
+                                    return response;
+                                }),
+                            };
+                        }),
+                    };
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(updateResponseMessageById.rejected, (state, action) => {
@@ -527,7 +454,4 @@ const subjectSlice = createSlice({
 });
 
 export default subjectSlice.reducer;
-export const {
-    setCurrentSubjectDisplay,
-    setCurrentSubjectDisplayWithAllRelatedData,
-} = subjectSlice.actions;
+export const { setCurrentSubjectDisplay, setCurrentSubjectDisplayWithAllRelatedData } = subjectSlice.actions;

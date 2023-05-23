@@ -19,9 +19,7 @@ export async function useFetchFile(props: Props) {
         async function fetchFile() {
             if (file_id) {
                 let filesPayload = await dispatch(fetchFileById(file_id));
-                let files = filesPayload.payload as
-                    | ModifiedFileType
-                    | ErrorType;
+                let files = filesPayload.payload as ModifiedFileType | ErrorType;
 
                 if (isErrorType(files)) {
                     setFile({

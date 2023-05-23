@@ -27,14 +27,10 @@ export default function Response(props: ResponseProps) {
     const dispatch = useAppDispatch();
     const { connectedUser } = useAppSelector(state => state.auth);
 
-    const [file, setFile] = useState<FileTypeWithStatus>(
-        {} as FileTypeWithStatus,
-    );
+    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [showPopup, setShowPopup] = useState(false);
 
-    const [isResponseOwner, setIsResponseOwner] = useState(
-        null as boolean | null,
-    );
+    const [isResponseOwner, setIsResponseOwner] = useState(null as boolean | null);
     const [messageIsBeingEdited, setMessageIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
 
@@ -56,9 +52,7 @@ export default function Response(props: ResponseProps) {
 
     async function deleteMessage() {
         await dispatch(deleteMessageById(message.id));
-        dispatch(
-            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
-        );
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
         quitPopup();
     }
 
@@ -69,9 +63,7 @@ export default function Response(props: ResponseProps) {
                 message: textAreaRef.current.value,
             } as PayLoadUpdateConversationMessage),
         );
-        dispatch(
-            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
-        );
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
         setMessageIsBeingEdited(false);
     }
 
@@ -86,16 +78,9 @@ export default function Response(props: ResponseProps) {
             ) : (
                 <>
                     <div className={'m-4'}>
-                        <div
-                            className={`flex flex-col ${
-                                align === 'right' ? 'items-end' : 'items-start'
-                            }`}
-                        >
+                        <div className={`flex flex-col ${align === 'right' ? 'items-end' : 'items-start'}`}>
                             <div className={'flex'}>
-                                <NameAndDate
-                                    date_created={message.date_created}
-                                    user_created={message.user_created}
-                                />
+                                <NameAndDate date_created={message.date_created} user_created={message.user_created} />
                                 {isResponseOwner && !messageIsBeingEdited && (
                                     //  Bouton modifier
                                     <svg
@@ -105,9 +90,7 @@ export default function Response(props: ResponseProps) {
                                         strokeWidth={1.5}
                                         stroke="currentColor"
                                         className="w-5 h-5 inline mx-1"
-                                        onClick={() =>
-                                            setMessageIsBeingEdited(true)
-                                        }
+                                        onClick={() => setMessageIsBeingEdited(true)}
                                     >
                                         <path
                                             strokeLinecap="round"
@@ -144,9 +127,7 @@ export default function Response(props: ResponseProps) {
                                             strokeWidth={1.5}
                                             stroke="currentColor"
                                             className="w-6 h-6"
-                                            onClick={() =>
-                                                setMessageIsBeingEdited(false)
-                                            }
+                                            onClick={() => setMessageIsBeingEdited(false)}
                                         >
                                             <path
                                                 strokeLinecap="round"
@@ -175,9 +156,7 @@ export default function Response(props: ResponseProps) {
                             </div>
                             {!messageIsBeingEdited && (
                                 <p
-                                    className={
-                                        'text-1xl whitespace-pre-wrap rounded-2xl px-3 py-1 my-1 max-w-full'
-                                    }
+                                    className={'text-1xl whitespace-pre-wrap rounded-2xl px-3 py-1 my-1 max-w-full'}
                                     style={{
                                         backgroundColor: 'rgb(219, 234, 254)',
                                         overflowWrap: 'normal',
@@ -194,9 +173,7 @@ export default function Response(props: ResponseProps) {
                                     }}
                                 >
                                     <textarea
-                                        className={
-                                            'text-1xl whitespace-pre-wrap w-full p-4'
-                                        }
+                                        className={'text-1xl whitespace-pre-wrap w-full p-4'}
                                         defaultValue={message.message}
                                         rows={4}
                                         ref={textAreaRef}
@@ -210,10 +187,7 @@ export default function Response(props: ResponseProps) {
                                     ></textarea>
                                 </div>
                             )}
-                            <DownloadableFile
-                                file={file}
-                                handleDownloadFile={handleDownloadFile}
-                            />
+                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
                         </div>
                         {/*<div className={"grid grid-cols-12"}>*/}
                         {/*    <div className={"col-span-11"}>*/}
@@ -247,10 +221,7 @@ export default function Response(props: ResponseProps) {
                         createPortal(
                             <div className={'alertContainer'}>
                                 <div className={'alertPopup text-center'}>
-                                    <h1>
-                                        Êtes-vous sur de vouloir supprimer cette
-                                        réponse ?
-                                    </h1>
+                                    <h1>Êtes-vous sur de vouloir supprimer cette réponse ?</h1>
                                     <h3>"{message.message}"</h3>
                                     <div className={'flex justify-evenly'}>
                                         <button
@@ -272,9 +243,7 @@ export default function Response(props: ResponseProps) {
                                     </div>
                                 </div>
                             </div>,
-                            document.getElementById(
-                                'modal-root',
-                            ) as HTMLElement,
+                            document.getElementById('modal-root') as HTMLElement,
                         )}
                 </>
             )}

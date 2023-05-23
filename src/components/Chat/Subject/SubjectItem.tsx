@@ -7,15 +7,14 @@ import { ChatEnum } from '../../../types/Chat/ChatEnum';
 type SubjectItemProps = {
     subject: SubjectType;
     selectedChat: ChatEnum;
-    setSelectedChat: (selectedChat: ChatEnum) => void;
+    handleSetSelectedChat: (selectedChat: ChatEnum) => void;
+    className: string;
 };
 
 export default function SubjectItem(props: SubjectItemProps) {
-    const { subject, setSelectedChat, selectedChat } = props;
+    const { subject, handleSetSelectedChat, selectedChat, className } = props;
     const dispatch = useAppDispatch();
-    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
-        state => state.subject,
-    );
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const [isCurrentSubject, setIsCurrentSubject] = useState<boolean>(false);
 
     useEffect(() => {
@@ -31,7 +30,7 @@ export default function SubjectItem(props: SubjectItemProps) {
     }, [currentSubjectDisplayWithAllRelatedData, subject, selectedChat]);
 
     const handleChangeSelectedSubject = (subject: SubjectType) => {
-        setSelectedChat(ChatEnum.SUBJECT);
+        handleSetSelectedChat(ChatEnum.SUBJECT);
         dispatch(setCurrentSubjectDisplay(subject));
     };
 
@@ -39,9 +38,7 @@ export default function SubjectItem(props: SubjectItemProps) {
         <div
             key={subject.id + 'item'}
             onClick={() => handleChangeSelectedSubject(subject)}
-            className={`${
-                isCurrentSubject ? 'bg-blue-200' : ''
-            } cursor-pointer`}
+            className={`${isCurrentSubject ? 'bg-blue-200' : ''} cursor-pointer ${className}`}
         >
             <h1>{subject.name}</h1>
         </div>
