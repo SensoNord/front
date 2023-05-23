@@ -28,6 +28,7 @@ export const subjectFields = [
     'user_updated.last_name',
     'date_updated',
     'name',
+    'user_list.directus_users_id.id',
     'user_list.directus_users_id.first_name',
     'user_list.directus_users_id.last_name',
     'posts.id',

@@ -1,37 +1,35 @@
-import { ConversationType } from '../../../types/Chat/ConversationType';
-import {  useRef } from 'react';
-import { createPortal } from 'react-dom';
-import DisplayFiles from '../../Files/DisplayFiles';
+import {ConversationType} from '../../../types/Chat/ConversationType';
+import {useRef} from 'react';
+import {createPortal} from 'react-dom';
 import '../../../styles/textarea.css';
-import { useAppDispatch } from '../../../App/hooks';
-import { createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData } from '../../../slicers/chat/conversation-slice';
-import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
-import { useFileManagement } from '../../../customHook/useFileManagement';
+import {useAppDispatch} from '../../../App/hooks';
+import {createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData} from '../../../slicers/chat/conversation-slice';
+import {PayLoadCreateConversationMessage} from '../../../slicers/chat/conversation-slice-helper';
+import {useFileManagement} from '../../../customHook/useFileManagement';
+import AddFilePopup from "../AddFilePopup";
 
 type WriteMessageProps = {
     conversation: ConversationType;
 };
 
 export default function WriteMessage(props: WriteMessageProps) {
-    const { conversation } = props;
+    const {conversation} = props;
     const dispatch = useAppDispatch();
-    const formRef = useRef(null) as { current: any };  
+    const formRef = useRef(null) as { current: any };
 
     const {
         fileRef,
-        fileName,
-        file,
-        fileId,
+        uploadedFile,
+        setUploadedFile,
         handleFileUpload,
         getFileFromDrive,
         getFileFromComputer,
-        clearFile,
         showPopup,
         setShowPopup,
         quitPopup,
     } = useFileManagement({
         chat: conversation,
-        chatType: 'conversation',  
+        chatType: 'conversation',
     })
 
     async function handleSubmit(e: {
@@ -43,36 +41,34 @@ export default function WriteMessage(props: WriteMessageProps) {
         const responseMessage = e.target[0].value.trimEnd();
 
         if (
-            file?.size === 0 &&
-            file.name.length === 0 &&
             responseMessage.length === 0
         ) {
             alert('Vous ne pouvez pas envoyez de message vide');
             return;
         }
 
-        const createdFile = await handleFileUpload();
-
-        if (createdFile) {
+        if (uploadedFile) {
+            const createdFile = await handleFileUpload();
+            if (createdFile) {
                 await dispatch(
                     createMessageToConversation({
                         conversation_id: conversation.id,
                         message: responseMessage,
                         fileId: createdFile.id,
-                    } as PayLoadCreateConversationMessage)
+                    } as PayLoadCreateConversationMessage),
                 );
+            }
+            setUploadedFile(null);
         } else {
-            await dispatch (
+            await dispatch(
                 createMessageToConversation({
                     conversation_id: conversation.id,
                     message: responseMessage,
-                    fileId: fileId,
-                } as PayLoadCreateConversationMessage)
+                } as PayLoadCreateConversationMessage),
             );
         }
         dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
 
-        clearFile();
         formRef.current.reset();
     }
 
@@ -108,7 +104,12 @@ export default function WriteMessage(props: WriteMessageProps) {
                     >
                         Ajouter un fichier
                     </button>
-                    {fileName && <span>{fileName}</span>}
+                    {uploadedFile?.name && (
+                        <>
+                            <span>Fichier : {uploadedFile?.name}</span>
+                            <span>Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}</span>
+                        </>
+                    )}
                     <button
                         type="submit"
                         className={
@@ -121,35 +122,13 @@ export default function WriteMessage(props: WriteMessageProps) {
             </form>
             {showPopup &&
                 createPortal(
-                    <div className={'alertContainer'}>
-                        <div className={'alertPopup text-center'}>
-                            <h1>Drive</h1>
-                            <DisplayFiles
-                                callbackOnClick={getFileFromDrive}
-                                startingFolderId={conversation.folder_id}
-                            />
-                            <h1>
-                                <input
-                                    type="file"
-                                    name="file"
-                                    id="file"
-                                    className={
-                                        'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
-                                    }
-                                    ref={fileRef}
-                                    onChange={getFileFromComputer}
-                                />
-                            </h1>
-                            <button
-                                className={
-                                    'bg-red-500 hover:bg-red-700 text-white w-1/2 mx-auto font-bold py-2 px-4 rounded'
-                                }
-                                onClick={quitPopup}
-                            >
-                                Annuler
-                            </button>
-                        </div>
-                    </div>,
+                    <AddFilePopup
+                        getFileFromDrive={getFileFromDrive}
+                        folderId={conversation.folder_id}
+                        fileRef={fileRef}
+                        getFileFromComputer={getFileFromComputer}
+                        quitPopup={quitPopup}
+                    />,
                     document.getElementById('modal-root') as HTMLElement,
                 )}
         </>
