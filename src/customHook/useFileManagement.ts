@@ -1,14 +1,15 @@
-// useFileManagement.js
-import { useRef, useState } from 'react';
-import {
-    UpdateFilePayload,
-    createFile,
-    updateFile,
-} from '../slicers/file/file-slice';
-import { ModifiedFileType } from '../types/File/ModifiedFileType';
-import { useAppDispatch } from '../App/hooks';
-import { SubjectType } from '../types/Chat/SubjectType';
-import { ConversationType } from '../types/Chat/ConversationType';
+import {useRef, useState} from 'react';
+import {UpdateFilePayload, createFile, updateFile, fetchFileById, downloadFileWithoutURL} from '../slicers/file/file-slice';
+import {ModifiedFileType} from '../types/File/ModifiedFileType';
+import {useAppDispatch} from '../App/hooks';
+import {SubjectType} from '../types/Chat/SubjectType';
+import {ConversationType} from '../types/Chat/ConversationType';
+
+type UploadedFile = {
+    file: ModifiedFileType | File;
+    uploadOrigin: 'computer' | 'drive';
+    name: string;
+};
 
 type useFileManagementProps = {
     chat: SubjectType | ConversationType;
@@ -16,16 +17,15 @@ type useFileManagementProps = {
 };
 
 export const useFileManagement = (props: useFileManagementProps) => {
-    const { chat, chatType } = props;
+    const {chat, chatType} = props;
     const fileRef = useRef(null) as { current: any };
-    const [fileName, setFileName] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
-    const [fileId, setFileId] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+
     async function handleFileUpload() {
-        if (file && !fileId) {
+        const uploadFile = async (file: File): Promise<ModifiedFileType | null> => {
             const createdFilePayload = await dispatch(createFile(file));
             const createdFile = createdFilePayload.payload as ModifiedFileType;
             await dispatch(
@@ -36,30 +36,47 @@ export const useFileManagement = (props: useFileManagementProps) => {
                     chatType: chatType,
                 } as UpdateFilePayload),
             );
+            setUploadedFile(null);
             return createdFile;
+        }
+
+        if (uploadedFile) {
+            if (uploadedFile.uploadOrigin === 'computer') {
+                return await uploadFile(uploadedFile.file as File);
+            } else if (uploadedFile.uploadOrigin === 'drive') {
+                const f = uploadedFile.file as ModifiedFileType;
+                const existingFile = (await dispatch(fetchFileById(f.id))).payload as ModifiedFileType;
+                if (existingFile)
+                    if (existingFile.folder !== chat.folder_id) {
+                        const downloadedFile = (await dispatch(downloadFileWithoutURL(existingFile))).payload as File;
+                        if (downloadedFile) {
+                            return await uploadFile(downloadedFile);
+                        }
+                    } else {
+                        return existingFile;
+                    }
+            }
+
         }
     }
 
-    function getFileFromDrive(file: any) {
-        fileRef.current.value = '';
-        setFile(null);
-        setFileId(file.id);
-        setFileName(file.filename_download);
+    function getFileFromDrive(file: ModifiedFileType) {
+        setUploadedFile({
+            file: file,
+            uploadOrigin: 'drive',
+            name: file.filename_download,
+        } as UploadedFile);
         setShowPopup(false);
     }
 
     function getFileFromComputer(e: { target: { files: any } }) {
         const f = e.target.files[0];
-        setFile(f);
-        setFileId(null);
-        setFileName(f.name);
+        setUploadedFile({
+            file: f,
+            uploadOrigin: 'computer',
+            name: f.name,
+        } as UploadedFile);
         setShowPopup(false);
-    }
-
-    function clearFile() {
-        setFile(null);
-        setFileId(null);
-        setFileName(null);
     }
 
     function quitPopup() {
@@ -68,13 +85,11 @@ export const useFileManagement = (props: useFileManagementProps) => {
 
     return {
         fileRef,
-        fileName,
-        file,
-        fileId,
+        uploadedFile,
+        setUploadedFile,
         handleFileUpload,
         getFileFromDrive,
         getFileFromComputer,
-        clearFile,
         showPopup,
         setShowPopup,
         quitPopup,

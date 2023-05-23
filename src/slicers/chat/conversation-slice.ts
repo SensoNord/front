@@ -14,6 +14,7 @@ import { MessageType } from '../../types/Chat/MessageType';
 interface ConversationState {
     conversationListDisplay: ConversationType[];
     currentConversationDisplayWithAllRelatedData: ConversationType | null;
+    conversationListForFolder: ConversationType[];
     status: StatusEnum;
     error: ErrorType;
 }
@@ -21,6 +22,7 @@ interface ConversationState {
 const initialState: ConversationState = {
     conversationListDisplay: [] as ConversationType[],
     currentConversationDisplayWithAllRelatedData: null,
+    conversationListForFolder: [] as ConversationType[],
     status: StatusEnum.IDLE,
     error: {} as ErrorType,
 };
@@ -31,6 +33,28 @@ export const fetchAllVisibleConversationAndRelatedMessage = createAsyncThunk(
         try {
             const response = await directus.items('conversations').readByQuery({
                 limit: -1,
+                fields: conversationFields,
+            });
+            return response.data as ConversationType[];
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const fetchConversationByFolderId = createAsyncThunk(
+    'items/fetchConversationByFolderId',
+    async (folderId: string, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('conversations').readByQuery({
+                filter: {
+                    folder_id: {
+                        _eq: folderId,
+                    },
+                },
                 fields: conversationFields,
             });
             return response.data as ConversationType[];
@@ -153,14 +177,31 @@ const conversationSlice = createSlice({
                     state.error = action.payload as ErrorType;
                 },
             )
-            .addCase(createMessageToConversation.pending, state => {
+            .addCase(fetchConversationByFolderId.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(createMessageToConversation.fulfilled, (state, action) => {
+            .addCase(fetchConversationByFolderId.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.conversationListDisplay =
-                    state.conversationListDisplay.map(
+                state.conversationListForFolder = action.payload;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchConversationByFolderId.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(
+                createMessageToConversation.pending,
+                state => {
+                    state.status = StatusEnum.LOADING;
+                    state.error = {} as ErrorType;
+                }
+            )
+            .addCase(
+                createMessageToConversation.fulfilled,
+                (state, action) => {
+                    state.status = StatusEnum.SUCCEEDED;
+                    state.conversationListDisplay = state.conversationListDisplay.map(
                         (conversation: ConversationType) => {
                             if (
                                 conversation.id ===
