@@ -1,5 +1,5 @@
-import { FileStatusEnum } from "../Request/FileStatusEnum";
-import { ModifiedFileType } from "./ModifiedFileType";
+import { FileStatusEnum } from '../Request/FileStatusEnum';
+import { ModifiedFileType } from './ModifiedFileType';
 
 export type FileTypeWithStatus = {
     file: ModifiedFileType | null;

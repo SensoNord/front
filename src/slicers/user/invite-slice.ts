@@ -3,6 +3,7 @@ import { directus } from '../../libraries/directus';
 import { ErrorType } from '../../types/Request/ErrorType';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { InvitationType } from '../../types/Users/InvitationType';
+import { AcceptInvitationType } from '../../types/Users/AcceptInvitationType';
 
 interface InviteState {
     invitationList: Array<InvitationType>;
@@ -35,6 +36,25 @@ export const sendInvite = createAsyncThunk(
     },
 );
 
+export const acceptInvite = createAsyncThunk(
+    'invite/acceptInvite',
+    async (acceptInvite: AcceptInvitationType, { rejectWithValue }) => {
+        try {
+            await directus.users.invites.accept(
+                acceptInvite.token,
+                acceptInvite.password,
+            );
+            console.log(acceptInvite);
+            return acceptInvite;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 const inviteSlice = createSlice({
     name: 'invitation',
     initialState,
@@ -51,6 +71,18 @@ const inviteSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(sendInvite.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(acceptInvite.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(acceptInvite.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+            })
+            .addCase(acceptInvite.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });

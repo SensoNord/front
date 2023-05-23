@@ -14,7 +14,7 @@ type UploadedFile = {
 type useFileManagementProps = {
     chat: SubjectType | ConversationType;
     chatType: 'subject' | 'conversation';
-}
+};
 
 export const useFileManagement = (props: useFileManagementProps) => {
     const {chat, chatType} = props;

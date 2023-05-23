@@ -3,11 +3,9 @@ import {PostType} from '../../../types/Chat/PostType';
 import {ResponseType} from '../../../types/Chat/ResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import {SubjectType} from '../../../types/Chat/SubjectType';
-import {
-    ModifiedFileType,
-} from '../../../types/File/ModifiedFileType';
-import {createPortal} from 'react-dom';
+import { SubjectType } from '../../../types/Chat/SubjectType';
+import { ModifiedFileType } from '../../../types/File/ModifiedFileType';
+import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
 import {useAppDispatch, useAppSelector} from '../../../App/hooks';
 import {
@@ -21,6 +19,7 @@ import {FileTypeWithStatus} from '../../../types/File/FileTypeWithStatus';
 import {useFetchFile} from '../../../customHook/useFetchFile';
 import DownloadableFile from '../DownloadableFile';
 import NameAndDate from '../../Field/NameAndDate';
+import Sondage from '../../Poll/Poll';
 
 type Props = {
     post: PostType;
@@ -28,12 +27,14 @@ type Props = {
 };
 
 export default function Post(props: Props) {
-    const {post, subject} = props;
+    const { post, subject } = props;
     const dispatch = useAppDispatch();
     const {connectedUser, connectedUserRole} = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
-    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
+    const [file, setFile] = useState<FileTypeWithStatus>(
+        {} as FileTypeWithStatus,
+    );
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
     const isLoaded = true;
@@ -50,7 +51,7 @@ export default function Post(props: Props) {
     useFetchFile({
         file_id: post.file_id,
         setFile: setFile,
-    })
+    });
 
     function quitPopup() {
         setShowPopup(false);
@@ -80,12 +81,15 @@ export default function Post(props: Props) {
     return (
         <>
             {!isLoaded ? (
-                <LoadingSpinner/>
+                <LoadingSpinner />
             ) : (
                 <>
                     <div className={'w-full'}>
-                        <div className={"flex justify-between"}>
-                            <NameAndDate date_created={post.date_created} user_created={post.user_created}/>
+                        <div className={'flex justify-between'}>
+                            <NameAndDate
+                                date_created={post.date_created}
+                                user_created={post.user_created}
+                            />
                             <div>
                                 {isPostOwner && !postIsBeingEdited && (
                                     //  Bouton modifier
@@ -101,7 +105,7 @@ export default function Post(props: Props) {
                                         </svg>
                                     )}
                                 {postIsBeingEdited && (
-                                    <div className={"flex"}>
+                                    <div className={'flex'}>
                                         {/* Bouton annulé */}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" onClick={() => setPostIsBeingEdited(false)}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -114,7 +118,10 @@ export default function Post(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <div className={'p-4 rounded-lg'} style={{backgroundColor: 'rgb(219, 234, 254)'}}>
+                        <div
+                            className={'p-4 rounded-lg'}
+                            style={{ backgroundColor: 'rgb(219, 234, 254)' }}
+                        >
                             <div>
                                 <h2 className={'text-2xl font-bold'}>
                                     {post.title}
@@ -144,12 +151,15 @@ export default function Post(props: Props) {
                                     ></textarea>
                                 </div>
                             )}
-                            < DownloadableFile
+                            {post.sondage_id && (
+                                <Sondage sondage_id={post.sondage_id} />
+                            )}
+                            <DownloadableFile
                                 file={file}
                                 handleDownloadFile={handleDownloadFile}
                             />
                             <div className={'text-right'}>
-                                < NameAndDate
+                                <NameAndDate
                                     user_created={post.user_created}
                                     date_created={post.date_created}
                                 />
@@ -157,39 +167,39 @@ export default function Post(props: Props) {
                         </div>
                         <div className={'w-full'}>
                             {[...post['responses']]
-                                .sort(
-                                    (
-                                        a: ResponseType,
-                                        b: ResponseType,
-                                    ) => {
-                                        return (
-                                            new Date(
-                                                a.date_created,
-                                            ).getTime() -
-                                            new Date(
-                                                b.date_created,
-                                            ).getTime()
-                                        );
-                                    },
-                                )
-                                .map(
-                                    (
-                                        response: ResponseType,
-                                    ) => {
-                                        return (
-                                            <div className={`flex ${response.user_created.id === connectedUser.id ? 'justify-end' : 'justify-start'}`} key={response.id}>
-                                                <div className={"w-7/12"}>
-                                                    <Response
-                                                        response={response}
-                                                        subjectId={subject.id}
-                                                        key={response.id}
-                                                        align={response.user_created.id === connectedUser.id ? 'right' : 'end'}
-                                                    />
-                                                </div>
+                                .sort((a: ResponseType, b: ResponseType) => {
+                                    return (
+                                        new Date(a.date_created).getTime() -
+                                        new Date(b.date_created).getTime()
+                                    );
+                                })
+                                .map((response: ResponseType) => {
+                                    return (
+                                        <div
+                                            className={`flex ${
+                                                response.user_created.id ===
+                                                connectedUser.id
+                                                    ? 'justify-end'
+                                                    : 'justify-start'
+                                            }`}
+                                        >
+                                            <div className={'w-7/12'}>
+                                                <Response
+                                                    response={response}
+                                                    subjectId={subject.id}
+                                                    key={response.id}
+                                                    align={
+                                                        response.user_created
+                                                            .id ===
+                                                        connectedUser.id
+                                                            ? 'right'
+                                                            : 'end'
+                                                    }
+                                                />
                                             </div>
-                                        );
-                                    },
-                                )}
+                                        </div>
+                                    );
+                                })}
                             <WriteResponse
                                 postId={post.id}
                                 subject={subject}

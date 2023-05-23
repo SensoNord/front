@@ -10,6 +10,7 @@ export type PayLoadCreateSubjectPost = {
     title: string;
     message: string;
     file_id: string | null;
+    sondage_id: string | null;
 };
 
 export type PayLoadUpdateSubjectPost = {
@@ -42,6 +43,7 @@ export const subjectFields = [
     'posts.title',
     'posts.message',
     'posts.file_id',
+    'posts.sondage_id',
     'posts.responses.user_created.first_name',
     'posts.responses.user_created.last_name',
     'posts.responses.user_created.id',
@@ -81,6 +83,7 @@ export const postFields = [
     'responses.message',
     'responses.file_id',
     'responses.id',
+    'sondage_id',
 ];
 
 export const responseFields = [

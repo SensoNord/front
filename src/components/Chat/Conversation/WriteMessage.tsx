@@ -1,11 +1,12 @@
-import {ConversationType} from '../../../types/Chat/ConversationType';
-import {useRef} from 'react';
-import {createPortal} from 'react-dom';
+import { ConversationType } from '../../../types/Chat/ConversationType';
+import { useRef } from 'react';
+import { createPortal } from 'react-dom';
+import DisplayFiles from '../../Files/DisplayFiles';
 import '../../../styles/textarea.css';
-import {useAppDispatch} from '../../../App/hooks';
-import {createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData} from '../../../slicers/chat/conversation-slice';
-import {PayLoadCreateConversationMessage} from '../../../slicers/chat/conversation-slice-helper';
-import {useFileManagement} from '../../../customHook/useFileManagement';
+import { useAppDispatch } from '../../../App/hooks';
+import { createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData } from '../../../slicers/chat/conversation-slice';
+import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
+import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from "../AddFilePopup";
 
 type WriteMessageProps = {
@@ -30,7 +31,7 @@ export default function WriteMessage(props: WriteMessageProps) {
     } = useFileManagement({
         chat: conversation,
         chatType: 'conversation',
-    })
+    });
 
     async function handleSubmit(e: {
         preventDefault: () => void;
@@ -67,7 +68,9 @@ export default function WriteMessage(props: WriteMessageProps) {
                 } as PayLoadCreateConversationMessage),
             );
         }
-        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
+        dispatch(
+            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
+        );
 
         formRef.current.reset();
     }
@@ -133,4 +136,4 @@ export default function WriteMessage(props: WriteMessageProps) {
                 )}
         </>
     );
-};
+}

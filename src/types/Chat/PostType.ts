@@ -12,6 +12,7 @@ export type PostType = {
     responses: ResponseType[];
     file_id: string;
     subject_id: string;
+    sondage_id: number | null;
 };
 
 const emptyPost: PostType = {
@@ -25,6 +26,7 @@ const emptyPost: PostType = {
     responses: [],
     file_id: '',
     subject_id: '',
+    sondage_id: null,
 };
 
 export { emptyPost };

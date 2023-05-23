@@ -44,7 +44,7 @@ function AuthHandler() {
             await dispatch(fetchConnectedUserRole());
         },
         [dispatch],
-    ); // Ajoutez les dépendances ici si nécessaire.
+    );
 
     useEffect(() => {
         const token = localStorage.getItem('auth_token');

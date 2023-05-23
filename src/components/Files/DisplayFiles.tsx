@@ -25,7 +25,6 @@ export default function DisplayFiles(props: Props) {
         return {id: '', name: 'Root', parent: ''} as FolderType;
     }, []);
 
-
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [tmpFile, setTmpFile] = useState<ModifiedFileType | null>(null);
@@ -37,11 +36,14 @@ export default function DisplayFiles(props: Props) {
     const {connectedUser} = useAppSelector(state => state.auth);
 
 
-    const getFolderById = useCallback(async (id: string) => {
-        const folderPayload = await dispatch(fetchFolderById(id));
-        const newFolder = folderPayload.payload as FolderType;
-        return newFolder;
-    }, [dispatch]);
+    const getFolderById = useCallback(
+        async (id: string) => {
+            const folderPayload = await dispatch(fetchFolderById(id));
+            const newFolder = folderPayload.payload as FolderType;
+            return newFolder;
+        },
+        [dispatch],
+    );
 
     const [folderListToDisplay, setFolderListToDisplay] = useState<FolderType[]>([rootFolder]);
 
@@ -129,7 +131,7 @@ export default function DisplayFiles(props: Props) {
                             {folderList && (
                                 <>
                                     {
-                                        folderList.map((folder) => {
+                                        folderList.map(folder => {
                                             return (
                                                 <>
                                                     <div

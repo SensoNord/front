@@ -4,7 +4,11 @@ import { createPortal } from 'react-dom';
 import NameAndDate from '../../Field/NameAndDate';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { downloadFile } from '../../../slicers/file/file-slice';
-import { deleteMessageById, setCurrentConversationDisplayWithAllRelatedData, updateMessageById } from '../../../slicers/chat/conversation-slice';
+import {
+    deleteMessageById,
+    setCurrentConversationDisplayWithAllRelatedData,
+    updateMessageById,
+} from '../../../slicers/chat/conversation-slice';
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { PayLoadUpdateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
 import { MessageType } from '../../../types/Chat/MessageType';
@@ -23,7 +27,9 @@ export default function Response(props: ResponseProps) {
     const dispatch = useAppDispatch();
     const { connectedUser } = useAppSelector(state => state.auth);
 
-    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
+    const [file, setFile] = useState<FileTypeWithStatus>(
+        {} as FileTypeWithStatus,
+    );
     const [showPopup, setShowPopup] = useState(false);
 
     const [isResponseOwner, setIsResponseOwner] = useState(
@@ -42,7 +48,7 @@ export default function Response(props: ResponseProps) {
     useFetchFile({
         file_id: message.file_id,
         setFile: setFile,
-    })
+    });
 
     function quitPopup() {
         setShowPopup(false);
@@ -50,7 +56,9 @@ export default function Response(props: ResponseProps) {
 
     async function deleteMessage() {
         await dispatch(deleteMessageById(message.id));
-        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id))
+        dispatch(
+            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
+        );
         quitPopup();
     }
 
@@ -59,9 +67,11 @@ export default function Response(props: ResponseProps) {
             updateMessageById({
                 messageId: message.id,
                 message: textAreaRef.current.value,
-            } as PayLoadUpdateConversationMessage)
+            } as PayLoadUpdateConversationMessage),
         );
-        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id))
+        dispatch(
+            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
+        );
         setMessageIsBeingEdited(false);
     }
 
@@ -77,8 +87,9 @@ export default function Response(props: ResponseProps) {
                 <>
                     <div className={'m-4'}>
                         <div
-                            className={`flex flex-col ${align === 'right' ? 'items-end' : 'items-start'
-                                }`}
+                            className={`flex flex-col ${
+                                align === 'right' ? 'items-end' : 'items-start'
+                            }`}
                         >
                             <div className={'flex'}>
                                 <NameAndDate
@@ -126,12 +137,38 @@ export default function Response(props: ResponseProps) {
                                 {messageIsBeingEdited && (
                                     <>
                                         {/* Bouton annulé */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" onClick={() => setMessageIsBeingEdited(false)}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-6 h-6"
+                                            onClick={() =>
+                                                setMessageIsBeingEdited(false)
+                                            }
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
                                         </svg>
                                         {/* Bouton validé */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" onClick={updateMessage}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-6 h-6"
+                                            onClick={updateMessage}
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M4.5 12.75l6 6 9-13.5"
+                                            />
                                         </svg>
                                     </>
                                 )}
@@ -173,7 +210,7 @@ export default function Response(props: ResponseProps) {
                                     ></textarea>
                                 </div>
                             )}
-                            < DownloadableFile
+                            <DownloadableFile
                                 file={file}
                                 handleDownloadFile={handleDownloadFile}
                             />
@@ -243,4 +280,4 @@ export default function Response(props: ResponseProps) {
             )}
         </>
     );
-};
+}

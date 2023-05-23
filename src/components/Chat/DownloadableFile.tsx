@@ -1,10 +1,10 @@
-import { FileTypeWithStatus } from "../../types/File/FileTypeWithStatus";
-import { FileStatusEnum } from "../../types/Request/FileStatusEnum";
+import { FileTypeWithStatus } from '../../types/File/FileTypeWithStatus';
+import { FileStatusEnum } from '../../types/Request/FileStatusEnum';
 
 type DownloadableFileProps = {
     file: FileTypeWithStatus;
     handleDownloadFile: () => void;
-}
+};
 
 export default function DownloadableFile(props: DownloadableFileProps) {
     const { file, handleDownloadFile } = props;
@@ -18,12 +18,8 @@ export default function DownloadableFile(props: DownloadableFileProps) {
             </button>
         );
     } else if (file.status === FileStatusEnum.DELETED) {
-        return (
-            <p className={'text-red-500'}>
-                Fichier supprimé
-            </p>
-        );
+        return <p className={'text-red-500'}>Fichier supprimé</p>;
     }
 
     return null;
-};
+}
