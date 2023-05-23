@@ -2,12 +2,9 @@ import AjouterReponse from './AddResponse';
 import { useState, useEffect } from 'react';
 import AddVote from './AddVote';
 import { directus } from '../../libraries/directus';
-import { Bar, Doughnut, Pie } from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 // eslint-disable-next-line no-unused-vars
 import Chart from 'chart.js/auto';
-import { Colors } from 'chart.js';
-
-Chart.register(Colors);
 
 const getDataSondageById = async sondage_id => {
     const data = await directus.items('sondage').readByQuery({
