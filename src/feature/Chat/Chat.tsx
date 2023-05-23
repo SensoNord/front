@@ -4,7 +4,6 @@ import ChatNavbar from '../../components/Chat/ChatNavbar';
 import { ChatEnum } from '../../types/Chat/ChatEnum';
 import Subject from './Subject';
 import Conversation from './Conversation';
-import { Transition } from '@headlessui/react';
 import ChatCreationMenu from '../../components/Chat/Create/ChatCreationMenu';
 
 export default function Chat() {
