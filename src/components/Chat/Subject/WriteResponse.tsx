@@ -6,6 +6,7 @@ import { useAppDispatch } from '../../../App/hooks';
 import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
 import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
+import AddFilePopup from '../AddFilePopup';
 
 type Props = {
     postId: string;
@@ -19,13 +20,11 @@ export default function WriteResponse(props: Props) {
 
     const {
         fileRef,
-        fileName,
-        file,
-        fileId,
+        uploadedFile,
+        setUploadedFile,
         handleFileUpload,
         getFileFromDrive,
         getFileFromComputer,
-        clearFile,
         showPopup,
         setShowPopup,
         quitPopup,
@@ -39,35 +38,35 @@ export default function WriteResponse(props: Props) {
 
         const responseMessage = e.target[0].value.trimEnd();
 
-        if (file?.size === 0 && file.name.length === 0 && responseMessage.length === 0) {
+        if (responseMessage.length === 0) {
             alert('Vous ne pouvez pas envoyez de message vide');
             return;
         }
 
-        const createdFile = await handleFileUpload();
-
-        if (createdFile) {
-            await dispatch(
-                createResponseToPost({
-                    subject_id: subject.id,
-                    post_id: postId,
-                    message: responseMessage,
-                    file_id: createdFile.id,
-                } as PayLoadCreateSubjectMessage),
-            );
+        if (uploadedFile) {
+            const createdFile = await handleFileUpload();
+            if (createdFile) {
+                await dispatch(
+                    createResponseToPost({
+                        subject_id: subject.id,
+                        post_id: postId,
+                        message: responseMessage,
+                        file_id: createdFile.id,
+                    } as PayLoadCreateSubjectMessage),
+                );
+            }
+            setUploadedFile(null);
         } else {
             await dispatch(
                 createResponseToPost({
                     subject_id: subject.id,
                     post_id: postId,
                     message: responseMessage,
-                    file_id: fileId,
                 } as PayLoadCreateSubjectMessage),
             );
         }
         dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
 
-        clearFile();
         formRef.current.reset();
     }
 
@@ -90,7 +89,14 @@ export default function WriteResponse(props: Props) {
                     >
                         Ajouter un fichier
                     </button>
-                    {fileName && <span>{fileName}</span>}
+                    {uploadedFile?.name && (
+                        <>
+                            <span>Fichier : {uploadedFile?.name}</span>
+                            <span>
+                                Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
+                            </span>
+                        </>
+                    )}
                     <button
                         type="submit"
                         className={'w-12/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'}
@@ -101,32 +107,13 @@ export default function WriteResponse(props: Props) {
             </form>
             {showPopup &&
                 createPortal(
-                    <div className={'alertContainer'}>
-                        <div className={'alertPopup text-center'}>
-                            <h1>Drive</h1>
-                            <DisplayFiles callbackOnClick={getFileFromDrive} startingFolderId={subject.folder_id} />
-                            <h1>
-                                <input
-                                    type="file"
-                                    name="file"
-                                    id="file"
-                                    className={
-                                        'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
-                                    }
-                                    ref={fileRef}
-                                    onChange={getFileFromComputer}
-                                />
-                            </h1>
-                            <button
-                                className={
-                                    'bg-red-500 hover:bg-red-700 text-white w-1/2 mx-auto font-bold py-2 px-4 rounded'
-                                }
-                                onClick={quitPopup}
-                            >
-                                Annuler
-                            </button>
-                        </div>
-                    </div>,
+                    <AddFilePopup
+                        getFileFromDrive={getFileFromDrive}
+                        folderId={subject.folder_id}
+                        fileRef={fileRef}
+                        getFileFromComputer={getFileFromComputer}
+                        quitPopup={quitPopup}
+                    />,
                     document.getElementById('modal-root') as HTMLElement,
                 )}
         </>

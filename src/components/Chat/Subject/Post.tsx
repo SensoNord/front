@@ -35,7 +35,6 @@ export default function Post(props: Props) {
     const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
-    // const [isLoaded, setIsLoaded] = useState(true);
     const isLoaded = true;
     const [isAdministrator, setIsAdministrator] = useState(null as boolean | null);
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);

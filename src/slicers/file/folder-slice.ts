@@ -18,16 +18,50 @@ const initialState: FolderState = {
     error: {} as ErrorType,
 };
 
+export type folderByParentPayload = {
+    parentId: string | null;
+    connectedUserId: string | null;
+};
+
 export const fetchFolderByParent = createAsyncThunk(
     'folder/fetchFolderByParent',
-    async (parentId: string | null, { rejectWithValue }) => {
+    async (folderByParentPayload: folderByParentPayload, { rejectWithValue }) => {
         try {
             const response = await directus.folders.readByQuery({
                 filter: {
-                    parent: parentId ? { _eq: parentId } : { _null: true },
+                    parent: folderByParentPayload.parentId ? { _eq: folderByParentPayload.parentId } : { _null: true },
                 },
             });
-            return response.data as Array<FolderType>;
+            const result = [] as Array<FolderType>;
+            const data = response.data as Array<FolderType>;
+            if (folderByParentPayload.parentId)
+                for (const folder of data) {
+                    const response2 = await directus.items('subjects').readByQuery({
+                        filter: {
+                            folder_id: {
+                                _eq: folder.id,
+                            },
+                        },
+                        fields: ['id'],
+                    });
+                    if (response2.data?.length && response2.data.length > 0) {
+                        result.push(folder);
+                    }
+
+                    const response3 = await directus.items('conversations').readByQuery({
+                        filter: {
+                            folder_id: {
+                                _eq: folder.id,
+                            },
+                        },
+                        fields: ['id'],
+                    });
+                    if (response3.data?.length && response3.data.length > 0) {
+                        result.push(folder);
+                    }
+                }
+            else result.push(...(data as Array<FolderType>));
+            return result;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,

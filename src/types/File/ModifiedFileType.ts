@@ -1,3 +1,5 @@
+import { UserType } from '@directus/sdk';
+
 export type ModifiedFileType = {
     charset: string;
     description: string;
@@ -11,14 +13,14 @@ export type ModifiedFileType = {
     id: string;
     location: string;
     metadata: string;
-    modified_by: string;
+    modified_by: UserType;
     modified_on: string;
     storage: string;
     subject: number[] | [];
     tags: string;
     title: string;
     type: string;
-    uploaded_by: string;
+    uploaded_by: UserType;
     uploaded_on: string;
     width: string;
 };
@@ -36,14 +38,14 @@ const emptyDirectusFileType: ModifiedFileType = {
     id: '',
     location: '',
     metadata: '',
-    modified_by: '',
+    modified_by: {} as UserType,
     modified_on: '',
     storage: '',
     subject: [],
     tags: '',
     title: '',
     type: '',
-    uploaded_by: '',
+    uploaded_by: {} as UserType,
     uploaded_on: '',
     width: '',
 };

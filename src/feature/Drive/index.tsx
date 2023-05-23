@@ -1,35 +1,59 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DisplayFiles from '../../components/Files/DisplayFiles';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { fetchSubjectByFolderId } from '../../slicers/chat/subject-slice';
 import { UpdateFilePayload, createFile, downloadFile, updateFile } from '../../slicers/file/file-slice';
-import '../../styles/Forum.css';
+import '../../styles/Popup.css';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
+import { FileType } from '@directus/sdk';
+import { SubjectType } from '../../types/Chat/SubjectType';
+import { fetchConversationByFolderId } from '../../slicers/chat/conversation-slice';
+import { ConversationType } from '../../types/Chat/ConversationType';
 
 export default function Drive() {
     const [showPopup, setShowPopup] = useState(false);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [uploadIsEnabled, setUploadIsEnabled] = useState<boolean>(false);
+    const [currentDisplayedFolder, setCurrentDisplayedFolder] = useState<FileType | null>(null);
     const dispatch = useAppDispatch();
-    const { actualFolder } = useAppSelector(state => state.folder);
     const { subjectListForFolder } = useAppSelector(state => state.subject);
+
+    const { connectedUser } = useAppSelector(state => state.auth);
 
     const fileRef = useRef(null) as { current: any };
 
     useEffect(() => {
         const doFetchSubjectByFolderId = async () => {
-            if (actualFolder.id !== '') {
-                await dispatch(fetchSubjectByFolderId(actualFolder.id));
+            if (currentDisplayedFolder && currentDisplayedFolder.id !== '') {
+                let currentSubject = (await dispatch(fetchSubjectByFolderId(currentDisplayedFolder.id)))
+                    .payload as SubjectType[];
+                if (currentSubject.length !== 0) {
+                    if (currentSubject['0']?.user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
+                        setUploadIsEnabled(true);
+                    } else {
+                        setUploadIsEnabled(false);
+                    }
+                } else {
+                    let currentConv = (await dispatch(fetchConversationByFolderId(currentDisplayedFolder.id)))
+                        .payload as ConversationType[];
+                    if (currentConv.length !== 0) {
+                        if (currentConv['0']?.user_list.some(user => user.directus_users_id.id === connectedUser.id)) {
+                            setUploadIsEnabled(true);
+                        } else {
+                            setUploadIsEnabled(false);
+                        }
+                    } else {
+                        setUploadIsEnabled(false);
+                    }
+                }
+            } else {
+                setUploadIsEnabled(false);
             }
         };
 
         doFetchSubjectByFolderId();
-    }, [actualFolder, dispatch]);
-
-    useEffect(() => {
-        setUploadIsEnabled(subjectListForFolder && subjectListForFolder.length !== 0);
-    }, [subjectListForFolder]);
+    }, [dispatch, connectedUser.id]);
 
     function newFile() {
         setShowPopup(true);
@@ -46,16 +70,16 @@ export default function Drive() {
         }
 
         if (uploadedFile?.size !== 0 || uploadedFile.name.length !== 0) {
-            await dispatch(fetchSubjectByFolderId(actualFolder.id));
+            await dispatch(fetchSubjectByFolderId(subjectListForFolder[0].folder_id));
 
-            if (uploadedFile && actualFolder.id !== '' && subjectListForFolder.length !== 0) {
+            if (uploadedFile && subjectListForFolder[0].folder_id !== '' && subjectListForFolder.length !== 0) {
                 const createdFilePayload = await dispatch(createFile(uploadedFile));
                 const createdFile = createdFilePayload.payload as ModifiedFileType;
                 await dispatch(
                     updateFile({
                         file: createdFile,
                         chatId: subjectListForFolder[0].id,
-                        folderId: actualFolder.id,
+                        folderId: subjectListForFolder[0].folder_id,
                         chatType: 'subject',
                     } as UpdateFilePayload),
                 );
@@ -76,17 +100,25 @@ export default function Drive() {
 
     return (
         <>
-            <div>
-                <button
-                    className={`bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded${
-                        !uploadIsEnabled ? ' cursor-not-allowed' : ''
-                    }`}
-                    disabled={!uploadIsEnabled}
-                    onClick={newFile}
-                >
-                    Ajouter un fichier
-                </button>
-                <DisplayFiles showDelete={true} callbackOnClick={handleDownloadFile}></DisplayFiles>
+            <div className={'grid grid-cols-6'}>
+                <div className={'col-start-5 flex justify-center items-start'}>
+                    <button
+                        className={`bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded z-10 ${
+                            !uploadIsEnabled ? 'cursor-not-allowed' : ''
+                        }`}
+                        disabled={!uploadIsEnabled}
+                        onClick={newFile}
+                    >
+                        Ajouter un fichier
+                    </button>
+                </div>
+                <div className={'col-span-6'} style={{ marginTop: '-2rem' }}>
+                    <DisplayFiles
+                        showDelete={true}
+                        callbackOnClick={handleDownloadFile}
+                        setCurrentDisplayedFolder={setCurrentDisplayedFolder}
+                    />
+                </div>
             </div>
             {showPopup &&
                 createPortal(
@@ -107,19 +139,19 @@ export default function Drive() {
                                 </label>
                                 <button
                                     className={
-                                        'col-span-6 w-8/12 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mb-2 mx-auto rounded'
-                                    }
-                                    onClick={() => setShowPopup(false)}
-                                >
-                                    Annuler
-                                </button>
-                                <button
-                                    className={
                                         'col-span-6 w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 mx-auto rounded'
                                     }
                                     type={'submit'}
                                 >
                                     Envoyer
+                                </button>
+                                <button
+                                    className={
+                                        'col-span-6 w-8/12 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mb-2 mx-auto rounded'
+                                    }
+                                    onClick={() => setShowPopup(false)}
+                                >
+                                    Annuler
                                 </button>
                             </form>
                         </div>

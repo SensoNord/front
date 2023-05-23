@@ -21,7 +21,7 @@ export const conversationFields = [
     'date_updated',
     'user_list.directus_users_id.first_name',
     'user_list.directus_users_id.last_name',
-    'user_list.id',
+    'user_list.directus_users_id.id',
     'folder_id',
     'messages_list.id',
     'messages_list.user_created.first_name',
