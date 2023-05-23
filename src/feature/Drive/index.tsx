@@ -53,7 +53,7 @@ export default function Drive() {
         };
 
         doFetchSubjectByFolderId();
-    }, [dispatch, connectedUser.id]);
+    }, [dispatch, connectedUser.id, currentDisplayedFolder]);
 
     function newFile() {
         setShowPopup(true);

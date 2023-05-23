@@ -1,7 +1,6 @@
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../../Files/DisplayFiles';
 import '../../../styles/textarea.css';
 import { useAppDispatch } from '../../../App/hooks';
 import {

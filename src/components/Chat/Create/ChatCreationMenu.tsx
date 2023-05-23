@@ -36,6 +36,7 @@ export default function ChatCreationMenu() {
         });
 
         setMatchedUserList(matchedUserListWithoutSelectedUser);
+        // eslint-disable-next-line
     }, [selectedUser]);
 
     const handleSearchChange = (newSearchTerm: string) => {

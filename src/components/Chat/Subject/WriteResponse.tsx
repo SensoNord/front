@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../../Files/DisplayFiles';
 import { useAppDispatch } from '../../../App/hooks';
 import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
 import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
