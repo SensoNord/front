@@ -16,17 +16,11 @@ import AuthentificationForm from '../../components/Forms/AuthentificationForm';
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [inputColor, setInputColor] = useState<string>(
-        'bg-blue-200 tablet:bg-blue-100',
-    );
+    const [inputColor, setInputColor] = useState<string>('bg-blue-200 tablet:bg-blue-100');
     const formId = 'login-form';
 
-    const textFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setEmail(event.target.value);
-    const passwordFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setPassword(event.target.value);
+    const textFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value);
+    const passwordFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value);
     const { status, isConnecting } = useAppSelector(state => state.auth);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -69,10 +63,7 @@ export default function Login() {
     };
 
     return (
-        <AuthentificationForm
-            title="Connexion"
-            description="Connectez-vous pour accéder à votre espace"
-        >
+        <AuthentificationForm title="Connexion" description="Connectez-vous pour accéder à votre espace">
             <form id={formId} onSubmit={handleSubmit}>
                 <TextField
                     customKey="email-auth"
@@ -91,13 +82,9 @@ export default function Login() {
                     className={`w-4/5 placeholder-inherit text-lg tablet:text-xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
                 />
                 {status === StatusEnum.FAILED ? (
-                    <p className="mt-4 mb-4 text-red-500 text-sm">
-                        Les informations de connexion sont incorrectes
-                    </p>
+                    <p className="mt-4 mb-4 text-red-500 text-sm">Les informations de connexion sont incorrectes</p>
                 ) : (
-                    <p className="mt-4 mb-4 text-sm invisible">
-                        Les informations de connexion sont incorrectes
-                    </p>
+                    <p className="mt-4 mb-4 text-sm invisible">Les informations de connexion sont incorrectes</p>
                 )}
                 <button
                     type="submit"

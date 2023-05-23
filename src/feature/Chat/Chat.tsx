@@ -5,21 +5,15 @@ import { ChatEnum } from '../../types/Chat/ChatEnum';
 import Subject from './Subject';
 import Conversation from './Conversation';
 import { Transition } from '@headlessui/react';
-import ChatCreationMenu from '../../components/Chat/ChatCreationMenu';
+import ChatCreationMenu from '../../components/Chat/Create/ChatCreationMenu';
 
 export default function Chat() {
     const [selectedChat, setSelectedChat] = useState<ChatEnum>(ChatEnum.NONE);
-    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
-        state => state.subject,
-    );
-    const { currentConversationDisplayWithAllRelatedData } = useAppSelector(
-        state => state.conversation,
-    );
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
+    const { currentConversationDisplayWithAllRelatedData } = useAppSelector(state => state.conversation);
 
-    const [isSubjectAddButtonClick, setIsSubjectAddButtonClick] =
-        useState<boolean>(false);
-    const [isConversationAddButtonClick, setIsConversationAddButtonClick] =
-        useState<boolean>(false);
+    const [isSubjectAddButtonClick, setIsSubjectAddButtonClick] = useState<boolean>(false);
+    const [isConversationAddButtonClick, setIsConversationAddButtonClick] = useState<boolean>(false);
 
     const handleSubjectButtonClick = () => {
         setSelectedChat(ChatEnum.NONE);
@@ -51,9 +45,7 @@ export default function Chat() {
                     selectedChat={selectedChat}
                     handleSetSelectedChat={handleSetSelectedChat}
                     handleSubjectButtonClick={handleSubjectButtonClick}
-                    handleConversationButtonClick={
-                        handleConversationButtonClick
-                    }
+                    handleConversationButtonClick={handleConversationButtonClick}
                 />
             </div>
             <div className="flex-1 bg-blue-50">
@@ -63,14 +55,10 @@ export default function Chat() {
                     </div>
                 ) : (
                     <>
-                        {selectedChat === ChatEnum.SUBJECT &&
-                            currentSubjectDisplayWithAllRelatedData && (
-                                <Subject />
-                            )}
-                        {selectedChat === ChatEnum.CONVERSATION &&
-                            currentConversationDisplayWithAllRelatedData && (
-                                <Conversation />
-                            )}
+                        {selectedChat === ChatEnum.SUBJECT && currentSubjectDisplayWithAllRelatedData && <Subject />}
+                        {selectedChat === ChatEnum.CONVERSATION && currentConversationDisplayWithAllRelatedData && (
+                            <Conversation />
+                        )}
                     </>
                 )}
             </div>

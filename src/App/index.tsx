@@ -67,17 +67,11 @@ function AuthHandler() {
                     <Route path="chat" element={<Chat />} />
                     <Route path="calendar" element={<Calendar />} />
                     <Route path="drive" element={<Drive />} />
-                    <Route
-                        path="send-invitation"
-                        element={<SendInvitation />}
-                    />
+                    <Route path="send-invitation" element={<SendInvitation />} />
                     <Route path="profil" element={<Profil />} />
                 </Route>
                 <Route path="login" element={<Login />} />
-                <Route
-                    path="accept-invitation"
-                    element={<AcceptInvitation />}
-                />
+                <Route path="accept-invitation" element={<AcceptInvitation />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

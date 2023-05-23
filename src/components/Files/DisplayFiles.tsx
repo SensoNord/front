@@ -3,14 +3,8 @@ import { FolderType } from '@directus/sdk';
 import LoadingSpinner from '../LoadingSpinner';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import {
-    fetchFolderById,
-    fetchFolderByParent,
-} from '../../slicers/file/folder-slice';
-import {
-    deleteFileById,
-    fetchFileByFolder,
-} from '../../slicers/file/file-slice';
+import { fetchFolderById, fetchFolderByParent } from '../../slicers/file/folder-slice';
+import { deleteFileById, fetchFileByFolder } from '../../slicers/file/file-slice';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
 type Props = {
@@ -107,12 +101,7 @@ export default function DisplayFiles(props: Props) {
                             {folderList.map(folder => {
                                 return (
                                     <div key={folder.id}>
-                                        <div
-                                            onClick={() =>
-                                                handleClickFolder(folder)
-                                            }
-                                            className={'cursor-pointer'}
-                                        >
+                                        <div onClick={() => handleClickFolder(folder)} className={'cursor-pointer'}>
                                             Dossier : {folder.name}
                                         </div>
                                     </div>
@@ -127,8 +116,7 @@ export default function DisplayFiles(props: Props) {
                                     <div key={file.id}>
                                         <div
                                             onClick={() => {
-                                                if (callbackOnClick)
-                                                    callbackOnClick(file);
+                                                if (callbackOnClick) callbackOnClick(file);
                                             }}
                                             className={'cursor-pointer'}
                                         >
@@ -160,9 +148,7 @@ export default function DisplayFiles(props: Props) {
                 createPortal(
                     <div className={'alertContainer'}>
                         <div className={'alertPopup text-center'}>
-                            <h1>
-                                Êtes-vous sur de vouloir supprimer ce fichier ?
-                            </h1>
+                            <h1>Êtes-vous sur de vouloir supprimer ce fichier ?</h1>
                             <h3>"{tmpFile!.filename_download}"</h3>
                             <div className={'flex justify-evenly'}>
                                 <button

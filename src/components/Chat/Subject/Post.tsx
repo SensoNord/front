@@ -29,21 +29,15 @@ type Props = {
 export default function Post(props: Props) {
     const { post, subject } = props;
     const dispatch = useAppDispatch();
-    const { connectedUser, connectedUserRole } = useAppSelector(
-        state => state.auth,
-    );
+    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
-    const [file, setFile] = useState<FileTypeWithStatus>(
-        {} as FileTypeWithStatus,
-    );
+    const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
     // const [isLoaded, setIsLoaded] = useState(true);
     const isLoaded = true;
-    const [isAdministrator, setIsAdministrator] = useState(
-        null as boolean | null,
-    );
+    const [isAdministrator, setIsAdministrator] = useState(null as boolean | null);
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
 
     useEffect(() => {
@@ -89,10 +83,7 @@ export default function Post(props: Props) {
                 <>
                     <div className={'w-full'}>
                         <div className={'flex justify-between'}>
-                            <NameAndDate
-                                date_created={post.date_created}
-                                user_created={post.user_created}
-                            />
+                            <NameAndDate date_created={post.date_created} user_created={post.user_created} />
                             <div>
                                 {isPostOwner && !postIsBeingEdited && (
                                     //  Bouton modifier
@@ -103,9 +94,7 @@ export default function Post(props: Props) {
                                         strokeWidth={1.5}
                                         stroke="currentColor"
                                         className="w-5 h-5 inline mx-1"
-                                        onClick={() =>
-                                            setPostIsBeingEdited(true)
-                                        }
+                                        onClick={() => setPostIsBeingEdited(true)}
                                     >
                                         <path
                                             strokeLinecap="round"
@@ -114,25 +103,24 @@ export default function Post(props: Props) {
                                         />
                                     </svg>
                                 )}
-                                {(isPostOwner || isAdministrator) &&
-                                    !postIsBeingEdited && (
-                                        // Bouton supprimer
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-5 h-5 inline mx-1"
-                                            onClick={() => setShowPopup(true)}
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                            />
-                                        </svg>
-                                    )}
+                                {(isPostOwner || isAdministrator) && !postIsBeingEdited && (
+                                    // Bouton supprimer
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="w-5 h-5 inline mx-1"
+                                        onClick={() => setShowPopup(true)}
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                        />
+                                    </svg>
+                                )}
                                 {postIsBeingEdited && (
                                     <div className={'flex'}>
                                         {/* Bouton annulé */}
@@ -143,9 +131,7 @@ export default function Post(props: Props) {
                                             strokeWidth={1.5}
                                             stroke="currentColor"
                                             className="w-6 h-6"
-                                            onClick={() =>
-                                                setPostIsBeingEdited(false)
-                                            }
+                                            onClick={() => setPostIsBeingEdited(false)}
                                         >
                                             <path
                                                 strokeLinecap="round"
@@ -173,26 +159,15 @@ export default function Post(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <div
-                            className={'p-4 rounded-lg'}
-                            style={{ backgroundColor: 'rgb(219, 234, 254)' }}
-                        >
+                        <div className={'p-4 rounded-lg'} style={{ backgroundColor: 'rgb(219, 234, 254)' }}>
                             <div>
-                                <h2 className={'text-2xl font-bold'}>
-                                    {post.title}
-                                </h2>
+                                <h2 className={'text-2xl font-bold'}>{post.title}</h2>
                             </div>
-                            {!postIsBeingEdited && (
-                                <p className={'text-1xl whitespace-pre-wrap'}>
-                                    {post.message}
-                                </p>
-                            )}
+                            {!postIsBeingEdited && <p className={'text-1xl whitespace-pre-wrap'}>{post.message}</p>}
                             {postIsBeingEdited && (
                                 <div className={'m-2'}>
                                     <textarea
-                                        className={
-                                            'text-1xl whitespace-pre-wrap w-full'
-                                        }
+                                        className={'text-1xl whitespace-pre-wrap w-full'}
                                         defaultValue={post.message}
                                         rows={4}
                                         ref={textAreaRef}
@@ -206,34 +181,22 @@ export default function Post(props: Props) {
                                     ></textarea>
                                 </div>
                             )}
-                            {post.sondage_id && (
-                                <Sondage sondage_id={post.sondage_id} />
-                            )}
-                            <DownloadableFile
-                                file={file}
-                                handleDownloadFile={handleDownloadFile}
-                            />
+                            {post.sondage_id && <Sondage sondage_id={post.sondage_id} />}
+                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
                             <div className={'text-right'}>
-                                <NameAndDate
-                                    user_created={post.user_created}
-                                    date_created={post.date_created}
-                                />
+                                <NameAndDate user_created={post.user_created} date_created={post.date_created} />
                             </div>
                         </div>
                         <div className={'w-full'}>
                             {[...post['responses']]
                                 .sort((a: ResponseType, b: ResponseType) => {
-                                    return (
-                                        new Date(a.date_created).getTime() -
-                                        new Date(b.date_created).getTime()
-                                    );
+                                    return new Date(a.date_created).getTime() - new Date(b.date_created).getTime();
                                 })
                                 .map((response: ResponseType) => {
                                     return (
                                         <div
                                             className={`flex ${
-                                                response.user_created.id ===
-                                                connectedUser.id
+                                                response.user_created.id === connectedUser.id
                                                     ? 'justify-end'
                                                     : 'justify-start'
                                             }`}
@@ -244,32 +207,21 @@ export default function Post(props: Props) {
                                                     subjectId={subject.id}
                                                     key={response.id}
                                                     align={
-                                                        response.user_created
-                                                            .id ===
-                                                        connectedUser.id
-                                                            ? 'right'
-                                                            : 'end'
+                                                        response.user_created.id === connectedUser.id ? 'right' : 'end'
                                                     }
                                                 />
                                             </div>
                                         </div>
                                     );
                                 })}
-                            <WriteResponse
-                                postId={post.id}
-                                subject={subject}
-                                key={post.id + 'writeResponse'}
-                            />
+                            <WriteResponse postId={post.id} subject={subject} key={post.id + 'writeResponse'} />
                         </div>
                     </div>
                     {showPopup &&
                         createPortal(
                             <div className={'alertContainer'}>
                                 <div className={'alertPopup text-center'}>
-                                    <h1>
-                                        Êtes-vous sur de vouloir supprimer ce
-                                        post ?
-                                    </h1>
+                                    <h1>Êtes-vous sur de vouloir supprimer ce post ?</h1>
                                     <h3>"{post.title}"</h3>
                                     <div className={'flex justify-evenly'}>
                                         <button
@@ -291,9 +243,7 @@ export default function Post(props: Props) {
                                     </div>
                                 </div>
                             </div>,
-                            document.getElementById(
-                                'modal-root',
-                            ) as HTMLElement,
+                            document.getElementById('modal-root') as HTMLElement,
                         )}
                 </>
             )}

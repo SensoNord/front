@@ -3,9 +3,7 @@ import { loginWithToken } from '../slicers/authentification/auth-slice';
 
 describe('Middleware', () => {
     beforeEach(() => {
-        store.dispatch(
-            loginWithToken({ access_token: 'token', expires: '123' }),
-        );
+        store.dispatch(loginWithToken({ access_token: 'token', expires: '123' }));
     });
 
     test('dispatches logout action when 401 error', () => {

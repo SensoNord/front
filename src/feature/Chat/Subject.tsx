@@ -6,10 +6,7 @@ import { createPortal } from 'react-dom';
 import DisplayFiles from '../../components/Files/DisplayFiles';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import {
-    createPostToSubject,
-    setCurrentSubjectDisplayWithAllRelatedData,
-} from '../../slicers/chat/subject-slice';
+import { createPostToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../slicers/chat/subject-slice';
 import { PayLoadCreateSubjectPost } from '../../slicers/chat/subject-slice-helper';
 import {
     UpdateFilePayload,
@@ -27,9 +24,7 @@ type UploadedFile = {
 };
 
 export default function Subject() {
-    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
-        state => state.subject,
-    );
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const dispatch = useAppDispatch();
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
@@ -38,13 +33,8 @@ export default function Subject() {
     const [sondageId, setSondageId] = useState<number | null>(null);
 
     useEffect(() => {
-        const sortedPost = [
-            ...currentSubjectDisplayWithAllRelatedData!.posts,
-        ].sort((a: PostType, b: PostType) => {
-            return (
-                new Date(b.date_created).getTime() -
-                new Date(a.date_created).getTime()
-            );
+        const sortedPost = [...currentSubjectDisplayWithAllRelatedData!.posts].sort((a: PostType, b: PostType) => {
+            return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
         });
         setSortedPost(sortedPost);
     }, [currentSubjectDisplayWithAllRelatedData]);
@@ -58,11 +48,7 @@ export default function Subject() {
         setShowPopup2(false);
     }
 
-    async function uploadFile(
-        downloadedFile: File,
-        postTitle: string,
-        postMessage: string,
-    ) {
+    async function uploadFile(downloadedFile: File, postTitle: string, postMessage: string) {
         const createdFilePayload = await dispatch(createFile(downloadedFile));
         const createdFile = createdFilePayload.payload as ModifiedFileType;
         await dispatch(
@@ -86,10 +72,7 @@ export default function Subject() {
         }
     }
 
-    async function handleSubmit(e: {
-        preventDefault: () => void;
-        target: any;
-    }) {
+    async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
 
         const formData = new FormData(e.target);
@@ -99,41 +82,19 @@ export default function Subject() {
         };
         if (formJson.titlePost && formJson.message) {
             setShowPopup(false);
-            if (
-                uploadedFile &&
-                uploadedFile.file instanceof File &&
-                uploadedFile.uploadOrigin === 'computer'
-            ) {
+            if (uploadedFile && uploadedFile.file instanceof File && uploadedFile.uploadOrigin === 'computer') {
                 // if ((uploadedFile.file instanceof File) && uploadedFile.file?.size !== 0 || (uploadedFile.file instanceof File) && uploadedFile.file.name.length !== 0) {
-                await uploadFile(
-                    uploadedFile.file,
-                    formJson.titlePost,
-                    formJson.message,
-                );
+                await uploadFile(uploadedFile.file, formJson.titlePost, formJson.message);
                 setUploadedFile(null);
                 // }
-            } else if (
-                uploadedFile &&
-                !(uploadedFile.file instanceof File) &&
-                uploadedFile.uploadOrigin === 'drive'
-            ) {
-                const existingFilePayload = await dispatch(
-                    fetchFileById(uploadedFile.file.id),
-                );
-                const existingFile =
-                    existingFilePayload.payload as ModifiedFileType;
+            } else if (uploadedFile && !(uploadedFile.file instanceof File) && uploadedFile.uploadOrigin === 'drive') {
+                const existingFilePayload = await dispatch(fetchFileById(uploadedFile.file.id));
+                const existingFile = existingFilePayload.payload as ModifiedFileType;
                 if (existingFile) {
-                    const downloadedFilePayload = await dispatch(
-                        downloadFileWithoutURL(existingFile),
-                    );
-                    const downloadedFile =
-                        downloadedFilePayload.payload as File;
+                    const downloadedFilePayload = await dispatch(downloadFileWithoutURL(existingFile));
+                    const downloadedFile = downloadedFilePayload.payload as File;
                     if (downloadedFile) {
-                        await uploadFile(
-                            downloadedFile,
-                            formJson.titlePost,
-                            formJson.message,
-                        );
+                        await uploadFile(downloadedFile, formJson.titlePost, formJson.message);
                     }
                 }
                 setUploadedFile(null);
@@ -147,11 +108,7 @@ export default function Subject() {
                     } as PayLoadCreateSubjectPost),
                 );
             }
-            dispatch(
-                setCurrentSubjectDisplayWithAllRelatedData(
-                    currentSubjectDisplayWithAllRelatedData!.id,
-                ),
-            );
+            dispatch(setCurrentSubjectDisplayWithAllRelatedData(currentSubjectDisplayWithAllRelatedData!.id));
         } else {
             document.getElementById('errorMessage')?.classList.remove('hidden');
         }
@@ -179,10 +136,7 @@ export default function Subject() {
     return (
         <>
             {currentSubjectDisplayWithAllRelatedData && (
-                <div
-                    style={{ height: '100%', position: 'relative' }}
-                    className={'overflow-hidden'}
-                >
+                <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
                     <div
                         className={
                             'text-3xl justify-center flex border-2 border-black mx-auto px-10 pb-2 bg-white z-10'
@@ -194,68 +148,43 @@ export default function Subject() {
                             left: 0,
                         }}
                     >
-                        <h1>
-                            {currentSubjectDisplayWithAllRelatedData!['name']}
-                        </h1>
+                        <h1>{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
                     </div>
                     <div
                         style={{ backgroundColor: 'rgb(239, 246, 255)' }}
-                        className={
-                            'grid grid-rows-[repeat(11,_minmax(0,_1fr))] grid-flow-col h-full'
-                        }
+                        className={'grid grid-rows-[repeat(11,_minmax(0,_1fr))] grid-flow-col h-full'}
                     >
                         <div
-                            className={
-                                'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden'
-                            }
+                            className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden'}
                             style={{ overflowAnchor: 'auto' }}
                         >
                             {sortedPost.map((post: PostType, index: number) => {
                                 return (
                                     <>
                                         <div
-                                            className={
-                                                'bg-white w-10/12 mx-auto rounded-3xl drop-shadow-xl p-6 my-14'
-                                            }
+                                            className={'bg-white w-10/12 mx-auto rounded-3xl drop-shadow-xl p-6 my-14'}
                                             key={post.id}
                                         >
                                             <Post
                                                 post={post}
                                                 key={post.id}
-                                                subject={
-                                                    currentSubjectDisplayWithAllRelatedData!
-                                                }
+                                                subject={currentSubjectDisplayWithAllRelatedData!}
                                             ></Post>
                                         </div>
                                     </>
                                 );
                             })}
                         </div>
-                        <div
-                            className={
-                                'row-span-3 h-full bg-white border-t-2 border-t-gray-400'
-                            }
-                        >
-                            <form
-                                className={
-                                    'text-center overflow-y-scroll h-full'
-                                }
-                                onSubmit={handleSubmit}
-                            >
-                                <div
-                                    className={
-                                        'p-2 text-xl grid grid-cols-12 h-full'
-                                    }
-                                >
+                        <div className={'row-span-3 h-full bg-white border-t-2 border-t-gray-400'}>
+                            <form className={'text-center overflow-y-scroll h-full'} onSubmit={handleSubmit}>
+                                <div className={'p-2 text-xl grid grid-cols-12 h-full'}>
                                     <div className={'col-span-9'}>
                                         <div className="grid grid-cols-1">
                                             <input
                                                 type="text"
                                                 id="titlePost"
                                                 name="titlePost"
-                                                className={
-                                                    'mt-2 border-2 border-gray-700 rounded-md px-2 py-1'
-                                                }
+                                                className={'mt-2 border-2 border-gray-700 rounded-md px-2 py-1'}
                                                 placeholder={'Titre'}
                                             />
                                         </div>
@@ -263,49 +192,35 @@ export default function Subject() {
                                             <textarea
                                                 id="message"
                                                 name="message"
-                                                className={
-                                                    'mt-2 border-2 border-gray-700 rounded-md h-full px-2 py-1'
-                                                }
+                                                className={'mt-2 border-2 border-gray-700 rounded-md h-full px-2 py-1'}
                                                 placeholder={'Nouveau topic'}
                                             />
                                         </div>
                                     </div>
-                                    <div
-                                        className={
-                                            'col-span-3 flex flex-col justify-start'
-                                        }
-                                    >
+                                    <div className={'col-span-3 flex flex-col justify-start'}>
                                         <div>
                                             <button
                                                 type={'button'}
                                                 className={
                                                     'w-8/12 bg-blue-500 hover:bg-blue-700 text-white mx-auto font-bold py-2 px-4 mb-2 rounded'
                                                 }
-                                                onClick={() =>
-                                                    setShowPopup2(true)
-                                                }
+                                                onClick={() => setShowPopup2(true)}
                                             >
                                                 Ajouter un fichier
                                             </button>
                                         </div>
                                         {uploadedFile?.name && (
                                             <>
-                                                <span>
-                                                    Fichier :{' '}
-                                                    {uploadedFile?.name}
-                                                </span>
+                                                <span>Fichier : {uploadedFile?.name}</span>
                                                 <span>
                                                     Origine :{' '}
-                                                    {uploadedFile?.uploadOrigin ===
-                                                    'drive'
+                                                    {uploadedFile?.uploadOrigin === 'drive'
                                                         ? 'Drive'
                                                         : 'Ordinateur local'}
                                                 </span>
                                             </>
                                         )}
-                                        <CreateSondage
-                                            setSondageId={setSondageId}
-                                        />
+                                        <CreateSondage setSondageId={setSondageId} />
                                         <div>
                                             <button
                                                 className={
@@ -317,14 +232,8 @@ export default function Subject() {
                                             </button>
                                         </div>
 
-                                        <div
-                                            id={'errorMessage'}
-                                            className={
-                                                'text-red-600 font-bold text-xl hidden'
-                                            }
-                                        >
-                                            Veuillez remplir les champs "Titre"
-                                            et "Nouveau topic"
+                                        <div id={'errorMessage'} className={'text-red-600 font-bold text-xl hidden'}>
+                                            Veuillez remplir les champs "Titre" et "Nouveau topic"
                                         </div>
                                     </div>
                                 </div>
@@ -336,10 +245,7 @@ export default function Subject() {
             {showPopup &&
                 createPortal(
                     <div className={'alertContainer'}>
-                        <form
-                            className={'alertPopup text-center'}
-                            onSubmit={handleSubmit}
-                        >
+                        <form className={'alertPopup text-center'} onSubmit={handleSubmit}>
                             <div className={'p-2 text-xl'}>
                                 <div className="grid grid-cols-1 mb-10">
                                     <label htmlFor="titlePost">Titre</label>
@@ -347,9 +253,7 @@ export default function Subject() {
                                         type="text"
                                         id="titlePost"
                                         name="titlePost"
-                                        className={
-                                            'mt-2 border-2 border-gray-700 rounded-md'
-                                        }
+                                        className={'mt-2 border-2 border-gray-700 rounded-md'}
                                     />
                                 </div>
                                 <div className="grid grid-cols-1">
@@ -357,9 +261,7 @@ export default function Subject() {
                                     <textarea
                                         id="message"
                                         name="message"
-                                        className={
-                                            'mt-2 border-2 border-gray-700 rounded-md'
-                                        }
+                                        className={'mt-2 border-2 border-gray-700 rounded-md'}
                                     />
                                 </div>
                                 <div className="grid grid-cols-1">
@@ -373,33 +275,21 @@ export default function Subject() {
                                     >
                                         Ajouter un fichier
                                     </button>
-                                    {uploadedFile?.name && (
-                                        <span>{uploadedFile?.name}</span>
-                                    )}
+                                    {uploadedFile?.name && <span>{uploadedFile?.name}</span>}
                                 </div>
                             </div>
-                            <div
-                                id={'errorMessage'}
-                                className={
-                                    'text-red-600 font-bold text-2xl hidden'
-                                }
-                            >
-                                Veuillez remplir les champs "Titre" et
-                                "Message"1
+                            <div id={'errorMessage'} className={'text-red-600 font-bold text-2xl hidden'}>
+                                Veuillez remplir les champs "Titre" et "Message"1
                             </div>
                             <div className="flex flex-row justify-evenly text-white mt-5">
                                 <button
-                                    className={
-                                        'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
-                                    }
+                                    className={'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'}
                                     onClick={quitPopup}
                                 >
                                     Annuler
                                 </button>
                                 <button
-                                    className={
-                                        'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-                                    }
+                                    className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'}
                                     type={'submit'}
                                 >
                                     Envoyer
@@ -416,10 +306,7 @@ export default function Subject() {
                             <h1>Drive</h1>
                             <DisplayFiles
                                 callbackOnClick={getFileFromDrive}
-                                startingFolderId={
-                                    currentSubjectDisplayWithAllRelatedData!
-                                        .folder_id
-                                }
+                                startingFolderId={currentSubjectDisplayWithAllRelatedData!.folder_id}
                             />
                             <h1>
                                 <input

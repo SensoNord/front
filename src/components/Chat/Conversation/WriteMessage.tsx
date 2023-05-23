@@ -37,19 +37,12 @@ export default function WriteMessage(props: WriteMessageProps) {
         chatType: 'conversation',
     });
 
-    async function handleSubmit(e: {
-        preventDefault: () => void;
-        target: any;
-    }) {
+    async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
 
         const responseMessage = e.target[0].value.trimEnd();
 
-        if (
-            file?.size === 0 &&
-            file.name.length === 0 &&
-            responseMessage.length === 0
-        ) {
+        if (file?.size === 0 && file.name.length === 0 && responseMessage.length === 0) {
             alert('Vous ne pouvez pas envoyez de message vide');
             return;
         }
@@ -73,9 +66,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                 } as PayLoadCreateConversationMessage),
             );
         }
-        dispatch(
-            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
-        );
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
 
         clearFile();
         formRef.current.reset();
@@ -92,23 +83,15 @@ export default function WriteMessage(props: WriteMessageProps) {
                     <textarea
                         id={'response'}
                         placeholder={'Nouveau Message'}
-                        className={
-                            'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md'
-                        }
+                        className={'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md'}
                         rows={3}
                         cols={30}
                     ></textarea>
                 </span>
-                <span
-                    className={
-                        'inline col-start-11 col-span-2 flex flex-col justify-start items-center'
-                    }
-                >
+                <span className={'inline col-start-11 col-span-2 flex flex-col justify-start items-center'}>
                     <button
                         type={'button'}
-                        className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
-                        }
+                        className={'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'}
                         onClick={() => setShowPopup(true)}
                     >
                         Ajouter un fichier
@@ -116,9 +99,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                     {fileName && <span>{fileName}</span>}
                     <button
                         type="submit"
-                        className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-                        }
+                        className={'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'}
                     >
                         Envoyer
                     </button>

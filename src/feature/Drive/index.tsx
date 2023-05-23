@@ -3,12 +3,7 @@ import DisplayFiles from '../../components/Files/DisplayFiles';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { fetchSubjectByFolderId } from '../../slicers/chat/subject-slice';
-import {
-    UpdateFilePayload,
-    createFile,
-    downloadFile,
-    updateFile,
-} from '../../slicers/file/file-slice';
+import { UpdateFilePayload, createFile, downloadFile, updateFile } from '../../slicers/file/file-slice';
 import '../../styles/Forum.css';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 
@@ -33,9 +28,7 @@ export default function Drive() {
     }, [actualFolder, dispatch]);
 
     useEffect(() => {
-        setUploadIsEnabled(
-            subjectListForFolder && subjectListForFolder.length !== 0,
-        );
+        setUploadIsEnabled(subjectListForFolder && subjectListForFolder.length !== 0);
     }, [subjectListForFolder]);
 
     function newFile() {
@@ -45,15 +38,9 @@ export default function Drive() {
     const handleAddNewFile = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const responseMessage = (
-            e.currentTarget[0] as HTMLInputElement
-        ).value.trimEnd();
+        const responseMessage = (e.currentTarget[0] as HTMLInputElement).value.trimEnd();
 
-        if (
-            uploadedFile?.size === 0 &&
-            uploadedFile.name.length === 0 &&
-            responseMessage.length === 0
-        ) {
+        if (uploadedFile?.size === 0 && uploadedFile.name.length === 0 && responseMessage.length === 0) {
             alert('Vous ne pouvez pas envoyez de message vide');
             return;
         }
@@ -61,16 +48,9 @@ export default function Drive() {
         if (uploadedFile?.size !== 0 || uploadedFile.name.length !== 0) {
             await dispatch(fetchSubjectByFolderId(actualFolder.id));
 
-            if (
-                uploadedFile &&
-                actualFolder.id !== '' &&
-                subjectListForFolder.length !== 0
-            ) {
-                const createdFilePayload = await dispatch(
-                    createFile(uploadedFile),
-                );
-                const createdFile =
-                    createdFilePayload.payload as ModifiedFileType;
+            if (uploadedFile && actualFolder.id !== '' && subjectListForFolder.length !== 0) {
+                const createdFilePayload = await dispatch(createFile(uploadedFile));
+                const createdFile = createdFilePayload.payload as ModifiedFileType;
                 await dispatch(
                     updateFile({
                         file: createdFile,
@@ -106,21 +86,14 @@ export default function Drive() {
                 >
                     Ajouter un fichier
                 </button>
-                <DisplayFiles
-                    showDelete={true}
-                    callbackOnClick={handleDownloadFile}
-                ></DisplayFiles>
+                <DisplayFiles showDelete={true} callbackOnClick={handleDownloadFile}></DisplayFiles>
             </div>
             {showPopup &&
                 createPortal(
                     <div className={'alertContainer'}>
                         <div className={'alertPopup text-center'}>
                             <h1>Ajout d'un fichier</h1>
-                            <form
-                                id="upload-file"
-                                className={'grid grid-cols-12 m-2'}
-                                onSubmit={handleAddNewFile}
-                            >
+                            <form id="upload-file" className={'grid grid-cols-12 m-2'} onSubmit={handleAddNewFile}>
                                 <label className={'col-span-12 m-2 p-2'}>
                                     Fichier
                                     <input

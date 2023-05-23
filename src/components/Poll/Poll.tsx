@@ -62,9 +62,7 @@ export default function Poll({ sondage_id }: PollProps) {
                     <DisplayPoll sondage_id={sondage_id} userId={userId} />
                     {userId === dataListeSondage.user_created && (
                         <div>
-                            <button onClick={supprimerSondage}>
-                                supprimer le sondage
-                            </button>
+                            <button onClick={supprimerSondage}>supprimer le sondage</button>
                         </div>
                     )}
                 </div>

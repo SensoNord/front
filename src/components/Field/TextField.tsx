@@ -8,8 +8,7 @@ type TextFieldProps = {
 };
 
 function TextField(props: TextFieldProps) {
-    const { value, handleChange, required, label, className, customKey } =
-        props;
+    const { value, handleChange, required, label, className, customKey } = props;
 
     return (
         <>

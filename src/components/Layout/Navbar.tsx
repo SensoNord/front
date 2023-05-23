@@ -18,8 +18,7 @@ export default function Navbar() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const iconeTransistion =
-        'hover:text-blue-500 transition-colors duration-200 space-x-4 flex flex-col items-center';
+    const iconeTransistion = 'hover:text-blue-500 transition-colors duration-200 space-x-4 flex flex-col items-center';
     const iconeSize = 'h-8 w-8 tablet:h-10 tablet:w-10';
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,15 +42,9 @@ export default function Navbar() {
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
                             {isMenuOpen ? (
-                                <XMarkIcon
-                                    className=" h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                />
+                                <XMarkIcon className=" h-5 w-5 text-gray-400" aria-hidden="true" />
                             ) : (
-                                <Bars3Icon
-                                    className=" h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                />
+                                <Bars3Icon className=" h-5 w-5 text-gray-400" aria-hidden="true" />
                             )}
                         </Menu.Button>
                     </div>
@@ -72,9 +65,7 @@ export default function Navbar() {
                                         <Link
                                             to="/"
                                             className={classNames(
-                                                active
-                                                    ? 'bg-blue-100 text-gray-900'
-                                                    : 'text-gray-700',
+                                                active ? 'bg-blue-100 text-gray-900' : 'text-gray-700',
                                                 'block px-4 py-2 text-base',
                                             )}
                                             onClick={() => setIsMenuOpen(false)}
@@ -88,9 +79,7 @@ export default function Navbar() {
                                         <Link
                                             to="/chat"
                                             className={classNames(
-                                                active
-                                                    ? 'bg-blue-100 text-gray-900'
-                                                    : 'text-gray-700',
+                                                active ? 'bg-blue-100 text-gray-900' : 'text-gray-700',
                                                 'block px-4 py-2 text-base',
                                             )}
                                             onClick={() => setIsMenuOpen(false)}
@@ -104,9 +93,7 @@ export default function Navbar() {
                                         <Link
                                             to="/calendar"
                                             className={classNames(
-                                                active
-                                                    ? 'bg-blue-100 text-gray-900'
-                                                    : 'text-gray-700',
+                                                active ? 'bg-blue-100 text-gray-900' : 'text-gray-700',
                                                 'block px-4 py-2 text-base',
                                             )}
                                             onClick={() => setIsMenuOpen(false)}
@@ -120,9 +107,7 @@ export default function Navbar() {
                                         <Link
                                             to="/drive"
                                             className={classNames(
-                                                active
-                                                    ? 'bg-blue-100 text-gray-900'
-                                                    : 'text-gray-700',
+                                                active ? 'bg-blue-100 text-gray-900' : 'text-gray-700',
                                                 'block px-4 py-2 text-base',
                                             )}
                                             onClick={() => setIsMenuOpen(false)}
@@ -136,9 +121,7 @@ export default function Navbar() {
                                         <Link
                                             to="/profil"
                                             className={classNames(
-                                                active
-                                                    ? 'bg-blue-100 text-gray-900'
-                                                    : 'text-gray-700',
+                                                active ? 'bg-blue-100 text-gray-900' : 'text-gray-700',
                                                 'block px-4 py-2 text-base',
                                             )}
                                             onClick={() => setIsMenuOpen(false)}
@@ -153,42 +136,22 @@ export default function Navbar() {
                 </Menu>
             </div>
             <div className="hidden tablet:flex space-x-4">
-                <NavLink
-                    to="/"
-                    className={({ isActive }) =>
-                        isActive ? 'text-blue-600' : ''
-                    }
-                >
+                <NavLink to="/" className={({ isActive }) => (isActive ? 'text-blue-600' : '')}>
                     <img src="/logo.svg" alt="logo" className="h-16 w-16" />
                 </NavLink>
-                <NavLink
-                    to="/chat"
-                    className={({ isActive }) =>
-                        isActive ? 'text-blue-600' : ''
-                    }
-                >
+                <NavLink to="/chat" className={({ isActive }) => (isActive ? 'text-blue-600' : '')}>
                     <div className={iconeTransistion}>
                         <ChatBubbleBottomCenterTextIcon className={iconeSize} />
                         <p className="flex text-sm w-full">Chat</p>
                     </div>
                 </NavLink>
-                <NavLink
-                    to="/calendar"
-                    className={({ isActive }) =>
-                        isActive ? 'text-blue-600' : ''
-                    }
-                >
+                <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'text-blue-600' : '')}>
                     <div className={iconeTransistion}>
                         <CalendarIcon className={iconeSize} />
                         <p className="flex text-sm w-full">Calendar</p>
                     </div>
                 </NavLink>
-                <NavLink
-                    to="/drive"
-                    className={({ isActive }) =>
-                        isActive ? 'text-blue-600' : ''
-                    }
-                >
+                <NavLink to="/drive" className={({ isActive }) => (isActive ? 'text-blue-600' : '')}>
                     <div className={iconeTransistion}>
                         <FolderIcon className={iconeSize} />
                         <p className="flex text-sm w-full">Drive</p>
@@ -200,19 +163,11 @@ export default function Navbar() {
             </div>
             <div className="hidden tablet:flex items-center rounded-full bg-gray-200 px-3 py-2 w-1/3">
                 <MagnifyingGlassIcon className="h-61 w-6 text-gray-500" />
-                <input
-                    className="ml-2 bg-transparent focus:outline-none w-full text-lg"
-                    placeholder="Rechercher"
-                />
+                <input className="ml-2 bg-transparent focus:outline-none w-full text-lg" placeholder="Rechercher" />
             </div>
             <div className="tablet:flex space-x-4">
                 <div className="hidden tablet:flex space-x-4">
-                    <NavLink
-                        to="/profil"
-                        className={({ isActive }) =>
-                            isActive ? 'text-blue-600' : ''
-                        }
-                    >
+                    <NavLink to="/profil" className={({ isActive }) => (isActive ? 'text-blue-600' : '')}>
                         <div className={iconeTransistion}>
                             <UserCircleIcon className={iconeSize} />
                             <p className="flex text-sm w-full">Profile</p>
@@ -222,9 +177,7 @@ export default function Navbar() {
                 <button onClick={handleLogout}>
                     <div className={iconeTransistion}>
                         <ArrowLeftOnRectangleIcon className={iconeSize} />
-                        <p className="hidden tablet:flex text-sm w-full">
-                            Logout
-                        </p>
+                        <p className="hidden tablet:flex text-sm w-full">Logout</p>
                     </div>
                 </button>
             </div>

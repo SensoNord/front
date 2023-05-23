@@ -2,9 +2,12 @@ import AjouterReponse from './AddResponse';
 import { useState, useEffect } from 'react';
 import AddVote from './AddVote';
 import { directus } from '../../libraries/directus';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Doughnut, Pie } from 'react-chartjs-2';
 // eslint-disable-next-line no-unused-vars
 import Chart from 'chart.js/auto';
+import { Colors } from 'chart.js';
+
+Chart.register(Colors);
 
 const getDataSondageById = async sondage_id => {
     const data = await directus.items('sondage').readByQuery({
@@ -87,17 +90,14 @@ export default function DisplayPoll({ sondage_id, userId }) {
         if (nouveauVote) {
             dataListeSondage.choix_user_list.push(choix);
             const indexChoix = dataSondage.reponses.indexOf(choix);
-            dataSondage.nombre_vote[indexChoix] =
-                dataSondage.nombre_vote[indexChoix] + 1;
+            dataSondage.nombre_vote[indexChoix] = dataSondage.nombre_vote[indexChoix] + 1;
         } else {
             const index = dataListeSondage.user_list.indexOf(userId);
             const ancienChoix = dataListeSondage.choix_user_list[index];
             const indexAncienChoix = dataSondage.reponses.indexOf(ancienChoix);
-            dataSondage.nombre_vote[indexAncienChoix] =
-                dataSondage.nombre_vote[indexAncienChoix] - 1;
+            dataSondage.nombre_vote[indexAncienChoix] = dataSondage.nombre_vote[indexAncienChoix] - 1;
             const indexChoix = dataSondage.reponses.indexOf(choix);
-            dataSondage.nombre_vote[indexChoix] =
-                dataSondage.nombre_vote[indexChoix] + 1;
+            dataSondage.nombre_vote[indexChoix] = dataSondage.nombre_vote[indexChoix] + 1;
             dataListeSondage.choix_user_list[index] = choix;
         }
         const id = await getIdParentSondageBySondageId(sondage_id);
@@ -143,14 +143,13 @@ export default function DisplayPoll({ sondage_id, userId }) {
                 {
                     label: dataListeSondage.nomSondage,
                     data: dataSondage.nombre_vote,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,
                 },
             ],
         };
         return data;
     };
+
     const options = {
         responsive: true,
         scales: {
@@ -177,16 +176,9 @@ export default function DisplayPoll({ sondage_id, userId }) {
                         ajouterVote={voterElement}
                         addUserToUserList={addUserToUserList}
                     />
-                    {dataListeSondage?.isEditable && (
-                        <AjouterReponse
-                            data={dataSondage}
-                            onClose={ajouter_element}
-                        />
-                    )}
-                    {isHistogramme && (
-                        <Bar data={getData()} options={options} />
-                    )}
-                    {isPie && <Pie data={getData()} options={options} />}
+                    {dataListeSondage?.isEditable && <AjouterReponse data={dataSondage} onClose={ajouter_element} />}
+                    {isHistogramme && <Bar data={getData()} options={options} />}
+                    {isPie && <Doughnut data={getData()} />}
                 </div>
             )}
         </div>

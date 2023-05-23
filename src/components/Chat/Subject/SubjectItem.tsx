@@ -14,9 +14,7 @@ type SubjectItemProps = {
 export default function SubjectItem(props: SubjectItemProps) {
     const { subject, handleSetSelectedChat, selectedChat, className } = props;
     const dispatch = useAppDispatch();
-    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(
-        state => state.subject,
-    );
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const [isCurrentSubject, setIsCurrentSubject] = useState<boolean>(false);
 
     useEffect(() => {
@@ -40,9 +38,7 @@ export default function SubjectItem(props: SubjectItemProps) {
         <div
             key={subject.id + 'item'}
             onClick={() => handleChangeSelectedSubject(subject)}
-            className={`${
-                isCurrentSubject ? 'bg-blue-200' : ''
-            } cursor-pointer ${className}`}
+            className={`${isCurrentSubject ? 'bg-blue-200' : ''} cursor-pointer ${className}`}
         >
             <h1>{subject.name}</h1>
         </div>

@@ -16,14 +16,10 @@ export default function AcceptInvitation() {
     const { status: statusUser } = useAppSelector(state => state.auth);
     const { status, error } = useAppSelector(state => state.invitation);
     const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
-    const [isErrorDisplayable, setIsErrorDisplayable] =
-        useState<boolean>(false);
-    const [isInscriptionSuccess, setIsInscriptionSuccess] =
-        useState<boolean>(false);
+    const [isErrorDisplayable, setIsErrorDisplayable] = useState<boolean>(false);
+    const [isInscriptionSuccess, setIsInscriptionSuccess] = useState<boolean>(false);
 
-    const [inputColor, setInputColor] = useState<string>(
-        'bg-blue-200 tablet:bg-blue-100',
-    );
+    const [inputColor, setInputColor] = useState<string>('bg-blue-200 tablet:bg-blue-100');
 
     const query = new URLSearchParams(location.search);
     const invitationToken = query.get('token');
@@ -31,13 +27,10 @@ export default function AcceptInvitation() {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-    const passwordFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setPassword(event.target.value);
+    const passwordFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value);
 
-    const confirmPasswordFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setConfirmPassword(event.target.value);
+    const confirmPasswordFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+        setConfirmPassword(event.target.value);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -92,16 +85,9 @@ export default function AcceptInvitation() {
     return (
         <>
             {isInscriptionSuccess ? (
-                <About
-                    isInsriptionSuccess={isInscriptionSuccess}
-                    password={password}
-                    setPassword={setPassword}
-                />
+                <About isInsriptionSuccess={isInscriptionSuccess} password={password} setPassword={setPassword} />
             ) : (
-                <AuthentificationForm
-                    title="Création du compte"
-                    description="Création du mot de passe de votre compte"
-                >
+                <AuthentificationForm title="Création du compte" description="Création du mot de passe de votre compte">
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                             <PasswordField
@@ -121,11 +107,9 @@ export default function AcceptInvitation() {
                             label="Confirm Password"
                             className={`w-4/5 placeholder-inherit text-lg tablet:text-xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
                         />
-                        {isErrorDisplayable &&
-                        (status === StatusEnum.FAILED || !isPasswordValid) ? (
+                        {isErrorDisplayable && (status === StatusEnum.FAILED || !isPasswordValid) ? (
                             <p className="mt-4 mb-4 text-red-500 text-sm">
-                                {!isPasswordValid &&
-                                    'Les mots de passe ne correspondent pas'}
+                                {!isPasswordValid && 'Les mots de passe ne correspondent pas'}
                                 {isPasswordValid && error.error}
                             </p>
                         ) : (

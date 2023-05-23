@@ -1,10 +1,6 @@
 // useFileManagement.js
 import { useRef, useState } from 'react';
-import {
-    UpdateFilePayload,
-    createFile,
-    updateFile,
-} from '../slicers/file/file-slice';
+import { UpdateFilePayload, createFile, updateFile } from '../slicers/file/file-slice';
 import { ModifiedFileType } from '../types/File/ModifiedFileType';
 import { useAppDispatch } from '../App/hooks';
 import { SubjectType } from '../types/Chat/SubjectType';

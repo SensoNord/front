@@ -20,10 +20,7 @@ export const store = configureStore({
         conversation: conversationReducer,
         user: userReducer,
     },
-    middleware: getDefaultMiddleware => [
-        ...getDefaultMiddleware(),
-        errorMiddleware,
-    ],
+    middleware: getDefaultMiddleware => [...getDefaultMiddleware(), errorMiddleware],
 });
 
 export type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>;

@@ -16,27 +16,22 @@ const initialState: UserState = {
     error: {} as ErrorType,
 };
 
-export const fetchUserList = createAsyncThunk(
-    'user/fetchUserList',
-    async (_, { rejectWithValue, getState }) => {
-        try {
-            const response = await directus.users.readByQuery({
-                limit: -1,
-            });
-            const state = getState() as any;
-            const connectedUser = state.auth.connectedUser;
-            const userList = response.data as unknown as UserType[];
-            return userList.filter(
-                (user: UserType) => user.id !== connectedUser.id,
-            );
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const fetchUserList = createAsyncThunk('user/fetchUserList', async (_, { rejectWithValue, getState }) => {
+    try {
+        const response = await directus.users.readByQuery({
+            limit: -1,
+        });
+        const state = getState() as any;
+        const connectedUser = state.auth.connectedUser;
+        const userList = response.data as unknown as UserType[];
+        return userList.filter((user: UserType) => user.id !== connectedUser.id);
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 const userSlice = createSlice({
     name: 'user',
