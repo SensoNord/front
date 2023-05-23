@@ -42,7 +42,7 @@ export default function Chat() {
     return (
         <div
             style={{
-                height: 'calc(100vh - 96px)',
+                height: 'calc(100vh - 100px)',
             }}
             className="flex"
         >
@@ -56,9 +56,9 @@ export default function Chat() {
                     }
                 />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 bg-blue-50">
                 {isConversationAddButtonClick || isSubjectAddButtonClick ? (
-                    <div className="h-full flex items-center justify-center bg-blue-100">
+                    <div className="h-full flex items-center justify-center">
                         <ChatCreationMenu />
                     </div>
                 ) : (
