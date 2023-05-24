@@ -89,7 +89,7 @@ export default function Response(props: ResponseProps) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="w-5 h-5 inline mx-1"
+                                        className="w-6 h-6 cursor-pointer hover:text-gray-500 inline mx-1"
                                         onClick={() => setMessageIsBeingEdited(true)}
                                     >
                                         <path
@@ -107,7 +107,7 @@ export default function Response(props: ResponseProps) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="w-5 h-5 inline mx-1"
+                                        className="w-6 h-6 cursor-pointer hover:text-red-500 inline mx-1"
                                         onClick={() => setShowPopup(true)}
                                     >
                                         <path
@@ -126,7 +126,7 @@ export default function Response(props: ResponseProps) {
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                             stroke="currentColor"
-                                            className="w-6 h-6"
+                                            className="w-6 h-6 cursor-pointer hover:text-orange-500"
                                             onClick={() => setMessageIsBeingEdited(false)}
                                         >
                                             <path
@@ -142,7 +142,7 @@ export default function Response(props: ResponseProps) {
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                             stroke="currentColor"
-                                            className="w-6 h-6"
+                                            className="w-6 h-6 cursor-pointer hover:text-green-500"
                                             onClick={updateMessage}
                                         >
                                             <path

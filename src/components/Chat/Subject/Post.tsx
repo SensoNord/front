@@ -92,7 +92,7 @@ export default function Post(props: Props) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="w-5 h-5 inline mx-1"
+                                        className="w-6 h-6 cursor-pointer hover:text-gray-500 inline mx-1"
                                         onClick={() => setPostIsBeingEdited(true)}
                                     >
                                         <path
@@ -110,7 +110,7 @@ export default function Post(props: Props) {
                                         viewBox="0 0 24 24"
                                         strokeWidth={1.5}
                                         stroke="currentColor"
-                                        className="w-5 h-5 inline mx-1"
+                                        className="w-6 h-6 cursor-pointer hover:text-red-500 inline mx-1"
                                         onClick={() => setShowPopup(true)}
                                     >
                                         <path
@@ -129,7 +129,7 @@ export default function Post(props: Props) {
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                             stroke="currentColor"
-                                            className="w-6 h-6"
+                                            className="w-6 h-6 cursor-pointer hover:text-orange-500"
                                             onClick={() => setPostIsBeingEdited(false)}
                                         >
                                             <path
@@ -145,7 +145,7 @@ export default function Post(props: Props) {
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                             stroke="currentColor"
-                                            className="w-6 h-6"
+                                            className="w-6 h-6 cursor-pointer hover:text-green-500"
                                             onClick={updatePost}
                                         >
                                             <path
@@ -180,7 +180,11 @@ export default function Post(props: Props) {
                                     ></textarea>
                                 </div>
                             )}
-                            {post.sondage_id && <Sondage sondage_id={post.sondage_id} />}
+                            {post.sondage_id && (
+                                <div className="border-t-2 border-gray-300 mt-2">
+                                    <Sondage sondage_id={post.sondage_id} />
+                                </div>
+                            )}
                             <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
                             <div className={'text-right'}>
                                 <NameAndDate user_created={post.user_created} date_created={post.date_created} />

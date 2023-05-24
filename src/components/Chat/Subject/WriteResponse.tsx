@@ -75,7 +75,7 @@ export default function WriteResponse(props: Props) {
             <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
                 <span className={'col-span-9 flex flex-col'}>
                     <textarea
-                        className={'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'}
+                        className={'w-full p-2 mt-2 border border-gray-700 rounded-md'}
                         rows={2}
                         cols={30}
                         placeholder={'Nouveau Message'}
@@ -88,10 +88,10 @@ export default function WriteResponse(props: Props) {
                             className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                             onClick={() => setShowPopup(true)}
                         >
-                            <DocumentPlusIcon className={'w-7 h-7'} />
+                            <DocumentPlusIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
                         </button>
                         <button type="submit" className={'mx-2 px-1 my-1 py-1 cursor-pointer'}>
-                            <PaperAirplaneIcon className={'w-7 h-7'} />
+                            <PaperAirplaneIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
                         </button>
                     </div>
                     {uploadedFile?.name && (
@@ -102,7 +102,10 @@ export default function WriteResponse(props: Props) {
                                     Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
                                 </span>
                             </div>
-                            <TrashIcon className={'w-7 h-7 cursor-pointer'} onClick={() => setUploadedFile(null)} />
+                            <TrashIcon
+                                className={'w-7 h-7 cursor-pointer hover:text-red-500'}
+                                onClick={() => setUploadedFile(null)}
+                            />
                         </div>
                     )}
                 </span>

@@ -199,7 +199,7 @@ export default function Subject() {
                                                 type="text"
                                                 id="titlePost"
                                                 name="titlePost"
-                                                className={'mt-2 border-2 border-gray-700 rounded-md px-2 py-1'}
+                                                className={'mt-2 border border-gray-700 rounded-md px-2 py-1'}
                                                 placeholder={'Titre'}
                                                 value={title}
                                                 onChange={handleChangeTitle}
@@ -209,7 +209,7 @@ export default function Subject() {
                                             <textarea
                                                 id="message"
                                                 name="message"
-                                                className={'mt-2 border-2 border-gray-700 rounded-md h-full px-2 py-1'}
+                                                className={'mt-2 border border-gray-700 rounded-md h-full px-2 py-1'}
                                                 placeholder={'Nouveau topic'}
                                                 value={message}
                                                 onChange={handleChangeMessage}
@@ -224,7 +224,7 @@ export default function Subject() {
                                                     className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                                                     onClick={() => setShowPopup(true)}
                                                 >
-                                                    <DocumentPlusIcon className={'w-7 h-7'} />
+                                                    <DocumentPlusIcon className={'w-7 h-7 hover:text-gray-500'} />
                                                 </button>
                                             </div>
                                             <CreateSondage
@@ -237,7 +237,7 @@ export default function Subject() {
                                                     className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                                                     type={'submit'}
                                                 >
-                                                    <PaperAirplaneIcon className={'w-7 h-7'} />
+                                                    <PaperAirplaneIcon className={'w-7 h-7 hover:text-gray-500'} />
                                                 </button>
                                             </div>
                                         </div>
@@ -252,7 +252,9 @@ export default function Subject() {
                                                     type={'button'}
                                                     onClick={() => setSondageId(null)}
                                                 >
-                                                    <TrashIcon className={'w-7 h-7'} />
+                                                    <TrashIcon
+                                                        className={'w-7 h-7 cursor-pointer hover:text-red-500'}
+                                                    />
                                                 </button>
                                             </div>
                                         )}
@@ -268,7 +270,7 @@ export default function Subject() {
                                                     </span>
                                                 </div>
                                                 <TrashIcon
-                                                    className={'w-7 h-7 cursor-pointer'}
+                                                    className={'w-7 h-7 cursor-pointer hover:text-red-500'}
                                                     onClick={() => setUploadedFile(null)}
                                                 />
                                             </div>
