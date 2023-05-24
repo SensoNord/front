@@ -36,6 +36,13 @@ export const conversationFields = [
     'messages_list.file_id',
 ];
 
+export const conversationListFields = [
+    'id',
+    'user_list.directus_users_id.first_name',
+    'user_list.directus_users_id.last_name',
+    'user_list.directus_users_id.id',
+];
+
 export const messageFields = [
     'id',
     'user_created.first_name',

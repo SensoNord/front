@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
-import { setCurrentConversationDisplay } from '../../../slicers/chat/conversation-slice';
+import {fetchConversationById} from '../../../slicers/chat/conversation-slice';
 
 type ConversationItemProps = {
     conversation: ConversationType;
@@ -46,9 +46,9 @@ export default function ConversationItem(props: ConversationItemProps) {
         }
     }, [currentConversationDisplayWithAllRelatedData, conversation, selectedChat]);
 
-    const handleChangeSelectedConversation = (conversation: ConversationType) => {
+    const handleChangeSelectedConversation = async (conversation: ConversationType) => {
         handleSetSelectedChat(ChatEnum.CONVERSATION);
-        dispatch(setCurrentConversationDisplay(conversation));
+        await dispatch(fetchConversationById(conversation.id));
     };
 
     return (

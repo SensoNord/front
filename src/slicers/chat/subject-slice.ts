@@ -14,7 +14,7 @@ import {
     PayLoadUpdateSubjectResponse,
     postFields,
     responseFields,
-    subjectFields,
+    subjectFields, subjectListFields,
 } from './subject-slice-helper';
 
 interface SubjectState {
@@ -55,13 +55,31 @@ export const fetchSubjectByFolderId = createAsyncThunk(
     },
 );
 
-export const fetchAllVisibleSubjectAndRelatedPost = createAsyncThunk(
+export const fetchBySubjectId = createAsyncThunk(
+    'items/fetchBySubjectId',
+    async (subjectId: string, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('subjects').readOne(subjectId, {
+                limit: -1,
+                fields: subjectFields,
+            });
+            return response as SubjectType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const fetchAllVisibleSubject = createAsyncThunk(
     'items/fetchAllVisibleSubject',
     async (_, { rejectWithValue }) => {
         try {
             const response = await directus.items('subjects').readByQuery({
                 limit: -1,
-                fields: subjectFields,
+                fields: subjectListFields,
             });
             return response.data as SubjectType[];
         } catch (error: any) {
@@ -245,16 +263,29 @@ const subjectSlice = createSlice({
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
-            .addCase(fetchAllVisibleSubjectAndRelatedPost.pending, state => {
+            .addCase(fetchBySubjectId.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchAllVisibleSubjectAndRelatedPost.fulfilled, (state, action) => {
+            .addCase(fetchBySubjectId.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.currentSubjectDisplayWithAllRelatedData = action.payload as SubjectType;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchBySubjectId.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(fetchAllVisibleSubject.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchAllVisibleSubject.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.subjectListDisplay = action.payload as SubjectType[];
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchAllVisibleSubjectAndRelatedPost.rejected, (state, action) => {
+            .addCase(fetchAllVisibleSubject.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
