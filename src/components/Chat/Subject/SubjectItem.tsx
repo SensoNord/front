@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { setCurrentSubjectDisplay } from '../../../slicers/chat/subject-slice';
+import {fetchBySubjectId} from '../../../slicers/chat/subject-slice';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 
@@ -29,9 +29,9 @@ export default function SubjectItem(props: SubjectItemProps) {
         }
     }, [currentSubjectDisplayWithAllRelatedData, subject, selectedChat]);
 
-    const handleChangeSelectedSubject = (subject: SubjectType) => {
+    const handleChangeSelectedSubject = async (subject: SubjectType) => {
         handleSetSelectedChat(ChatEnum.SUBJECT);
-        dispatch(setCurrentSubjectDisplay(subject));
+        await dispatch(fetchBySubjectId(subject.id));
     };
 
     return (

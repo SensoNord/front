@@ -5,7 +5,7 @@ import {
     PayLoadCreateConversationMessage,
     PayLoadUpdateConversationMessage,
     conversationFields,
-    messageFields,
+    messageFields, conversationListFields,
 } from './conversation-slice-helper';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { ErrorType } from '../../types/Request/ErrorType';
@@ -27,15 +27,32 @@ const initialState: ConversationState = {
     error: {} as ErrorType,
 };
 
-export const fetchAllVisibleConversationAndRelatedMessage = createAsyncThunk(
-    'conversation/fetchAllVisibleConversationAndRelatedMessage',
+export const fetchAllVisibleConversation = createAsyncThunk(
+    'conversation/fetchAllVisibleConversation',
     async (_, { rejectWithValue }) => {
         try {
             const response = await directus.items('conversations').readByQuery({
                 limit: -1,
-                fields: conversationFields,
+                fields: conversationListFields,
             });
             return response.data as ConversationType[];
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const fetchConversationById = createAsyncThunk(
+    'conversation/fetchConversationById',
+    async (conversationId: string, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('conversations').readOne(conversationId, {
+                fields: conversationFields,
+            });
+            return response as ConversationType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -146,16 +163,29 @@ const conversationSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllVisibleConversationAndRelatedMessage.pending, state => {
+            .addCase(fetchAllVisibleConversation.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchAllVisibleConversationAndRelatedMessage.fulfilled, (state, action) => {
+            .addCase(fetchAllVisibleConversation.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.conversationListDisplay = action.payload;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchAllVisibleConversationAndRelatedMessage.rejected, (state, action) => {
+            .addCase(fetchAllVisibleConversation.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(fetchConversationById.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchConversationById.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.currentConversationDisplayWithAllRelatedData = action.payload;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchConversationById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { fetchAllVisibleSubjectAndRelatedPost } from '../../slicers/chat/subject-slice';
+import {fetchAllVisibleSubject} from '../../slicers/chat/subject-slice';
 import SubjectItem from './Subject/SubjectItem';
-import { fetchAllVisibleConversationAndRelatedMessage } from '../../slicers/chat/conversation-slice';
+import {fetchAllVisibleConversation} from '../../slicers/chat/conversation-slice';
 import { ConversationType } from '../../types/Chat/ConversationType';
 import ConversationItem from './Conversation/ConversationItem';
 import { SubjectType } from '../../types/Chat/SubjectType';
@@ -35,20 +35,16 @@ export default function ChatNavbar(props: ChatNavbarProps) {
     }, [connectedUserId, connectedUserRoleName]);
 
     useEffect(() => {
-        const fetchAllSubject = async () => {
-            // TODO:
-            // Pour l'instant on fetch tout les subjects et tout les posts
-            // Probablement vouer à disparaitre, plutot faire d'abord un fetchAllSubject (sans les posts)
-            // puis quand on click sur un subject, on fetchAllPostBySubjectId
-            await dispatch(fetchAllVisibleSubjectAndRelatedPost());
+        const localFetchAllSubject = async () => {
+            await dispatch(fetchAllVisibleSubject());
         };
 
-        const fetchAllConversation = async () => {
-            await dispatch(fetchAllVisibleConversationAndRelatedMessage());
+        const localFetchAllConversation = async () => {
+            await dispatch(fetchAllVisibleConversation());
         };
 
-        fetchAllSubject();
-        fetchAllConversation();
+        localFetchAllSubject();
+        localFetchAllConversation();
     }, [dispatch]);
 
     const className = 'my-1 mx-4 px-2 py-1 cursor-pointer hover:bg-blue-100 rounded-lg';
