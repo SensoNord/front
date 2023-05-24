@@ -102,7 +102,7 @@ export default function CreatePoll(props: CreatPollProps) {
     return (
         <div>
             <button onClick={initialisationPopup} type={'button'} className={'mx-2 px-1 my-1 py-1 cursor-pointer'}>
-                <ChartBarIcon className="h-6 w-6" />
+                <ChartBarIcon className="h-7 w-7 hover:text-gray-500" />
             </button>
             {showPopup && (
                 <div className="alertContainer">
@@ -167,7 +167,7 @@ export default function CreatePoll(props: CreatPollProps) {
                                     <li key={index} className={'my-1'}>
                                         {reponse}{' '}
                                         <TrashIcon
-                                            className={'h-4 w-4 cursor-pointer inline ml-2 mb-1'}
+                                            className={'h-4 w-4 cursor-pointer hover:text-red-500 inline ml-2 mb-1'}
                                             onClick={() => {
                                                 handleDeleteReponseSondage(index);
                                             }}

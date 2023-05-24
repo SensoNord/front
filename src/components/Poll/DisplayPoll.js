@@ -167,15 +167,27 @@ export default function DisplayPoll({ sondage_id, userId }) {
     return (
         <div>
             {isSondageLoaded && (
-                <div>
-                    <AddVote
-                        dataSondage={dataSondage}
-                        ajouterVote={voterElement}
-                        addUserToUserList={addUserToUserList}
-                    />
-                    {dataListeSondage?.isEditable && <AjouterReponse data={dataSondage} onClose={ajouter_element} />}
-                    {isHistogramme && <Bar data={getData()} options={options} />}
-                    {isPie && <Doughnut data={getData()} />}
+                <div className="flex flex-row mt-2">
+                    {isHistogramme && (
+                        <div className="tablet:w-3/5">
+                            <Bar data={getData()} options={options} />
+                        </div>
+                    )}
+                    {isPie && (
+                        <div className="tablet:w-1/5">
+                            <Doughnut data={getData()} />
+                        </div>
+                    )}
+                    <div className="flex flex-col justify-between">
+                        {dataListeSondage?.isEditable && (
+                            <AjouterReponse data={dataSondage} onClose={ajouter_element} />
+                        )}
+                        <AddVote
+                            dataSondage={dataSondage}
+                            ajouterVote={voterElement}
+                            addUserToUserList={addUserToUserList}
+                        />
+                    </div>
                 </div>
             )}
         </div>
