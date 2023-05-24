@@ -1,4 +1,9 @@
-name: Node.js CI
+name: Deploy to Vercel - development
+
+env:
+  REACT_APP_EMAIL_TESTEUR: ${{ secrets.REACT_APP_EMAIL_TESTEUR }}
+  REACT_APP_PASSWORD_TESTEUR: ${{ secrets.REACT_APP_PASSWORD_TESTEUR }}
+  REACT_APP_DIRECTUS_URL: ${{ secrets.REACT_APP_DIRECTUS_URL }}
 
 on:
   - pull_request
