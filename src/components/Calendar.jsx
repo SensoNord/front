@@ -29,7 +29,7 @@ const Calendar = () => {
     useEffect(() => {
         if (!isSetup) {
             directus.auth
-                .login({email: "**************", password: "**********"})
+                .login({email: "****", password: "$*****"})
                 .then(() => {
                     directus.items('Calendrier').readByQuery({limit: -1}).then((calendar) => {
                         if (calendar) {
@@ -57,15 +57,36 @@ const Calendar = () => {
     };
 
     async function createEvent (toAdd){
+        if(toAdd.allDay) {
+            let start = new Date(toAdd.startDate);
+            let end = new Date(toAdd.endDate);
+            start.setHours(0);
+            start.setMinutes(0);
+            let day = end.getDate();
+            end.setDate(day + 1);
+            end.setHours(0);
+            end.setMinutes(0)
+            await directus.items('Calendrier').createOne(
+                {
+                    title: toAdd.title,
+                    startDate: start,
+                    endDate: end,
+                    notes: toAdd.notes,
+                    rRule:toAdd.rRule
+                });
 
-        await directus.items('Calendrier').createOne(
-            {
-                title: toAdd.title,
-                startDate: toAdd.startDate,
-                endDate: toAdd.endDate,
-                notes: toAdd.notes,
-                rRule:toAdd.rRule
-            });
+        }
+        else {
+            await directus.items('Calendrier').createOne(
+                {
+                    title: toAdd.title,
+                    startDate: toAdd.startDate,
+                    endDate: toAdd.endDate,
+                    notes: toAdd.notes,
+                    rRule:toAdd.rRule
+                });
+        }
+
     }
 
     async function updateEvent (toUpdate,id,changed){
@@ -158,7 +179,6 @@ const Calendar = () => {
                         }
                     });
                     if (!isHere){
-                        console.log(added.title,added.startDate,new Date(added.startDate));
                         updatedData = [...updatedData, {...added}];
                     }
                 }
