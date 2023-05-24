@@ -21,9 +21,7 @@ export default function RoleSelection(props: RoleSelectionProps) {
     }, [dispatch]);
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const role = roles.find(
-            (role: RoleType) => role.name === event.target.value,
-        );
+        const role = roles.find((role: RoleType) => role.name === event.target.value);
         setSelectedRole(role);
         role ? setIsRoleValid(true) : setIsRoleValid(false);
     };
@@ -40,6 +38,5 @@ export default function RoleSelection(props: RoleSelectionProps) {
             label=""
             className={classNameSelection}
         />
-        
     );
 }

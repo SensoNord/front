@@ -4,10 +4,7 @@ import AuthentificationForm from '../../components/Forms/AuthentificationForm';
 import TextField from '../../components/Field/TextField';
 import { CredentialsType } from '../../types/Users/CredentialsType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import {
-    fetchLogin,
-    updateCurrentUser,
-} from '../../slicers/authentification/auth-slice';
+import { fetchLogin, updateCurrentUserName } from '../../slicers/authentification/auth-slice';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { useNavigate } from 'react-router';
 import { UserInformationType } from '../../types/Users/UserInformationType';
@@ -21,33 +18,22 @@ type AboutProps = {
 
 export const About = (props: AboutProps) => {
     const { isInsriptionSuccess, password, setPassword } = props;
-    const [isErrorDisplayable, setIsErrorDisplayable] =
-        useState<boolean>(false);
+    const [isErrorDisplayable, setIsErrorDisplayable] = useState<boolean>(false);
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const dispatch = useAppDispatch();
     const { status } = useAppSelector(state => state.auth);
-    const [inputColor, setInputColor] = useState<string>(
-        'bg-blue-200 tablet:bg-blue-100',
-    );
+    const [inputColor, setInputColor] = useState<string>('bg-blue-200 tablet:bg-blue-100');
     const navigate = useNavigate();
 
-    const firstnameFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setFirstname(event.target.value);
+    const firstnameFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setFirstname(event.target.value);
 
-    const lastnameFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setLastname(event.target.value);
+    const lastnameFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setLastname(event.target.value);
 
-    const emailFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setEmail(event.target.value);
+    const emailFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value);
 
-    const passwordFieldHandleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => setPassword(event.target.value);
+    const passwordFieldHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value);
 
     const CONFETTI_ARGS = [
         {},
@@ -55,24 +41,12 @@ export const About = (props: AboutProps) => {
         { emojis: ['🌈', '⚡️', '💥', '✨', '💫', '🌸'] },
         { emojis: ['⚡️', '💥', '✨', '💫'] },
         {
-            confettiColors: [
-                '#ffbe0b',
-                '#fb5607',
-                '#ff006e',
-                '#8338ec',
-                '#3a86ff',
-            ],
+            confettiColors: ['#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff'],
             confettiRadius: 10,
             confettiNumber: 150,
         },
         {
-            confettiColors: [
-                '#9b5de5',
-                '#f15bb5',
-                '#fee440',
-                '#00bbf9',
-                '#00f5d4',
-            ],
+            confettiColors: ['#9b5de5', '#f15bb5', '#fee440', '#00bbf9', '#00f5d4'],
             confettiRadius: 6,
             confettiNumber: 300,
         },
@@ -85,7 +59,7 @@ export const About = (props: AboutProps) => {
 
     const updateUserData = useCallback(async () => {
         await dispatch(
-            updateCurrentUser({
+            updateCurrentUserName({
                 first_name: firstname,
                 last_name: lastname,
             } as UserInformationType),

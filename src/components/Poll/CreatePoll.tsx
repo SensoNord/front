@@ -26,23 +26,17 @@ export default function CreatePoll(props: CreatPollProps) {
     const createSondage = async (typeSondage: string, nomSondage: string) => {
         const now = moment().format('YYYY-MM-DD HH:mm:ss');
         try {
-            const listeSondageItem = await directus
-                .items('liste_sondage')
-                .createOne({
-                    typeSondage: typeSondage,
-                    nomSondage: nomSondage,
-                    date_creation: now,
-                    user_list: [],
-                    choix_user_list: [],
-                    user_created: await getUserId(),
-                    isEditable: enabled,
-                });
+            const listeSondageItem = await directus.items('liste_sondage').createOne({
+                typeSondage: typeSondage,
+                nomSondage: nomSondage,
+                date_creation: now,
+                user_list: [],
+                choix_user_list: [],
+                user_created: await getUserId(),
+                isEditable: enabled,
+            });
 
-            if (
-                listeSondageItem !== null &&
-                typeof listeSondageItem === 'object' &&
-                'id' in listeSondageItem
-            ) {
+            if (listeSondageItem !== null && typeof listeSondageItem === 'object' && 'id' in listeSondageItem) {
                 const parentId = listeSondageItem.id as number;
                 await directus.items('sondage').createOne({
                     sondage_id: parentId,
@@ -64,15 +58,11 @@ export default function CreatePoll(props: CreatPollProps) {
         setTypeSondage('');
     };
 
-    const handleInputNomSondage = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleInputNomSondage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNomSondage(event.target.value);
     };
 
-    const handleInputReponseSondage = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleInputReponseSondage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setReponseSondage(event.target.value);
     };
 
@@ -112,27 +102,18 @@ export default function CreatePoll(props: CreatPollProps) {
                         <div className={'flex flex-row'}>
                             <button
                                 className="bg-white focus:bg-blue-100 p-2 rounded"
-                                onClick={() =>
-                                    handleInputTypeSondage('Histogramme')
-                                }
+                                onClick={() => handleInputTypeSondage('Histogramme')}
                             >
                                 Histogramme
                             </button>
                             <button
                                 className="bg-white focus:bg-blue-100 p-2 rounded"
-                                onClick={() =>
-                                    handleInputTypeSondage(
-                                        'Diagramme circulaire',
-                                    )
-                                }
+                                onClick={() => handleInputTypeSondage('Diagramme circulaire')}
                             >
                                 Diagramme circulaire
                             </button>
                         </div>
-                        <p>
-                            Voulez vous que les utilisateurs puissent ajouter
-                            des réponses ?
-                        </p>
+                        <p>Voulez vous que les utilisateurs puissent ajouter des réponses ?</p>
                         <Switch
                             checked={enabled}
                             onChange={setEnabled}
@@ -140,9 +121,7 @@ export default function CreatePoll(props: CreatPollProps) {
                                 enabled ? 'bg-blue-600' : 'bg-gray-200'
                             } relative inline-flex h-6 w-11 items-center rounded-full`}
                         >
-                            <span className="sr-only">
-                                Enable adding responses
-                            </span>
+                            <span className="sr-only">Enable adding responses</span>
                             <span
                                 className={`${
                                     enabled ? 'translate-x-6' : 'translate-x-1'
@@ -158,13 +137,7 @@ export default function CreatePoll(props: CreatPollProps) {
                             />
                         </div>
                         <div>
-                            <button
-                                onClick={() =>
-                                    handleSubmit(typeSondage, nomSondage)
-                                }
-                            >
-                                Submit
-                            </button>
+                            <button onClick={() => handleSubmit(typeSondage, nomSondage)}>Submit</button>
                             <button onClick={closePopup}>Fermer</button>
                         </div>
                     </div>

@@ -10,10 +10,7 @@ export default function DownloadableFile(props: DownloadableFileProps) {
     const { file, handleDownloadFile } = props;
     if (file.file && file.status === FileStatusEnum.ACTIVE) {
         return (
-            <button
-                onClick={handleDownloadFile}
-                className={'underline underline-offset-4'}
-            >
+            <button onClick={handleDownloadFile} className={'underline underline-offset-4'}>
                 Télécharger {file.file.filename_download}
             </button>
         );

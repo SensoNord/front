@@ -1,9 +1,15 @@
-import {useRef, useState} from 'react';
-import {UpdateFilePayload, createFile, updateFile, fetchFileById, downloadFileWithoutURL} from '../slicers/file/file-slice';
-import {ModifiedFileType} from '../types/File/ModifiedFileType';
-import {useAppDispatch} from '../App/hooks';
-import {SubjectType} from '../types/Chat/SubjectType';
-import {ConversationType} from '../types/Chat/ConversationType';
+import { useRef, useState } from 'react';
+import {
+    UpdateFilePayload,
+    createFile,
+    updateFile,
+    fetchFileById,
+    downloadFileWithoutURL,
+} from '../slicers/file/file-slice';
+import { ModifiedFileType } from '../types/File/ModifiedFileType';
+import { useAppDispatch } from '../App/hooks';
+import { SubjectType } from '../types/Chat/SubjectType';
+import { ConversationType } from '../types/Chat/ConversationType';
 
 type UploadedFile = {
     file: ModifiedFileType | File;
@@ -17,7 +23,7 @@ type useFileManagementProps = {
 };
 
 export const useFileManagement = (props: useFileManagementProps) => {
-    const {chat, chatType} = props;
+    const { chat, chatType } = props;
     const fileRef = useRef(null) as { current: any };
     const [showPopup, setShowPopup] = useState<boolean>(false);
     const dispatch = useAppDispatch();
@@ -38,7 +44,7 @@ export const useFileManagement = (props: useFileManagementProps) => {
             );
             setUploadedFile(null);
             return createdFile;
-        }
+        };
 
         if (uploadedFile) {
             if (uploadedFile.uploadOrigin === 'computer') {
@@ -56,7 +62,6 @@ export const useFileManagement = (props: useFileManagementProps) => {
                         return existingFile;
                     }
             }
-
         }
     }
 

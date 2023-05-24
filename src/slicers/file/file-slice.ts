@@ -45,7 +45,7 @@ export const fetchFileByFolder = createAsyncThunk(
                     'uploaded_by.first_name',
                     'uploaded_by.last_name',
                     'uploaded_by.id',
-                ]
+                ],
             });
             return response.data as unknown as Array<ModifiedFileType>;
         } catch (error: any) {
@@ -57,65 +57,46 @@ export const fetchFileByFolder = createAsyncThunk(
     },
 );
 
-export const fetchFileById = createAsyncThunk(
-    'file/fetchFileById',
-    async (fileId: string, { rejectWithValue }) => {
-        try {
-            const response = await directus.files.readOne(fileId);
-            return response as unknown as ModifiedFileType;
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const fetchFileById = createAsyncThunk('file/fetchFileById', async (fileId: string, { rejectWithValue }) => {
+    try {
+        const response = await directus.files.readOne(fileId);
+        return response as unknown as ModifiedFileType;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
-export const createFile = createAsyncThunk(
-    'file/createFile',
-    async (file: File, { rejectWithValue }) => {
-        try {
-            const formData = getFormData({ file });
-            const response = await directus.files.createOne(formData);
-            return response as unknown as ModifiedFileType;
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const createFile = createAsyncThunk('file/createFile', async (file: File, { rejectWithValue }) => {
+    try {
+        const formData = getFormData({ file });
+        const response = await directus.files.createOne(formData);
+        return response as unknown as ModifiedFileType;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 export const updateFile = createAsyncThunk(
     'file/updateFile',
     async (updateFilePayload: UpdateFilePayload, { rejectWithValue }) => {
         try {
-            const chatType =
-                updateFilePayload.chatType === 'subject'
-                    ? 'subjects_id'
-                    : 'conversations_id';
+            const chatType = updateFilePayload.chatType === 'subject' ? 'subjects_id' : 'conversations_id';
             const options =
                 updateFilePayload.chatId !== null
                     ? {
-                          [updateFilePayload.chatType]: [
-                              { [chatType]: updateFilePayload.chatId },
-                          ],
+                          [updateFilePayload.chatType]: [{ [chatType]: updateFilePayload.chatId }],
                           folder: updateFilePayload.folderId,
                       }
                     : { folder: updateFilePayload.folderId };
-            const response = await directus.files.updateOne(
-                updateFilePayload.file.id,
-                options,
-                {
-                    fields: [
-                        '*',
-                        'modified_by.first_name',
-                        'modified_by.last_name',
-                    ]
-                }
-            );
+            const response = await directus.files.updateOne(updateFilePayload.file.id, options, {
+                fields: ['*', 'modified_by.first_name', 'modified_by.last_name'],
+            });
             return response as unknown as ModifiedFileType;
         } catch (error: any) {
             return rejectWithValue({
@@ -132,16 +113,13 @@ export const downloadFileWithoutURL = createAsyncThunk(
         try {
             const state = getState() as any;
             const token = state.auth.token as AuthResult;
-            const response = await fetch(
-                `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': file.type,
-                        Authorization: 'Bearer ' + token.access_token,
-                    },
+            const response = await fetch(`${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': file.type,
+                    Authorization: 'Bearer ' + token.access_token,
                 },
-            );
+            });
 
             const blob = await response.blob();
             const newFile = new File([blob], file.filename_download as string, {
@@ -163,16 +141,13 @@ export const downloadFile = createAsyncThunk(
         try {
             const state = getState() as any;
             const token = state.auth.token as AuthResult;
-            const response = await fetch(
-                `${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': file.type,
-                        Authorization: 'Bearer ' + token.access_token,
-                    },
+            const response = await fetch(`${process.env.REACT_APP_DIRECTUS_URL}/assets/${file.id}?download`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': file.type,
+                    Authorization: 'Bearer ' + token.access_token,
                 },
-            );
+            });
 
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -191,20 +166,17 @@ export const downloadFile = createAsyncThunk(
     },
 );
 
-export const deleteFileById = createAsyncThunk(
-    'file/deleteFileById',
-    async (fileId: string, { rejectWithValue }) => {
-        try {
-            await directus.files.deleteOne(fileId);
-            return fileId;
-        } catch (error: any) {
-            return rejectWithValue({
-                error: error.message,
-                status: error.response.status,
-            });
-        }
-    },
-);
+export const deleteFileById = createAsyncThunk('file/deleteFileById', async (fileId: string, { rejectWithValue }) => {
+    try {
+        await directus.files.deleteOne(fileId);
+        return fileId;
+    } catch (error: any) {
+        return rejectWithValue({
+            error: error.message,
+            status: error.response.status,
+        });
+    }
+});
 
 const fileSlice = createSlice({
     name: 'file',
@@ -231,9 +203,7 @@ const fileSlice = createSlice({
             })
             .addCase(deleteFileById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.fileList = state.fileList.filter(
-                    file => file.id !== action.payload,
-                );
+                state.fileList = state.fileList.filter(file => file.id !== action.payload);
                 state.error = {} as ErrorType;
             })
             .addCase(deleteFileById.rejected, (state, action) => {
@@ -259,9 +229,7 @@ const fileSlice = createSlice({
             })
             .addCase(updateFile.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.fileList = state.fileList.map(file =>
-                    file.id === action.payload.id ? action.payload : file,
-                );
+                state.fileList = state.fileList.map(file => (file.id === action.payload.id ? action.payload : file));
                 state.error = {} as ErrorType;
             })
             .addCase(updateFile.rejected, (state, action) => {
@@ -299,9 +267,7 @@ const fileSlice = createSlice({
             .addCase(fetchFileById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.error = {} as ErrorType;
-                state.fileList = state.fileList.map(file =>
-                    file.id === action.payload.id ? action.payload : file,
-                );
+                state.fileList = state.fileList.map(file => (file.id === action.payload.id ? action.payload : file));
             })
             .addCase(fetchFileById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;

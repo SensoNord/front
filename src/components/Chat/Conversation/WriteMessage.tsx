@@ -1,20 +1,22 @@
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
-import DisplayFiles from '../../Files/DisplayFiles';
 import '../../../styles/textarea.css';
 import { useAppDispatch } from '../../../App/hooks';
-import { createMessageToConversation, setCurrentConversationDisplayWithAllRelatedData } from '../../../slicers/chat/conversation-slice';
+import {
+    createMessageToConversation,
+    setCurrentConversationDisplayWithAllRelatedData,
+} from '../../../slicers/chat/conversation-slice';
 import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
-import AddFilePopup from "../AddFilePopup";
+import AddFilePopup from '../AddFilePopup';
 
 type WriteMessageProps = {
     conversation: ConversationType;
 };
 
 export default function WriteMessage(props: WriteMessageProps) {
-    const {conversation} = props;
+    const { conversation } = props;
     const dispatch = useAppDispatch();
     const formRef = useRef(null) as { current: any };
 
@@ -33,17 +35,12 @@ export default function WriteMessage(props: WriteMessageProps) {
         chatType: 'conversation',
     });
 
-    async function handleSubmit(e: {
-        preventDefault: () => void;
-        target: any;
-    }) {
+    async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
 
         const responseMessage = e.target[0].value.trimEnd();
 
-        if (
-            responseMessage.length === 0
-        ) {
+        if (responseMessage.length === 0) {
             alert('Vous ne pouvez pas envoyez de message vide');
             return;
         }
@@ -68,9 +65,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                 } as PayLoadCreateConversationMessage),
             );
         }
-        dispatch(
-            setCurrentConversationDisplayWithAllRelatedData(conversation.id),
-        );
+        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
 
         formRef.current.reset();
     }
@@ -86,23 +81,15 @@ export default function WriteMessage(props: WriteMessageProps) {
                     <textarea
                         id={'response'}
                         placeholder={'Nouveau Message'}
-                        className={
-                            'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md'
-                        }
+                        className={'w-10/12 p-2 mt-2 mx-auto border-2 border-gray-600 rounded-md'}
                         rows={3}
                         cols={30}
                     ></textarea>
                 </span>
-                <span
-                    className={
-                        'inline col-start-11 col-span-2 flex flex-col justify-start items-center'
-                    }
-                >
+                <span className={'inline col-start-11 col-span-2 flex flex-col justify-start items-center'}>
                     <button
                         type={'button'}
-                        className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'
-                        }
+                        className={'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'}
                         onClick={() => setShowPopup(true)}
                     >
                         Ajouter un fichier
@@ -110,14 +97,14 @@ export default function WriteMessage(props: WriteMessageProps) {
                     {uploadedFile?.name && (
                         <>
                             <span>Fichier : {uploadedFile?.name}</span>
-                            <span>Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}</span>
+                            <span>
+                                Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
+                            </span>
                         </>
                     )}
                     <button
                         type="submit"
-                        className={
-                            'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-                        }
+                        className={'w-8/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'}
                     >
                         Envoyer
                     </button>

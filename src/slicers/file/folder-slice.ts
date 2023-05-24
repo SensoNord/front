@@ -1,8 +1,8 @@
-import {FolderType} from '@directus/sdk';
-import {StatusEnum} from '../../types/Request/StatusEnum';
-import {ErrorType} from '../../types/Request/ErrorType';
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {directus} from '../../libraries/directus';
+import { FolderType } from '@directus/sdk';
+import { StatusEnum } from '../../types/Request/StatusEnum';
+import { ErrorType } from '../../types/Request/ErrorType';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { directus } from '../../libraries/directus';
 
 interface FolderState {
     actualFolder: FolderType;
@@ -21,15 +21,15 @@ const initialState: FolderState = {
 export type folderByParentPayload = {
     parentId: string | null;
     connectedUserId: string | null;
-}
+};
 
 export const fetchFolderByParent = createAsyncThunk(
     'folder/fetchFolderByParent',
-    async (folderByParentPayload: folderByParentPayload, {rejectWithValue}) => {
+    async (folderByParentPayload: folderByParentPayload, { rejectWithValue }) => {
         try {
             const response = await directus.folders.readByQuery({
                 filter: {
-                    parent: folderByParentPayload.parentId ? {_eq: folderByParentPayload.parentId} : {_null: true},
+                    parent: folderByParentPayload.parentId ? { _eq: folderByParentPayload.parentId } : { _null: true },
                 },
             });
             const result = [] as Array<FolderType>;
@@ -60,8 +60,7 @@ export const fetchFolderByParent = createAsyncThunk(
                         result.push(folder);
                     }
                 }
-            else
-                result.push(...(data as Array<FolderType>));
+            else result.push(...(data as Array<FolderType>));
             return result;
         } catch (error: any) {
             return rejectWithValue({
@@ -74,7 +73,7 @@ export const fetchFolderByParent = createAsyncThunk(
 
 export const fetchFolderById = createAsyncThunk(
     'folder/fetchFolderById',
-    async (folderId: string, {rejectWithValue}) => {
+    async (folderId: string, { rejectWithValue }) => {
         try {
             const response = await directus.folders.readOne(folderId);
             return response as FolderType;

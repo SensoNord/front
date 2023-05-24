@@ -1,4 +1,4 @@
-import {UserType} from "@directus/sdk";
+import { UserType } from '@directus/sdk';
 
 export type ModifiedFileType = {
     charset: string;

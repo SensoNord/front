@@ -20,7 +20,4 @@ const config = {
     },
 };
 
-export const directus = new Directus(
-    process.env.REACT_APP_DIRECTUS_URL,
-    config,
-);
+export const directus = new Directus(process.env.REACT_APP_DIRECTUS_URL, config);

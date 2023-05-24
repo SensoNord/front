@@ -69,15 +69,11 @@ export const fetchConversationByFolderId = createAsyncThunk(
 
 export const createMessageToConversation = createAsyncThunk(
     'conversation/createMessageToConversation',
-    async (
-        payLoadCreateConversationMessage: PayLoadCreateConversationMessage,
-        { rejectWithValue },
-    ) => {
+    async (payLoadCreateConversationMessage: PayLoadCreateConversationMessage, { rejectWithValue }) => {
         try {
             const response = await directus.items('messages').createOne(
                 {
-                    conversation_id:
-                        payLoadCreateConversationMessage.conversation_id,
+                    conversation_id: payLoadCreateConversationMessage.conversation_id,
                     message: payLoadCreateConversationMessage.message,
                     file_id: payLoadCreateConversationMessage.fileId,
                 },
@@ -111,10 +107,7 @@ export const deleteMessageById = createAsyncThunk(
 
 export const updateMessageById = createAsyncThunk(
     'conversation/updateMessageById',
-    async (
-        payLoadUpdateMessage: PayLoadUpdateConversationMessage,
-        { rejectWithValue },
-    ) => {
+    async (payLoadUpdateMessage: PayLoadUpdateConversationMessage, { rejectWithValue }) => {
         try {
             const response = await directus.items('messages').updateOne(
                 payLoadUpdateMessage.messageId,
@@ -144,39 +137,28 @@ const conversationSlice = createSlice({
         },
         setCurrentConversationDisplayWithAllRelatedData: (state, action) => {
             const foundConversation = state.conversationListDisplay.find(
-                (conversation: ConversationType) =>
-                    conversation.id === action.payload,
+                (conversation: ConversationType) => conversation.id === action.payload,
             );
             if (foundConversation) {
-                state.currentConversationDisplayWithAllRelatedData =
-                    foundConversation;
+                state.currentConversationDisplayWithAllRelatedData = foundConversation;
             }
         },
     },
     extraReducers: builder => {
         builder
-            .addCase(
-                fetchAllVisibleConversationAndRelatedMessage.pending,
-                state => {
-                    state.status = StatusEnum.LOADING;
-                    state.error = {} as ErrorType;
-                },
-            )
-            .addCase(
-                fetchAllVisibleConversationAndRelatedMessage.fulfilled,
-                (state, action) => {
-                    state.status = StatusEnum.SUCCEEDED;
-                    state.conversationListDisplay = action.payload;
-                    state.error = {} as ErrorType;
-                },
-            )
-            .addCase(
-                fetchAllVisibleConversationAndRelatedMessage.rejected,
-                (state, action) => {
-                    state.status = StatusEnum.FAILED;
-                    state.error = action.payload as ErrorType;
-                },
-            )
+            .addCase(fetchAllVisibleConversationAndRelatedMessage.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchAllVisibleConversationAndRelatedMessage.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.conversationListDisplay = action.payload;
+                state.error = {} as ErrorType;
+            })
+            .addCase(fetchAllVisibleConversationAndRelatedMessage.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
             .addCase(fetchConversationByFolderId.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
@@ -190,34 +172,21 @@ const conversationSlice = createSlice({
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
-            .addCase(
-                createMessageToConversation.pending,
-                state => {
-                    state.status = StatusEnum.LOADING;
-                    state.error = {} as ErrorType;
-                }
-            )
-            .addCase(
-                createMessageToConversation.fulfilled,
-                (state, action) => {
-                    state.status = StatusEnum.SUCCEEDED;
-                    state.conversationListDisplay = state.conversationListDisplay.map(
-                        (conversation: ConversationType) => {
-                            if (
-                                conversation.id ===
-                                action.payload.conversation_id
-                            ) {
-                                return {
-                                    ...conversation,
-                                    messages_list: [
-                                        ...(conversation.messages_list as MessageType[]),
-                                        action.payload,
-                                    ],
-                                };
-                            }
-                            return conversation;
-                        },
-                    );
+            .addCase(createMessageToConversation.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createMessageToConversation.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.conversationListDisplay = state.conversationListDisplay.map((conversation: ConversationType) => {
+                    if (conversation.id === action.payload.conversation_id) {
+                        return {
+                            ...conversation,
+                            messages_list: [...(conversation.messages_list as MessageType[]), action.payload],
+                        };
+                    }
+                    return conversation;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(createMessageToConversation.rejected, (state, action) => {
@@ -231,22 +200,16 @@ const conversationSlice = createSlice({
             .addCase(deleteMessageById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 const conversationId = action.meta.arg;
-                state.conversationListDisplay =
-                    state.conversationListDisplay.map(
-                        (conversation: ConversationType) => {
-                            if (conversation.messages_list)
-                                return {
-                                    ...conversation,
-                                    messages_list: (
-                                        conversation.messages_list as MessageType[]
-                                    ).filter(
-                                        (message: MessageType) =>
-                                            message.id !== conversationId,
-                                    ),
-                                };
-                            return conversation;
-                        },
-                    );
+                state.conversationListDisplay = state.conversationListDisplay.map((conversation: ConversationType) => {
+                    if (conversation.messages_list)
+                        return {
+                            ...conversation,
+                            messages_list: (conversation.messages_list as MessageType[]).filter(
+                                (message: MessageType) => message.id !== conversationId,
+                            ),
+                        };
+                    return conversation;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(deleteMessageById.rejected, (state, action) => {
@@ -259,24 +222,19 @@ const conversationSlice = createSlice({
             })
             .addCase(updateMessageById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.conversationListDisplay =
-                    state.conversationListDisplay.map(
-                        (conversation: ConversationType) => {
-                            if (conversation.messages_list)
-                                return {
-                                    ...conversation,
-                                    messages_list: (
-                                        conversation.messages_list as MessageType[]
-                                    ).map((message: MessageType) => {
-                                        if (message.id === action.payload.id) {
-                                            return action.payload;
-                                        }
-                                        return message;
-                                    }),
-                                };
-                            return conversation;
-                        },
-                    );
+                state.conversationListDisplay = state.conversationListDisplay.map((conversation: ConversationType) => {
+                    if (conversation.messages_list)
+                        return {
+                            ...conversation,
+                            messages_list: (conversation.messages_list as MessageType[]).map((message: MessageType) => {
+                                if (message.id === action.payload.id) {
+                                    return action.payload;
+                                }
+                                return message;
+                            }),
+                        };
+                    return conversation;
+                });
                 state.error = {} as ErrorType;
             })
             .addCase(updateMessageById.rejected, (state, action) => {
@@ -287,7 +245,5 @@ const conversationSlice = createSlice({
 });
 
 export default conversationSlice.reducer;
-export const {
-    setCurrentConversationDisplay,
-    setCurrentConversationDisplayWithAllRelatedData,
-} = conversationSlice.actions;
+export const { setCurrentConversationDisplay, setCurrentConversationDisplayWithAllRelatedData } =
+    conversationSlice.actions;

@@ -2,25 +2,22 @@ import { useState } from 'react';
 import { directus } from '../../libraries/directus';
 import SettingForm from '../../components/Forms/SendInvitationForm';
 import PasswordField from '../../components/Field/PasswordField';
+import { useAppDispatch } from '../../App/hooks';
+import { updateCurrentUserPassword } from '../../slicers/authentification/auth-slice';
 
 export default function ChangePassword() {
     const [empty, setEmpty] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [wrongPassword, setWrongPassword] = useState(false);
-    const [inputColor, setInputColor] = useState<string>(
-        'bg-blue-100 tablet:bg-blue-100',
-    );
+    const [inputColor, setInputColor] = useState<string>('bg-blue-100 tablet:bg-blue-100');
+    const dispatch = useAppDispatch();
 
-    const handleInputNewPassword = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleInputNewPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNewPassword(event.target.value);
     };
 
-    const handleInputConfirmNewPassword = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleInputConfirmNewPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmNewPassword(event.target.value);
     };
 
@@ -32,9 +29,11 @@ export default function ChangePassword() {
         } else if (newPassword === '' || confirmNewPassword === '') {
             setEmpty(true);
         } else {
+            dispatch(updateCurrentUserPassword(newPassword));
             await directus.users.me.update({ password: newPassword });
         }
     };
+
     return (
         <div>
             <SettingForm title="Changer votre mot de passe">
@@ -63,16 +62,8 @@ export default function ChangePassword() {
                             Valider
                         </button>
                     </div>
-                    {empty && (
-                        <p className="text-red-500 text-center">
-                            Veuillez ne pas laisser de champs vide
-                        </p>
-                    )}
-                    {wrongPassword && (
-                        <p className="text-red-500 text-center">
-                            L'un des champs est incorrect
-                        </p>
-                    )}
+                    {empty && <p className="text-red-500 text-center">Veuillez ne pas laisser de champs vide</p>}
+                    {wrongPassword && <p className="text-red-500 text-center">L'un des champs est incorrect</p>}
                 </div>
             </SettingForm>
         </div>

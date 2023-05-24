@@ -39,43 +39,40 @@ export default function SendInvitation() {
     };
 
     return (
-        <SettingForm
-        title="Envoyer une invitation"
-        >
-            <section className=''>
-            <form id={formId} onSubmit={handleSendInvitation}>
-                <div className='space-y-8 text-left'>
-                <EmailField
-                    value={email}
-                    handleChange={handleEmailChange}
-                    label="Email : "
-                    required={true}
-                    setIsEmailValid={setIsEmailValid} 
-                    classNameInput="w-full bg-blue-100 border-blue-300 tablet:text-2xl focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 p-2 rounded-lg shadow-sm"                 
-                />
-                <RoleSelection
-                    selectedRole={selectedRole}
-                    setSelectedRole={setSelectedRole}
-                    setIsRoleValid={setIsRoleValid} 
-                    classNameSelection="w-full bg-blue-100 border-blue-100 tablet:text-2xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 p-2 rounded-lg shadow-sm"                   
-                />
-                
-                <div className="text-center pt-5">
-                <CustomButtonWithValidation
-                    type="submit"
-                    disabled={false}
-                    validationStates={{ isEmailValid, isRoleValid }}
-                    errorMessages={errorMessages}
-                    formId={formId}
-                    classNameButton='w-4/5 bg-blue-500 hover:bg-blue-600 text-white tablet:text-2xl rounded-lg p-2 tablet:p-3 focus:outline-none'
-                    >
-                    Envoyer l'invitation
-                </CustomButtonWithValidation>
-                </div>
-                </div>
-            </form>
+        <SettingForm title="Envoyer une invitation">
+            <section className="">
+                <form id={formId} onSubmit={handleSendInvitation}>
+                    <div className="space-y-8 text-left">
+                        <EmailField
+                            value={email}
+                            handleChange={handleEmailChange}
+                            label="Email : "
+                            required={true}
+                            setIsEmailValid={setIsEmailValid}
+                            classNameInput="w-full bg-blue-100 border-blue-300 tablet:text-2xl focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 p-2 rounded-lg shadow-sm"
+                        />
+                        <RoleSelection
+                            selectedRole={selectedRole}
+                            setSelectedRole={setSelectedRole}
+                            setIsRoleValid={setIsRoleValid}
+                            classNameSelection="w-full bg-blue-100 border-blue-100 tablet:text-2xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 p-2 rounded-lg shadow-sm"
+                        />
+
+                        <div className="text-center pt-5">
+                            <CustomButtonWithValidation
+                                type="submit"
+                                disabled={false}
+                                validationStates={{ isEmailValid, isRoleValid }}
+                                errorMessages={errorMessages}
+                                formId={formId}
+                                classNameButton="w-4/5 bg-blue-500 hover:bg-blue-600 text-white tablet:text-2xl rounded-lg p-2 tablet:p-3 focus:outline-none"
+                            >
+                                Envoyer l'invitation
+                            </CustomButtonWithValidation>
+                        </div>
+                    </div>
+                </form>
             </section>
-            </SettingForm>
-        
+        </SettingForm>
     );
 }

@@ -1,97 +1,100 @@
-import { useState } from 'react';
-import { directus } from '../../libraries/directus';
+import { useEffect, useState } from 'react';
 import SettingForm from '../../components/Forms/SendInvitationForm';
-import { NameField } from '../../components/Forms/ChangeNameForm';
 import EmailField from '../../components/Field/EmailField';
-
-function isEmailValid(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+import { useAppDispatch } from '../../App/hooks';
+import { updateCurrentUserEmail } from '../../slicers/authentification/auth-slice';
 
 export default function ChangeEmail() {
-    const [email, setEmail] = useState<string>('');
-    const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
-    const [emailNotValid, setIsEmailNotValid] = useState(false);
-    const [nouveauEmail, setNouveauEmail] = useState('');
-    const [isEmailChanged, setIsNameChanged] = useState(false);
-    const [isWrongInput, setIsWrongInput] = useState(false);
-    const [validationSupplementaire, setValidationSupplementaire] =
-        useState(false);
-    const [validation, setValidation] = useState(true);
-    const [inputColor, setInputColor] = useState<string>(
-        'bg-blue-200 tablet:bg-blue-100',
-    );
+    const [email, setEmail] = useState<string>('');
+    const [confirmEmail, setConfirmEmail] = useState<string>('');
+
+    const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+    const [isConfirmEmailValid, setIsConfirmEmailValid] = useState<boolean>(false);
+
+    const [isEmailSame, setIsEmailSame] = useState<boolean>(false);
+
+    const [isEmailChanged, setIsEmailChanged] = useState(false);
+    useState(false);
+    const [inputColor, setInputColor] = useState<string>('bg-blue-200 tablet:bg-blue-100');
+
+    const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
     };
 
-    const handleValidationSupplementaire = async () => {
-        if (nouveauEmail === '') {
-            setIsWrongInput(true);
-            setIsEmailNotValid(false);
-        } else if (!isEmailValid(nouveauEmail)) {
-            setIsEmailNotValid(true);
-            setIsWrongInput(false);
+    const handleConfirmEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmEmail(event.target.value);
+    };
+
+    useEffect(() => {
+        setIsFormSubmitted(false);
+        setInputColor('bg-blue-200 tablet:bg-blue-100');
+    }, [email, confirmEmail]);
+
+    const isEmailAndConfirmEmailSame = () => {
+        setIsEmailSame(email === confirmEmail);
+    };
+
+    const updateName = async (event: any) => {
+        setIsFormSubmitted(true);
+        isEmailAndConfirmEmailSame();
+        event.preventDefault();
+        if (isEmailValid && isEmailSame) {
+            setIsEmailChanged(true);
+            dispatch(updateCurrentUserEmail(email));
         } else {
-            setValidationSupplementaire(true);
-            setValidation(false);
-            setIsWrongInput(false);
-            setIsEmailNotValid(false);
+            setInputColor('bg-red-200 tablet:bg-red-100');
         }
-    };
-    const handleAnnuler = async () => {
-        setValidation(true);
-        setValidationSupplementaire(false);
-        setNouveauEmail('');
-    };
-    const updateName = async () => {
-        await directus.users.me.update({ email: nouveauEmail });
-        setIsWrongInput(false);
-        setNouveauEmail('');
-        setIsNameChanged(true);
     };
 
     return (
         <div>
-            <SettingForm title="Changer votre email">
-                <div className="space-y-8 text-left">
+            <SettingForm title="Email" description="Modification de l'email">
+                <>
                     <form id="email-form" onSubmit={updateName}>
                         <EmailField
                             value={email}
                             handleChange={handleEmailChange}
-                            label="Email : "
+                            label="Email"
                             required={true}
                             setIsEmailValid={setIsEmailValid}
-                            classNameInput="w-full bg-blue-100 border-blue-300 tablet:text-2xl focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 p-2 rounded-lg shadow-sm"
+                            classNameInput={`mb-5 w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
                         />
+                        <EmailField
+                            value={confirmEmail}
+                            handleChange={handleConfirmEmailChange}
+                            label="Confirmation"
+                            required={true}
+                            setIsEmailValid={setIsConfirmEmailValid}
+                            classNameInput={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
+                        />
+                        {isFormSubmitted && !isEmailSame ? (
+                            <p className="mt-4 mb-4 text-red-500 text-sm">Les emails ne sont pas identiques</p>
+                        ) : (
+                            <>
+                                {isFormSubmitted && !isEmailValid && (
+                                    <p className="mt-4 mb-4 text-red-500 text-sm">
+                                        Veuillez renseigner une adresse mail valide
+                                    </p>
+                                )}
 
+                                {isFormSubmitted && isEmailChanged && (
+                                    <p className="mt-4 mb-4 text-green-500 text-sm">Votre email a bien été changé</p>
+                                )}
+                            </>
+                        )}
+                        {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                         <button
                             type="submit"
-                            className="w-3/5 bg-blue-500 hover:bg-blue-600 text-white tablet:text-2xl rounded-lg p-2 tablet:p-3 focus:outline-none"
+                            className="w-3/5 mb-3 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                         >
                             Valider
                         </button>
                     </form>
-
-                    {isEmailChanged && (
-                        <p className="text-red-500 text-sm text-center">
-                            Votre email a bien été changé
-                        </p>
-                    )}
-                    {emailNotValid && (
-                        <p className="text-red-500 text-sm text-center">
-                            Veuillez renseigner une adresse mail valide
-                        </p>
-                    )}
-                    {isWrongInput && (
-                        <p className="text-red-500 text-sm first:text-center">
-                            Veuillez ne pas laisser de champs vide
-                        </p>
-                    )}
-                </div>
+                </>
             </SettingForm>
         </div>
     );

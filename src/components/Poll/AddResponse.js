@@ -17,9 +17,7 @@ export default function AddResponse({ data, onClose }) {
     };
     return (
         <div>
-            <button onClick={() => setAffichePopup(true)}>
-                Ajouter un élément
-            </button>
+            <button onClick={() => setAffichePopup(true)}>Ajouter un élément</button>
             {affichePopup && (
                 <div>
                     <input type="text" onChange={handleAddNewElement} />

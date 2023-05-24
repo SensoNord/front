@@ -69,10 +69,7 @@ function AuthHandler() {
                     <Route path="profil" element={<Profil />} />
                 </Route>
                 <Route path="login" element={<Login />} />
-                <Route
-                    path="accept-invitation"
-                    element={<AcceptInvitation />}
-                />
+                <Route path="accept-invitation" element={<AcceptInvitation />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

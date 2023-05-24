@@ -1,10 +1,6 @@
 import { useState } from 'react';
 
-export default function AddVote({
-    dataSondage,
-    ajouterVote,
-    addUserToUserList,
-}) {
+export default function AddVote({ dataSondage, ajouterVote, addUserToUserList }) {
     const [showPopup, setShowPopup] = useState(false);
     const [Element, setElement] = useState('');
 
