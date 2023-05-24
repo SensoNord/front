@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import { directus } from '../../libraries/directus';
@@ -19,10 +19,8 @@ import {
     AllDayPanel,
     EditRecurrenceMenu,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { emptyCalendar } from "../../type/CalendarType";
 
 const Calendar = () => {
-    const [calendar, setCalendar] = useState(emptyCalendar);
 
     let isSetup = false;
 
@@ -30,10 +28,12 @@ const Calendar = () => {
         if (!isSetup) {
             directus.items('Calendrier').readByQuery({ limit: -1 }).then((calendar) => {
                 if (calendar) {
+                    // eslint-disable-next-line
                     calendar.data.map(c => {
                         commitChanges({ added: c, changed: undefined, deleted: undefined })
                     })
                 }
+                // eslint-disable-next-line
                 isSetup = true;
             });
         }
@@ -146,6 +146,7 @@ const Calendar = () => {
                 }
                 else {
                     let isHere = false;
+                    // eslint-disable-next-line
                     updatedData.map(c => {
                         if (c.id === added.id) {
                             isHere = true;
@@ -169,6 +170,7 @@ const Calendar = () => {
                         chan = updatedData[i];
                     }
                 }
+                // eslint-disable-next-line
                 changed = updateEvent(changed, id, chan).then(changed = changed,
                     updatedData = updatedData.map((appointment) => (changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment)));
             }
