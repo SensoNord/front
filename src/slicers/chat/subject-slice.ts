@@ -15,7 +15,6 @@ import {
     postFields,
     responseFields,
     subjectFields,
-    subjectListFields,
 } from './subject-slice-helper';
 
 interface SubjectState {
@@ -80,7 +79,7 @@ export const fetchAllVisibleSubject = createAsyncThunk(
         try {
             const response = await directus.items('subjects').readByQuery({
                 limit: -1,
-                fields: subjectListFields,
+                fields: subjectFields,
             });
             return response.data as SubjectType[];
         } catch (error: any) {
