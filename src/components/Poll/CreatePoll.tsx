@@ -148,32 +148,32 @@ export default function CreatePoll(props: CreatPollProps) {
                                 id={'switch'}
                                 checked={enabled}
                                 onChange={setEnabled}
-                                className={`${
-                                    enabled ? 'bg-blue-600' : 'bg-gray-200'
-                                } relative inline-flex h-6 w-11 items-center rounded-full`}
+                                className={`${enabled ? 'bg-blue-600' : 'bg-gray-200'
+                                    } relative inline-flex h-6 w-11 items-center rounded-full`}
                             >
                                 <span className="sr-only">Enable adding responses</span>
                                 <span
-                                    className={`${
-                                        enabled ? 'translate-x-6' : 'translate-x-1'
-                                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                                    className={`${enabled ? 'translate-x-6' : 'translate-x-1'
+                                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                                 />
                             </Switch>
                         </div>
                         <div>
                             <p>Réponses :</p>
-                            <ul className={'list-disc list-inside'}>
-                                {reponseSondage.map((reponse, index) => (
-                                    <li key={index} className={'my-1'}>
-                                        {reponse}{' '}
-                                        <TrashIcon
-                                            className={'h-4 w-4 cursor-pointer hover:text-red-500 inline ml-2 mb-1'}
-                                            onClick={() => {
-                                                handleDeleteReponseSondage(index);
-                                            }}
-                                        />
-                                    </li>
-                                ))}
+                            <ul className={"list-disc list-inside"}>
+                                <div
+                                    className="pb-4"
+                                    style={{
+                                        minHeight: '200px',
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                    }}
+                                >
+                                    {reponseSondage.map((reponse, index) => (
+                                        <li key={index} className={"my-1"}>{reponse} <TrashIcon className={"h-4 w-4 cursor-pointer inline ml-2 mb-1"} onClick={() => { handleDeleteReponseSondage(index) }} />
+                                        </li>
+                                    ))}
+                                </div>
                             </ul>
                         </div>
                         <div className={'flex justify-center items-center'}>
@@ -183,7 +183,7 @@ export default function CreatePoll(props: CreatPollProps) {
                                 ref={responseRef}
                                 className={'border-2 border-gray-300 py-2 px-3 mr-4 rounded-md w-6/12'}
                             />
-                            <PlusIcon className={'h-6 w-6 cursor-pointer'} onClick={handleAddReponseSondage} />
+                            <PlusIcon className={"h-6 w-6 cursor-pointer"} onClick={handleAddReponseSondage} />
                         </div>
                         <div className={'flex justify-evenly h-12 items-center mt-2'}>
                             <button
