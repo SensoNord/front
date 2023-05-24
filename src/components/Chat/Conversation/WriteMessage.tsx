@@ -10,7 +10,7 @@ import {
 import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from '../AddFilePopup';
-import {DocumentPlusIcon, PaperAirplaneIcon, TrashIcon} from "@heroicons/react/24/outline";
+import { DocumentPlusIcon, PaperAirplaneIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 type WriteMessageProps = {
     conversation: ConversationType;
@@ -94,22 +94,24 @@ export default function WriteMessage(props: WriteMessageProps) {
                             className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                             onClick={() => setShowPopup(true)}
                         >
-                            <DocumentPlusIcon className={'w-7 h-7'}/>
+                            <DocumentPlusIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
                         </button>
-                        <button
-                            type="submit"
-                            className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
-                        >
-                            <PaperAirplaneIcon className={'w-7 h-7'}/>
+                        <button type="submit" className={'mx-2 px-1 my-1 py-1 cursor-pointer'}>
+                            <PaperAirplaneIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
                         </button>
                     </div>
                     {uploadedFile?.name && (
-                        <div className={"flex gap-10"}>
-                            <div className={"flex flex-col items-start"}>
+                        <div className={'flex gap-10'}>
+                            <div className={'flex flex-col items-start'}>
                                 <span>Fichier : {uploadedFile?.name}</span>
-                                <span>Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}</span>
+                                <span>
+                                    Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
+                                </span>
                             </div>
-                            <TrashIcon className={'w-7 h-7 cursor-pointer'} onClick={() => setUploadedFile(null)}/>
+                            <TrashIcon
+                                className={'w-7 h-7 cursor-pointer hover:text-red-500'}
+                                onClick={() => setUploadedFile(null)}
+                            />
                         </div>
                     )}
                 </span>

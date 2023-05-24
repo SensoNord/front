@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChartPieIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
 
 export default function AddVote({ dataSondage, ajouterVote, addUserToUserList }) {
     const [showPopup, setShowPopup] = useState(false);
@@ -17,21 +18,28 @@ export default function AddVote({ dataSondage, ajouterVote, addUserToUserList })
 
     return (
         <>
-            <button onClick={() => setShowPopup(true)}>voter</button>
-            {showPopup && (
-                <div>
-                    <select onBlur={handleSelect}>
-                        <option value="">Sélectionner une option</option>
-                        {dataSondage.reponses.map((reponses, index) => (
-                            <option key={index} value={reponses}>
-                                {reponses}
-                            </option>
-                        ))}
-                    </select>
-                    <button onClick={handleAjouter}>Ajouter</button>
-                    <button onClick={() => setShowPopup(false)}>Fermer</button>
-                </div>
-            )}
+            <div className="flex space-x-4">
+                <ChartPieIcon
+                    className="h-8 w-8 cursor-pointer hover:text-gray-500"
+                    onClick={() => setShowPopup(!showPopup)}
+                />
+                {showPopup && (
+                    <div className="flex space-x-4">
+                        <select onBlur={handleSelect} className="rounded-lg">
+                            <option value="">Voter</option>
+                            {dataSondage.reponses.map((reponses, index) => (
+                                <option key={index} value={reponses}>
+                                    {reponses}
+                                </option>
+                            ))}
+                        </select>
+                        <HandThumbUpIcon
+                            className="h-8 w-8 cursor-pointer hover:text-gray-500"
+                            onClick={handleAjouter}
+                        />
+                    </div>
+                )}
+            </div>
         </>
     );
 }
