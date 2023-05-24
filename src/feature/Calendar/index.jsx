@@ -81,11 +81,9 @@ const Calendar = () => {
     }
 
     async function updateEvent(toUpdate, id, changed) {
-        if (!toUpdate[id] || !changed.startDate) {
+        if (!toUpdate[id]) {
             return;
         }
-
-        console.log(changed);
 
         if (toUpdate[id].allDay) {
             let start = new Date(changed.startDate);
@@ -100,12 +98,17 @@ const Calendar = () => {
                 startDate: start,
                 endDate: end,
             });
-            changed.startDate.setHours(0);
-            changed.startDate.setMinutes(0);
-            let day2 = changed.endDate.getDate();
-            changed.endDate.setDate(day2 + 1);
-            changed.endDate.setHours(0);
-            changed.endDate.setMinutes(0);
+
+            try {
+                changed.startDate.setHours(0);
+                changed.startDate.setMinutes(0);
+                let day2 = changed.endDate.getDate();
+                changed.endDate.setDate(day2 + 1);
+                changed.endDate.setHours(0);
+                changed.endDate.setMinutes(0);
+            } catch {
+                // Nothing
+            }
         }
         if (toUpdate[id].title) {
             await directus.items('Calendrier').updateOne(id, {
@@ -137,7 +140,11 @@ const Calendar = () => {
     }
 
     async function suppressEvent(toSuppress) {
-        await directus.items('Calendrier').deleteOne(toSuppress);
+        try {
+            await directus.items('Calendrier').deleteOne(toSuppress);
+        } catch (e) {
+            // Nothing
+        }
     }
     const commitChanges = ({ added, changed, deleted }) => {
         setData(state => {
