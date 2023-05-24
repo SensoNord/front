@@ -38,6 +38,14 @@ export const fetchFileByFolder = createAsyncThunk(
                 filter: {
                     folder: folderId ? { _eq: folderId } : { _null: true },
                 },
+                fields: [
+                    '*',
+                    'modified_by.first_name',
+                    'modified_by.last_name',
+                    'uploaded_by.first_name',
+                    'uploaded_by.last_name',
+                    'uploaded_by.id',
+                ]
             });
             return response.data as unknown as Array<ModifiedFileType>;
         } catch (error: any) {
@@ -100,6 +108,13 @@ export const updateFile = createAsyncThunk(
             const response = await directus.files.updateOne(
                 updateFilePayload.file.id,
                 options,
+                {
+                    fields: [
+                        '*',
+                        'modified_by.first_name',
+                        'modified_by.last_name',
+                    ]
+                }
             );
             return response as unknown as ModifiedFileType;
         } catch (error: any) {
