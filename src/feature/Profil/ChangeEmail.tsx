@@ -32,10 +32,13 @@ export default function ChangeEmail() {
     useEffect(() => {
         setIsFormSubmitted(false);
         setInputColor('bg-blue-200 tablet:bg-blue-100');
+        isEmailAndConfirmEmailSame();
     }, [email, confirmEmail]);
 
     const isEmailAndConfirmEmailSame = () => {
-        setIsEmailSame(email === confirmEmail);
+        if(email === confirmEmail){
+            setIsEmailSame(true);
+        }
     };
 
     const updateName = async (event: any) => {
@@ -54,7 +57,7 @@ export default function ChangeEmail() {
         <div>
             <SettingForm title="Changer votre email">
                 <>
-                    <form id="email-form" onSubmit={updateName}>
+                    
                         <EmailField
                             value={email}
                             handleChange={handleEmailChange}
@@ -88,12 +91,13 @@ export default function ChangeEmail() {
                         )}
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                         <button
-                            type="submit"
+                            
+                            onClick={updateName}
                             className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                         >
                             Valider
                         </button>
-                    </form>
+               
                 </>
             </SettingForm>
         </div>

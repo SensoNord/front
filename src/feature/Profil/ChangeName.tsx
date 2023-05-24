@@ -11,10 +11,7 @@ export default function ChangeName() {
 
     const [nouveauFirstName, setNouveauFirstName] = useState('');
     const [nouveauLastName, setNouveauLastName] = useState('');
-    const [isNameChanged, setIsNameChanged] = useState(false);
-    const [isWrongInput, setIsWrongInput] = useState(false);
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
-    const [empty, setEmpty] =useState<boolean>(true);
     const [inputColor , setInputColor] = useState<string>('bg-blue-100 tablet:bg-blue-100');
     const dispatch = useAppDispatch();
 
@@ -31,23 +28,14 @@ export default function ChangeName() {
         setNouveauLastName(event.target.value);
     };
 
-    const setIsEmpty = () => {
-        setEmpty(nouveauFirstName === '' || nouveauLastName === '');
-    }
 
     const updateName = async (event: any) => {
-        setIsEmpty();
-        event.preventDefault();
         setIsFormSubmitted(true);
-        if (isFormSubmitted && !empty) {
-            setInputColor('bg-blue-100 tablet:bg-blue-100');
             await dispatch(updateCurrentUserName({
                 first_name: nouveauFirstName,
                 last_name: nouveauLastName,
             } as UserInformationType));
-        } else {
-            setInputColor('bg-red-200 tablet:bg-red-100');
-        }
+       
     }
 
     return (
@@ -77,12 +65,12 @@ export default function ChangeName() {
                     
          
                             
-                    {isFormSubmitted && (<div>
-                        {empty ? (<p className="mt-4 mb-4 text-red-500 text-sm">L'un des champs est vide</p>) : (
+                    {isFormSubmitted && (
+   
                             <p className="mt-4 mb-4 text-green-500 text-sm">Vos noms ont bien été changé</p>
-                        )}
+                      
 
-                    </div>
+    
 
                     )}
                        

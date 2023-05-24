@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { directus } from '../../libraries/directus';
 import SettingForm from '../../components/Forms/SendInvitationForm';
 import PasswordField from '../../components/Field/PasswordField';
@@ -21,15 +21,21 @@ export default function ChangePassword() {
     const handleInputConfirmNewPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmNewPassword(event.target.value);
     };
+    const isSamePassword = () => {
+            setSamePassword(newPassword===confirmNewPassword);
+        }
+
+    useEffect(() => {
+        setIsFormSubmitted(false);
+        setInputColor('bg-blue-200 tablet:bg-blue-100');
+        isSamePassword();
+    }, [newPassword, confirmNewPassword]);
 
     const updatePassword = async (event: any) => {
-        event.preventDefault();
-        setSamePassword(newPassword===confirmNewPassword);
+        isSamePassword();
         setIsFormSubmitted(true);
-        console.log(isFormSubmitted);
-        console.log(isFormSubmitted);
-        if (isFormSubmitted && samePassword) {
-            console.log('e');
+        event.preventDefault();
+        if (samePassword) {
             await dispatch(updateCurrentUserPassword(newPassword));
             setInputColor('bg-blue-100 tablet:bg-blue-100');
         } else {
@@ -40,7 +46,7 @@ export default function ChangePassword() {
     return (
         <div>
             <SettingForm title="Changer votre mot de passe">
-            <form id="password-form" onSubmit={updatePassword}>
+       
                 <div className="text-left">
                     <PasswordField
                         customKey="password-auth"
@@ -70,7 +76,7 @@ export default function ChangePassword() {
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                     <div className="text-center">
                         <button
-                        type="submit"
+                        onClick={updatePassword}
                             className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                           
                         >
@@ -78,7 +84,7 @@ export default function ChangePassword() {
                         </button>
                     </div>
                 </div>
-                </form>
+   
             </SettingForm>
         </div>
     );

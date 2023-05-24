@@ -11,6 +11,7 @@ import SettingForm from '../../components/Forms/SendInvitationForm';
 export default function SendInvitation() {
     const dispatch = useAppDispatch();
     const { status, error } = useAppSelector(state => state.invitation);
+    const [isValid, setIsValid] = useState(false);
     const [selectedRole, setSelectedRole] = useState<RoleType | undefined>();
     const [email, setEmail] = useState<string>('');
     const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
@@ -39,7 +40,9 @@ export default function SendInvitation() {
                     roleId: selectedRole?.id,
                 } as InvitationType),
             );
+            setIsValid(true);
         } else {
+            setIsValid(false);
             setInputColor('bg-red-200 tablet:bg-red-100');
         }
     };
@@ -63,7 +66,9 @@ export default function SendInvitation() {
                             setIsRoleValid={setIsRoleValid}
                             classNameSelection={`w-full bg-blue-100 border-blue-100 tablet:text-2xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 p-2 rounded-lg shadow-sm ${inputColor}`}
                         />
-                        <p className="mt-5 mb-5 text-sm invisible">" "</p>
+                        {isValid && (<p className="mt-5 mb-5 text-sm text-green-500">Invitation envoyé</p>)}
+                        {!isValid && (<p className="mt-5 mb-5 text-sm invisible">" "</p>)}
+                        
                             <div className="text-center">
                             <CustomButtonWithValidation
                                 type="submit"
