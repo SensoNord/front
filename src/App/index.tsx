@@ -8,7 +8,6 @@ import NotFound from '../feature/NotFound';
 import PrivateRoute from '../feature/Authentification/PrivateRoute';
 import { store } from './store';
 import AcceptInvitation from '../feature/Authentification/AcceptInvitation';
-import SendInvitation from '../feature/Authentification/SendInvitation';
 import Drive from '../feature/Drive';
 import Chat from '../feature/Chat/Chat';
 import { useCallback, useEffect } from 'react';
@@ -67,10 +66,6 @@ function AuthHandler() {
                     <Route path="chat" element={<Chat />} />
                     <Route path="calendar" element={<Calendar />} />
                     <Route path="drive" element={<Drive />} />
-                    <Route
-                        path="send-invitation"
-                        element={<SendInvitation />}
-                    />
                     <Route path="profil" element={<Profil />} />
                 </Route>
                 <Route path="login" element={<Login />} />

@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../App/hooks';
 import { sendInvite } from '../../slicers/user/invite-slice';
 import { InvitationType } from '../../types/Users/InvitationType';
 import RoleSelection from '../../components/Users/RoleSelection';
-import SendInvitationForm from '../../components/Forms/SendInvitationForm';
+import SettingForm from '../../components/Forms/SendInvitationForm';
 
 export default function SendInvitation() {
     const dispatch = useAppDispatch();
@@ -39,28 +39,28 @@ export default function SendInvitation() {
     };
 
     return (
-        <><SendInvitationForm
-        title="Send Invitation"
+        <SettingForm
+        title="Envoyer une invitation"
         >
-            <section className='flex justify-center text-center'>
+            <section className=''>
             <form id={formId} onSubmit={handleSendInvitation}>
                 <div className='space-y-8 text-left'>
                 <EmailField
                     value={email}
                     handleChange={handleEmailChange}
-                    label="Email: "
+                    label="Email : "
                     required={true}
                     setIsEmailValid={setIsEmailValid} 
-                    classNameInput="w-full bg-blue-100 border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 p-2 rounded-lg shadow-sm"                 
+                    classNameInput="w-full bg-blue-100 border-blue-300 tablet:text-2xl focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-300 p-2 rounded-lg shadow-sm"                 
                 />
                 <RoleSelection
                     selectedRole={selectedRole}
                     setSelectedRole={setSelectedRole}
                     setIsRoleValid={setIsRoleValid} 
-                    classNameSelection="w-full bg-blue-100 border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 p-2 rounded-lg shadow-sm"                   
+                    classNameSelection="w-full bg-blue-100 border-blue-100 tablet:text-2xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 p-2 rounded-lg shadow-sm"                   
                 />
                 
-                <div className="text-center pt-8">
+                <div className="text-center pt-5">
                 <CustomButtonWithValidation
                     type="submit"
                     disabled={false}
@@ -69,13 +69,13 @@ export default function SendInvitation() {
                     formId={formId}
                     classNameButton='w-4/5 bg-blue-500 hover:bg-blue-600 text-white tablet:text-2xl rounded-lg p-2 tablet:p-3 focus:outline-none'
                     >
-                    Send Invitation
+                    Envoyer l'invitation
                 </CustomButtonWithValidation>
                 </div>
                 </div>
             </form>
             </section>
-            </SendInvitationForm>
-        </>
+            </SettingForm>
+        
     );
 }
