@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
-import {useState} from 'react';
-import {directus} from '../../libraries/directus';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import { directus } from '../../libraries/directus';
 import moment from 'moment';
-import {Switch} from '@headlessui/react';
-import {ChartBarIcon, PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
+import { Switch } from '@headlessui/react';
+import { ChartBarIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 type CreatPollProps = {
     setSondageId: (id: number) => void;
@@ -12,7 +12,7 @@ type CreatPollProps = {
 };
 
 export default function CreatePoll(props: CreatPollProps) {
-    const {setSondageId, nomSondage, setNomSondage} = props;
+    const { setSondageId, nomSondage, setNomSondage } = props;
     const [showPopup, setShowPopup] = useState(false);
     const [typeSondage, setTypeSondage] = useState('');
     const [idSondage, setIdSondage] = useState(0);
@@ -22,7 +22,7 @@ export default function CreatePoll(props: CreatPollProps) {
     const responseRef = React.useRef<HTMLInputElement>(null);
 
     const getUserId = async () => {
-        const currentUser = await directus.users.me.read({fields: ['id']});
+        const currentUser = await directus.users.me.read({ fields: ['id'] });
         const userId = currentUser.id;
         return userId;
     };
@@ -102,11 +102,11 @@ export default function CreatePoll(props: CreatPollProps) {
     return (
         <div>
             <button onClick={initialisationPopup} type={"button"} className={"mx-2 px-1 my-1 py-1 cursor-pointer"}>
-                <ChartBarIcon className="h-6 w-6"/>
+                <ChartBarIcon className="h-6 w-6" />
             </button>
             {showPopup && (
                 <div className="alertContainer">
-                    <div className="alertPopup" style={{minWidth: '600px', minHeight: '480px', padding: '0.5rem'}}>
+                    <div className="alertPopup" style={{ minWidth: '600px', minHeight: '480px', padding: '0.5rem' }}>
                         <h1 className={"font-bold text-xl"}>Créer votre sondage</h1>
                         <div>
                             <label htmlFor={"namePoll"} className={"cursor-pointer"}>Quel est l'intitulé de votre sondage ?</label>
@@ -144,25 +144,32 @@ export default function CreatePoll(props: CreatPollProps) {
                                 id={"switch"}
                                 checked={enabled}
                                 onChange={setEnabled}
-                                className={`${
-                                    enabled ? 'bg-blue-600' : 'bg-gray-200'
-                                } relative inline-flex h-6 w-11 items-center rounded-full`}
+                                className={`${enabled ? 'bg-blue-600' : 'bg-gray-200'
+                                    } relative inline-flex h-6 w-11 items-center rounded-full`}
                             >
                                 <span className="sr-only">Enable adding responses</span>
                                 <span
-                                    className={`${
-                                        enabled ? 'translate-x-6' : 'translate-x-1'
-                                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                                    className={`${enabled ? 'translate-x-6' : 'translate-x-1'
+                                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                                 />
                             </Switch>
                         </div>
                         <div>
                             <p>Réponses :</p>
                             <ul className={"list-disc list-inside"}>
-                                {reponseSondage.map((reponse, index) => (
-                                    <li key={index} className={"my-1"}>{reponse} <TrashIcon className={"h-4 w-4 cursor-pointer inline ml-2 mb-1"} onClick={() => {handleDeleteReponseSondage(index)}} />
-                                    </li>
-                                ))}
+                                <div
+                                    className="pb-4"
+                                    style={{
+                                        minHeight: '200px',
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                    }}
+                                >
+                                    {reponseSondage.map((reponse, index) => (
+                                        <li key={index} className={"my-1"}>{reponse} <TrashIcon className={"h-4 w-4 cursor-pointer inline ml-2 mb-1"} onClick={() => { handleDeleteReponseSondage(index) }} />
+                                        </li>
+                                    ))}
+                                </div>
                             </ul>
                         </div>
                         <div className={"flex justify-center items-center"}>
@@ -172,7 +179,7 @@ export default function CreatePoll(props: CreatPollProps) {
                                 ref={responseRef}
                                 className={"border-2 border-gray-300 py-2 px-3 mr-4 rounded-md w-6/12"}
                             />
-                            <PlusIcon className={"h-6 w-6 cursor-pointer"} onClick={handleAddReponseSondage}/>
+                            <PlusIcon className={"h-6 w-6 cursor-pointer"} onClick={handleAddReponseSondage} />
                         </div>
                         <div className={'flex justify-evenly h-12 items-center mt-2'}>
                             <button
