@@ -193,8 +193,8 @@ const Calendar = () => {
                         chan = updatedData[i];
                     }
                 }
-                // eslint-disable-next-line
                 changed = updateEvent(changed, id, chan).then(
+                    // eslint-disable-next-line
                     (changed = changed),
                     (updatedData = updatedData.map(appointment =>
                         changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment,
