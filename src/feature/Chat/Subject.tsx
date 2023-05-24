@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {PostType} from '../../types/Chat/PostType';
+import React, { useEffect, useState } from 'react';
+import { PostType } from '../../types/Chat/PostType';
 import Post from '../../components/Chat/Subject/Post';
 import '../../styles/Popup.css';
-import {createPortal} from 'react-dom';
-import {ModifiedFileType} from '../../types/File/ModifiedFileType';
-import {useAppDispatch, useAppSelector} from '../../App/hooks';
-import {createPostToSubject, setCurrentSubjectDisplayWithAllRelatedData} from '../../slicers/chat/subject-slice';
-import {PayLoadCreateSubjectPost} from '../../slicers/chat/subject-slice-helper';
+import { createPortal } from 'react-dom';
+import { ModifiedFileType } from '../../types/File/ModifiedFileType';
+import { useAppDispatch, useAppSelector } from '../../App/hooks';
+import { createPostToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../slicers/chat/subject-slice';
+import { PayLoadCreateSubjectPost } from '../../slicers/chat/subject-slice-helper';
 import {
     UpdateFilePayload,
     createFile,
@@ -16,8 +16,7 @@ import {
 } from '../../slicers/file/file-slice';
 import AddFilePopup from '../../components/Chat/AddFilePopup';
 import CreateSondage from '../../components/Poll/CreatePoll';
-import {PaperAirplaneIcon, DocumentPlusIcon, TrashIcon} from "@heroicons/react/24/outline";
-
+import { PaperAirplaneIcon, DocumentPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 type UploadedFile = {
     file: ModifiedFileType | File;
@@ -26,7 +25,7 @@ type UploadedFile = {
 };
 
 export default function Subject() {
-    const {currentSubjectDisplayWithAllRelatedData} = useAppSelector(state => state.subject);
+    const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const dispatch = useAppDispatch();
     const [showPopup, setShowPopup] = useState(false);
     const [title, setTitle] = useState('');
@@ -41,7 +40,7 @@ export default function Subject() {
         setMessage('');
         setUploadedFile(null);
         setSondageId(null);
-    }
+    };
 
     useEffect(() => {
         const sortedPost = [...currentSubjectDisplayWithAllRelatedData!.posts].sort((a: PostType, b: PostType) => {
@@ -81,7 +80,6 @@ export default function Subject() {
 
     async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
-
 
         const formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries()) as {
@@ -145,18 +143,18 @@ export default function Subject() {
         setShowPopup(false);
     }
 
-    const handleChangeTitle = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    const handleChangeTitle = (e: { target: { value: React.SetStateAction<string> } }) => {
         setTitle(e.target.value);
-    }
+    };
 
-    const handleChangeMessage = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    const handleChangeMessage = (e: { target: { value: React.SetStateAction<string> } }) => {
         setMessage(e.target.value);
-    }
+    };
 
     return (
         <>
             {currentSubjectDisplayWithAllRelatedData && (
-                <div style={{height: '100%', position: 'relative'}} className={'overflow-hidden'}>
+                <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
                     <div
                         className={
                             'text-3xl justify-center flex border-b-2 border-gray-300 mx-auto px-10 pb-2 bg-white z-10'
@@ -170,12 +168,12 @@ export default function Subject() {
                         <h1>{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
                     </div>
                     <div
-                        style={{backgroundColor: 'rgb(239, 246, 255)'}}
+                        style={{ backgroundColor: 'rgb(239, 246, 255)' }}
                         className={'grid grid-rows-[repeat(11,_minmax(0,_1fr))] grid-flow-col h-full'}
                     >
                         <div
                             className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden'}
-                            style={{overflowAnchor: 'auto'}}
+                            style={{ overflowAnchor: 'auto' }}
                         >
                             {sortedPost.map((post: PostType, index: number) => {
                                 return (
@@ -219,29 +217,33 @@ export default function Subject() {
                                         </div>
                                     </div>
                                     <div className={'col-span-3 flex flex-col justify-start items-center'}>
-                                        <div className={"flex"}>
+                                        <div className={'flex'}>
                                             <div>
                                                 <button
                                                     type={'button'}
                                                     className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                                                     onClick={() => setShowPopup(true)}
                                                 >
-                                                    <DocumentPlusIcon className={'w-7 h-7'}/>
+                                                    <DocumentPlusIcon className={'w-7 h-7'} />
                                                 </button>
                                             </div>
-                                            <CreateSondage setSondageId={setSondageId} nomSondage={nomSondage} setNomSondage={setNomSondage}/>
+                                            <CreateSondage
+                                                setSondageId={setSondageId}
+                                                nomSondage={nomSondage}
+                                                setNomSondage={setNomSondage}
+                                            />
                                             <div>
                                                 <button
                                                     className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
                                                     type={'submit'}
                                                 >
-                                                    <PaperAirplaneIcon className={'w-7 h-7'}/>
+                                                    <PaperAirplaneIcon className={'w-7 h-7'} />
                                                 </button>
                                             </div>
                                         </div>
                                         {sondageId !== 0 && sondageId !== null && (
                                             <div className={'flex gap-10 items-center'}>
-                                                <div className={"flex flex-col items-start"}>
+                                                <div className={'flex flex-col items-start'}>
                                                     <span className={'text-lg'}>Sondage créé</span>
                                                     <span className={'text-lg'}>"{nomSondage}"</span>
                                                 </div>
@@ -250,20 +252,31 @@ export default function Subject() {
                                                     type={'button'}
                                                     onClick={() => setSondageId(null)}
                                                 >
-                                                    <TrashIcon className={'w-7 h-7'}/>
+                                                    <TrashIcon className={'w-7 h-7'} />
                                                 </button>
                                             </div>
                                         )}
                                         {uploadedFile?.name && (
-                                            <div className={"flex gap-10 text-lg"}>
-                                                <div className={"flex flex-col items-start"}>
+                                            <div className={'flex gap-10 text-lg'}>
+                                                <div className={'flex flex-col items-start'}>
                                                     <span>Fichier : {uploadedFile?.name}</span>
-                                                    <span>Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}</span>
+                                                    <span>
+                                                        Origine :{' '}
+                                                        {uploadedFile?.uploadOrigin === 'drive'
+                                                            ? 'Drive'
+                                                            : 'Ordinateur local'}
+                                                    </span>
                                                 </div>
-                                                <TrashIcon className={'w-7 h-7 cursor-pointer'} onClick={() => setUploadedFile(null)}/>
+                                                <TrashIcon
+                                                    className={'w-7 h-7 cursor-pointer'}
+                                                    onClick={() => setUploadedFile(null)}
+                                                />
                                             </div>
                                         )}
-                                        <div id={'errorMessage'} className={'text-red-600 font-bold w-8/12 text-lg hidden'}>
+                                        <div
+                                            id={'errorMessage'}
+                                            className={'text-red-600 font-bold w-8/12 text-lg hidden'}
+                                        >
                                             Veuillez remplir les champs "Titre" et "Nouveau topic"
                                         </div>
                                     </div>

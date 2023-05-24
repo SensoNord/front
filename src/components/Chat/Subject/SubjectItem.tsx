@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import {fetchBySubjectId} from '../../../slicers/chat/subject-slice';
+import { fetchBySubjectId } from '../../../slicers/chat/subject-slice';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 

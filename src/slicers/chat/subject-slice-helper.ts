@@ -86,10 +86,7 @@ export const postFields = [
     'sondage_id',
 ];
 
-export const subjectListFields = [
-    'id',
-    'name'
-]
+export const subjectListFields = ['id', 'name'];
 
 export const responseFields = [
     'id',
