@@ -44,7 +44,7 @@ export default function ChangeEmail() {
         event.preventDefault();
         if (isEmailValid && isEmailSame) {
             setIsEmailChanged(true);
-            dispatch(updateCurrentUserEmail(email));
+            await dispatch(updateCurrentUserEmail(email));
         } else {
             setInputColor('bg-red-200 tablet:bg-red-100');
         }
@@ -52,7 +52,7 @@ export default function ChangeEmail() {
 
     return (
         <div>
-            <SettingForm title="Email" description="Modification de l'email">
+            <SettingForm title="Changer votre email">
                 <>
                     <form id="email-form" onSubmit={updateName}>
                         <EmailField
@@ -89,7 +89,7 @@ export default function ChangeEmail() {
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                         <button
                             type="submit"
-                            className="w-3/5 mb-3 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
+                            className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                         >
                             Valider
                         </button>
