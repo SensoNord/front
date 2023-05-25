@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { fetchUserListWithoutCurrentUser } from '../../../slicers/user/user-slice';
 import stringSimilarity from 'string-similarity';
 import { UserType } from '@directus/sdk';
-import PersonItem from './PersonItem';
+import PersonItem, { SelefPersonItem } from './PersonItem';
 import { addUsersToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
 import { DirectusUserType, PayLoadAddUserToSubject } from '../../../slicers/chat/subject-slice-helper';
 import { SubjectType } from '../../../types/Chat/SubjectType';
@@ -20,6 +20,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
     const dispatch = useAppDispatch();
     const { userList } = useAppSelector(state => state.user);
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
+    const { connectedUser } = useAppSelector(state => state.auth);
 
     const [selectedUser, setSelectedUser] = useState([] as UserType[]);
     const [matchedUserList, setMatchedUserList] = useState([] as UserType[]);
@@ -89,7 +90,11 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
             } as UserType;
         });
 
-        setSelectedUser(groupMember || []);
+        const groupMemberWithoutCurrentUser = groupMember?.filter((user: any) => {
+            return user.id !== connectedUser?.id;
+        });
+
+        setSelectedUser(groupMemberWithoutCurrentUser || []);
     }, [dispatch, currentSubjectDisplayWithAllRelatedData]);
 
     useEffect(() => {
@@ -98,6 +103,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
         });
 
         setMatchedUserList(matchedUserListWithoutSelectedUser);
+
         // eslint-disable-next-line
     }, [selectedUser]);
 
@@ -115,10 +121,16 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
             } as DirectusUserType);
         });
 
+        const connectedUserDirectusUser = {
+            directus_users_id: {
+                id: connectedUser?.id,
+            },
+        } as DirectusUserType;
+
         const subjectPayload = await dispatch(
             addUsersToSubject({
                 subjectId: currentSubjectDisplayWithAllRelatedData?.id,
-                userList: directusUserList,
+                userList: [...directusUserList, connectedUserDirectusUser],
             } as PayLoadAddUserToSubject),
         );
 
@@ -229,6 +241,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
                                             />
                                         </div>
                                     ))}
+                                <SelefPersonItem user={connectedUser} />
                             </div>
                         </div>{' '}
                         <div className="flex justify-between items-center mx-4">
@@ -243,7 +256,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
                                 {selectedUser.length === 0 ? (
                                     'Recherche...'
                                 ) : (
-                                    <>Modifier la liste {selectedUser.length > 0 && `(${selectedUser.length})`}</>
+                                    <>Modifier la liste {selectedUser.length > 0 && `(${selectedUser.length + 1})`}</>
                                 )}
                             </button>
                             <XMarkIcon
@@ -274,6 +287,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
                                         />
                                     </div>
                                 ))}
+                                <SelefPersonItem user={connectedUser} />
                             </div>
                         </div>
                     )}
