@@ -117,10 +117,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
         return `${firstName.charAt(0).toUpperCase()}.${lastName.charAt(0).toUpperCase()}${lastName.slice(1)}`;
     }
 
-    useEffect(() => {
-        console.log(chatName);
-    }, [chatName]);
-
     const handleCreateGroup = async () => {
         let newChatName = chatName;
 

@@ -53,7 +53,6 @@ export default function ConversationItem(props: ConversationItemProps) {
     }, [currentConversationDisplayWithAllRelatedData, conversation, selectedChat]);
 
     const handleChangeSelectedConversation = async (conversation: ConversationType) => {
-        console.log('conversation', conversation);
         handleSetSelectedChat(ChatEnum.CONVERSATION);
         await dispatch(
             fetchConversationByIdAndPage({

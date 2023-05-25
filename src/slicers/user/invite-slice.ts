@@ -41,7 +41,6 @@ export const acceptInvite = createAsyncThunk(
     async (acceptInvite: AcceptInvitationType, { rejectWithValue }) => {
         try {
             await directus.users.invites.accept(acceptInvite.token, acceptInvite.password);
-            console.log(acceptInvite);
             return acceptInvite;
         } catch (error: any) {
             return rejectWithValue({

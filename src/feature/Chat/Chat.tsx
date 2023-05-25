@@ -49,10 +49,6 @@ export default function Chat() {
         setIsConversationAddButtonClick(false);
     };
 
-    useEffect(() => {
-        console.log('currentConversationDisplayWithAllRelatedData', currentConversationDisplayWithAllRelatedData);
-    }, [currentConversationDisplayWithAllRelatedData]);
-
     return (
         <div
             style={{
