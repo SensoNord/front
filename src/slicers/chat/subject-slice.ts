@@ -1,21 +1,22 @@
 // For testing purposes
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { directus } from '../../libraries/directus';
-import { ErrorType } from '../../types/Request/ErrorType';
-import { StatusEnum } from '../../types/Request/StatusEnum';
-import { SubjectType } from '../../types/Chat/SubjectType';
-import { PostType } from '../../types/Chat/PostType';
-import { ResponseType } from '../../types/Chat/ResponseType';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {directus} from '../../libraries/directus';
+import {ErrorType} from '../../types/Request/ErrorType';
+import {StatusEnum} from '../../types/Request/StatusEnum';
+import {SubjectType} from '../../types/Chat/SubjectType';
+import {PostType} from '../../types/Chat/PostType';
+import {ResponseType} from '../../types/Chat/ResponseType';
 import {
     PayLoadCreateSubjectMessage,
-    PayLoadCreateSubjectPost,
+    PayLoadCreateSubjectPost, PayloadFetchSubjectByIdAndPage,
     PayLoadUpdateSubjectPost,
     PayLoadUpdateSubjectResponse,
     postFields,
     responseFields,
     subjectFields, subjectListFields,
 } from './subject-slice-helper';
+import {fetchConversationByIdAndPage} from "./conversation-slice";
 
 interface SubjectState {
     subjectListDisplay: SubjectType[];
@@ -35,7 +36,7 @@ const initialState: SubjectState = {
 
 export const fetchSubjectByFolderId = createAsyncThunk(
     'items/fetchSubjectByFolderId',
-    async (folderId: string, { rejectWithValue }) => {
+    async (folderId: string, {rejectWithValue}) => {
         try {
             const response = await directus.items('subjects').readByQuery({
                 filter: {
@@ -55,13 +56,19 @@ export const fetchSubjectByFolderId = createAsyncThunk(
     },
 );
 
-export const fetchBySubjectId = createAsyncThunk(
-    'items/fetchBySubjectId',
-    async (subjectId: string, { rejectWithValue }) => {
+export const fetchSubjectByIdAndPage = createAsyncThunk(
+    'items/fetchSubjectByIdAndPage',
+    async (payload: PayloadFetchSubjectByIdAndPage, {rejectWithValue}) => {
         try {
-            const response = await directus.items('subjects').readOne(subjectId, {
-                limit: -1,
+            const response = await directus.items('subjects').readOne(payload.subjectId, {
                 fields: subjectFields,
+                deep: {
+                    posts: {
+                        _limit: 2,
+                        _sort: '-date_created',
+                        _page: payload.page,
+                    }
+                }
             });
             return response as SubjectType;
         } catch (error: any) {
@@ -75,7 +82,7 @@ export const fetchBySubjectId = createAsyncThunk(
 
 export const fetchAllVisibleSubject = createAsyncThunk(
     'items/fetchAllVisibleSubject',
-    async (_, { rejectWithValue }) => {
+    async (_, {rejectWithValue}) => {
         try {
             const response = await directus.items('subjects').readByQuery({
                 limit: -1,
@@ -93,7 +100,7 @@ export const fetchAllVisibleSubject = createAsyncThunk(
 
 export const updatePostListAndRelatedResponseBySubjectId = createAsyncThunk(
     'items/updatePostListAndRelatedResponseBySubjectId',
-    async (subjectId: string, { rejectWithValue }) => {
+    async (subjectId: string, {rejectWithValue}) => {
         try {
             const response = await directus.items('posts').readByQuery({
                 filter: {
@@ -115,7 +122,7 @@ export const updatePostListAndRelatedResponseBySubjectId = createAsyncThunk(
 
 export const createResponseToPost = createAsyncThunk(
     'items/createResponseToPost',
-    async (payLoadMessage: PayLoadCreateSubjectMessage, { rejectWithValue }) => {
+    async (payLoadMessage: PayLoadCreateSubjectMessage, {rejectWithValue}) => {
         try {
             const response = await directus.items('responses').createOne(
                 {
@@ -139,7 +146,7 @@ export const createResponseToPost = createAsyncThunk(
 
 export const createPostToSubject = createAsyncThunk(
     'items/createPostToSubject',
-    async (payloadPost: PayLoadCreateSubjectPost, { rejectWithValue }) => {
+    async (payloadPost: PayLoadCreateSubjectPost, {rejectWithValue}) => {
         try {
             const response = await directus.items('posts').createOne(
                 {
@@ -165,7 +172,7 @@ export const createPostToSubject = createAsyncThunk(
 
 export const updatePostMessageById = createAsyncThunk(
     'items/updatePostMessageById',
-    async (payloadUpdatePost: PayLoadUpdateSubjectPost, { rejectWithValue }) => {
+    async (payloadUpdatePost: PayLoadUpdateSubjectPost, {rejectWithValue}) => {
         try {
             const response = await directus.items('posts').updateOne(
                 payloadUpdatePost.id,
@@ -188,7 +195,7 @@ export const updatePostMessageById = createAsyncThunk(
 
 export const updateResponseMessageById = createAsyncThunk(
     'items/updateResponseMessageById',
-    async (payloadUpdateResponse: PayLoadUpdateSubjectResponse, { rejectWithValue }) => {
+    async (payloadUpdateResponse: PayLoadUpdateSubjectResponse, {rejectWithValue}) => {
         try {
             const response = await directus.items('responses').updateOne(
                 payloadUpdateResponse.id,
@@ -209,7 +216,7 @@ export const updateResponseMessageById = createAsyncThunk(
     },
 );
 
-export const deletePostById = createAsyncThunk('items/deletePostById', async (postId: string, { rejectWithValue }) => {
+export const deletePostById = createAsyncThunk('items/deletePostById', async (postId: string, {rejectWithValue}) => {
     try {
         await directus.items('posts').deleteOne(postId);
     } catch (error: any) {
@@ -222,7 +229,7 @@ export const deletePostById = createAsyncThunk('items/deletePostById', async (po
 
 export const deleteResponseById = createAsyncThunk(
     'items/deleteResponseById',
-    async (responseId: string, { rejectWithValue }) => {
+    async (responseId: string, {rejectWithValue}) => {
         try {
             await directus.items('responses').deleteOne(responseId);
         } catch (error: any) {
@@ -247,6 +254,9 @@ const subjectSlice = createSlice({
                 state.currentSubjectDisplayWithAllRelatedData = foundSubject;
             }
         },
+        clearCurrentSubjectDisplayWithAllRelatedData: state => {
+            state.currentSubjectDisplayWithAllRelatedData = {} as SubjectType;
+        }
     },
     extraReducers: builder => {
         builder
@@ -263,16 +273,20 @@ const subjectSlice = createSlice({
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
-            .addCase(fetchBySubjectId.pending, state => {
+            .addCase(fetchSubjectByIdAndPage.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchBySubjectId.fulfilled, (state, action) => {
+            .addCase(fetchSubjectByIdAndPage.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.currentSubjectDisplayWithAllRelatedData = action.payload as SubjectType;
+                if (state.currentSubjectDisplayWithAllRelatedData?.posts && action.payload.id === state.currentSubjectDisplayWithAllRelatedData.id) {
+                    state.currentSubjectDisplayWithAllRelatedData.posts = [...state.currentSubjectDisplayWithAllRelatedData.posts, ...action.payload.posts];
+                } else {
+                    state.currentSubjectDisplayWithAllRelatedData = action.payload;
+                }
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchBySubjectId.rejected, (state, action) => {
+            .addCase(fetchSubjectByIdAndPage.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
@@ -333,23 +347,7 @@ const subjectSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(createResponseToPost.fulfilled, (state, action) => {
-                const subject_Id = action.meta.arg.subject_id;
-
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
-                    if (subject.id === subject_Id) {
-                        return {
-                            ...subject,
-                            posts: (subject.posts as PostType[]).map((post: PostType) => {
-                                return {
-                                    ...post,
-                                    responses: [...(post.responses as ResponseType[]), action.payload],
-                                };
-                            }),
-                        };
-                    }
-                    return subject;
-                });
                 state.error = {} as ErrorType;
             })
             .addCase(createResponseToPost.rejected, (state, action) => {
@@ -362,15 +360,6 @@ const subjectSlice = createSlice({
             })
             .addCase(createPostToSubject.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
-                    if (subject.id === action.payload.subject_id) {
-                        return {
-                            ...subject,
-                            posts: [...(subject.posts as PostType[]), action.payload],
-                        };
-                    }
-                    return subject;
-                });
                 state.error = {} as ErrorType;
             })
             .addCase(createPostToSubject.rejected, (state, action) => {
@@ -383,20 +372,6 @@ const subjectSlice = createSlice({
             })
             .addCase(updatePostMessageById.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
-                    if (subject.id === action.payload.subject_id) {
-                        return {
-                            ...subject,
-                            posts: (subject.posts as PostType[]).map((post: PostType) => {
-                                if (post.id === action.payload.id) {
-                                    return action.payload;
-                                }
-                                return post;
-                            }),
-                        };
-                    }
-                    return subject;
-                });
                 state.error = {} as ErrorType;
             })
             .addCase(updatePostMessageById.rejected, (state, action) => {
@@ -485,4 +460,4 @@ const subjectSlice = createSlice({
 });
 
 export default subjectSlice.reducer;
-export const { setCurrentSubjectDisplay, setCurrentSubjectDisplayWithAllRelatedData } = subjectSlice.actions;
+export const {setCurrentSubjectDisplay, setCurrentSubjectDisplayWithAllRelatedData, clearCurrentSubjectDisplayWithAllRelatedData} = subjectSlice.actions;

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import {fetchBySubjectId} from '../../../slicers/chat/subject-slice';
+import {fetchSubjectByIdAndPage} from '../../../slicers/chat/subject-slice';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
+import {PayloadFetchSubjectByIdAndPage} from "../../../slicers/chat/subject-slice-helper";
 
 type SubjectItemProps = {
     subject: SubjectType;
@@ -31,7 +32,7 @@ export default function SubjectItem(props: SubjectItemProps) {
 
     const handleChangeSelectedSubject = async (subject: SubjectType) => {
         handleSetSelectedChat(ChatEnum.SUBJECT);
-        await dispatch(fetchBySubjectId(subject.id));
+        await dispatch(fetchSubjectByIdAndPage({subjectId: subject.id, page: 1} as PayloadFetchSubjectByIdAndPage));
     };
 
     return (

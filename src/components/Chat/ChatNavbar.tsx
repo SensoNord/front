@@ -85,13 +85,13 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                                 }}
                             />
                         </div>
-                        {subjectListDisplay.map((subject: SubjectType) => (
+                        {subjectListDisplay.map((subject: SubjectType, index) => (
                             <div onClick={() => setIsMenuOpen(!isMenuOpen)}>
                                 <SubjectItem
                                     subject={subject}
                                     selectedChat={selectedChat}
                                     handleSetSelectedChat={handleSetSelectedChat}
-                                    key={subject.id + 'chatNavbar'}
+                                    key={index + '_chatNavbar'}
                                     className={className}
                                 />
                             </div>

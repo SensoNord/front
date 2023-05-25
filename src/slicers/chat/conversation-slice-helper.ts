@@ -9,6 +9,11 @@ export type PayLoadCreateConversationMessage = {
     fileId: string | null;
 };
 
+export type PayloadFetchConversationByIdAndPage = {
+    conversationId: string;
+    page: number;
+}
+
 export const conversationFields = [
     'id',
     'user_created.first_name',

@@ -189,33 +189,6 @@ export default function Response(props: ResponseProps) {
                             )}
                             <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
                         </div>
-                        {/*<div className={"grid grid-cols-12"}>*/}
-                        {/*    <div className={"col-span-11"}>*/}
-                        {/*        {!messageIsBeingEdited && <p className={"text-1xl whitespace-pre-wrap"}>{message.message}</p>}*/}
-                        {/*        {messageIsBeingEdited && <div className={"grid grid-cols-12 m-2"}>*/}
-                        {/*            <textarea className={"text-1xl whitespace-pre-wrap col-span-11 border border-black"} defaultValue={message.message} rows={4} ref={textAreaRef} autoFocus={messageIsBeingEdited} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></textarea>*/}
-                        {/*            <div>*/}
-                        {/*                <button className={"col-start-12 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2.5 m-1 rounded"} onClick={() => setMessageIsBeingEdited(false)}>Annuler*/}
-                        {/*                </button>*/}
-                        {/*                <button className={"col-start-11 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2.5 m-1 rounded"} onClick={updateMessage}>Valider*/}
-                        {/*                </button>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*        }*/}
-                        {/*    </div>*/}
-                        {/*    <div className={"col-span-1"}>*/}
-                        {/*        {*/}
-                        {/*            showEditButton && !messageIsBeingEdited && (*/}
-                        {/*                <button className={"bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-1 w-24 rounded"} onClick={editResponse}>Modifier</button>*/}
-                        {/*            )*/}
-                        {/*        }*/}
-                        {/*        {*/}
-                        {/*            showDeleteButton && !messageIsBeingEdited && (*/}
-                        {/*                <button className={"bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 w-24 rounded"} onClick={() => setShowPopup(true)}>Supprimer</button>*/}
-                        {/*            )*/}
-                        {/*        }*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
                     </div>
                     {showPopup &&
                         createPortal(

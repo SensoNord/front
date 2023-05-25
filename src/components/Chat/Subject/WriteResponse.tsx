@@ -11,10 +11,11 @@ import {PaperAirplaneIcon, DocumentPlusIcon, TrashIcon} from "@heroicons/react/2
 type Props = {
     postId: string;
     subject: SubjectType;
+    updateResponsesList: Function;
 };
 
 export default function WriteResponse(props: Props) {
-    const {postId, subject} = props;
+    const {postId, subject, updateResponsesList} = props;
     const dispatch = useAppDispatch();
     const formRef = useRef(null) as { current: any };
 
@@ -65,7 +66,7 @@ export default function WriteResponse(props: Props) {
                 } as PayLoadCreateSubjectMessage),
             );
         }
-        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+        updateResponsesList();
 
         formRef.current.reset();
     }
