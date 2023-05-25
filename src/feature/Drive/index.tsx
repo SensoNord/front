@@ -100,7 +100,7 @@ export default function Drive() {
 
     return (
         <>
-            <div className={'grid grid-cols-6'}>
+            <div className={'grid grid-cols-6 py-4 px-8'}>
                 <div className={'col-start-5 flex justify-center items-start'}>
                     <button
                         className={`bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded z-10 ${
