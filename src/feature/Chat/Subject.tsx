@@ -52,20 +52,27 @@ export default function Subject() {
     };
 
     useEffect(() => {
-        const fetchNbPost = async () => {
-            let response = (await directus.items('posts').readByQuery({
-                filter: {
-                    subject_id: {
-                        _eq: currentSubjectDisplayWithAllRelatedData?.id,
-                    },
-                },
-                aggregate: {
-                    count: 'id',
-                },
-            })) as { data: [{ count: { id: number } }] };
-            setTotalNbPost(response.data[0].count.id);
-        };
-        fetchNbPost();
+        if (currentSubjectDisplayWithAllRelatedData?.id) {
+            try {
+                const fetchNbPost = async () => {
+                    let response = (await directus.items('posts').readByQuery({
+                        filter: {
+                            subject_id: {
+                                _eq: currentSubjectDisplayWithAllRelatedData?.id,
+                            },
+                        },
+                        aggregate: {
+                            count: 'id',
+                        },
+                    })) as { data: [{ count: { id: number } }] };
+                    setTotalNbPost(response.data[0].count.id);
+                };
+                fetchNbPost();
+            } catch (error) {
+                console.error('Erreur lors de la récupération du nombre de post:', error);
+                throw error;
+            }
+        }
     }, [currentSubjectDisplayWithAllRelatedData?.id]);
 
     useEffect(() => {

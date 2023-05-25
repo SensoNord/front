@@ -60,34 +60,41 @@ export default function Post(props: Props) {
     }, [connectedUser, connectedUserRole, post.user_created.id]);
 
     useEffect(() => {
-        const fetchResponsesList = async () => {
-            let msgList = await directus.items('responses').readByQuery({
-                filter: {
-                    post_id: {
-                        _eq: post.id,
-                    },
-                },
-                fields: responseField,
-                limit: 5,
-                // @ts-ignore
-                sort: '-date_created',
-                page: 1,
-            });
-            setResponsesList(msgList.data as ResponseType[]);
+        if (post.id) {
+            try {
+                const fetchResponsesList = async () => {
+                    let msgList = await directus.items('responses').readByQuery({
+                        filter: {
+                            post_id: {
+                                _eq: post.id,
+                            },
+                        },
+                        fields: responseField,
+                        limit: 5,
+                        // @ts-ignore
+                        sort: '-date_created',
+                        page: 1,
+                    });
+                    setResponsesList(msgList.data as ResponseType[]);
 
-            let nbResponses = (await directus.items('responses').readByQuery({
-                filter: {
-                    post_id: {
-                        _eq: post.id,
-                    },
-                },
-                aggregate: {
-                    count: 'id',
-                },
-            })) as { data: [{ count: { id: number } }] };
-            setTotalNbResponses(nbResponses.data[0].count.id);
-        };
-        fetchResponsesList();
+                    let nbResponses = (await directus.items('responses').readByQuery({
+                        filter: {
+                            post_id: {
+                                _eq: post.id,
+                            },
+                        },
+                        aggregate: {
+                            count: 'id',
+                        },
+                    })) as { data: [{ count: { id: number } }] };
+                    setTotalNbResponses(nbResponses.data[0].count.id);
+                };
+                fetchResponsesList();
+            } catch (error) {
+                console.error('Erreur lors de la récupération du nombre de réponses:', error);
+                throw error;
+            }
+        }
     }, [post.id]);
 
     useFetchFile({

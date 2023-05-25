@@ -31,21 +31,28 @@ export default function Conversation() {
     }, [currentConversationDisplayWithAllRelatedData?.messages_list]);
 
     useEffect(() => {
-        const fetchNbMessages = async () => {
-            let response = (await directus.items('messages').readByQuery({
-                filter: {
-                    conversation_id: {
-                        _eq: currentConversationDisplayWithAllRelatedData?.id,
-                    },
-                },
-                aggregate: {
-                    count: 'id',
-                },
-            })) as { data: [{ count: { id: number } }] };
-            setTotalNbMessages(response.data[0].count.id);
-        };
+        if (currentConversationDisplayWithAllRelatedData?.id) {
+            try {
+                const fetchNbMessages = async () => {
+                    let response = (await directus.items('messages').readByQuery({
+                        filter: {
+                            conversation_id: {
+                                _eq: currentConversationDisplayWithAllRelatedData?.id,
+                            },
+                        },
+                        aggregate: {
+                            count: 'id',
+                        },
+                    })) as { data: [{ count: { id: number } }] };
+                    setTotalNbMessages(response.data[0].count.id);
+                };
 
-        fetchNbMessages().then(() => setTimeout(() => setIsLoading(false), 1000));
+                fetchNbMessages().then(() => setTimeout(() => setIsLoading(false), 1000));
+            } catch (error) {
+                console.error('Erreur lors de la récupération du nombre de messages:', error);
+                throw error;
+            }
+        }
     }, [currentConversationDisplayWithAllRelatedData?.id]);
 
     useEffect(() => {
