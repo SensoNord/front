@@ -28,6 +28,7 @@ export default function Conversation() {
             );
             setSortedMessages(sortedMessages);
         }
+        // eslint-disable-next-line
     }, [currentConversationDisplayWithAllRelatedData?.messages_list]);
 
     useEffect(() => {
@@ -65,6 +66,7 @@ export default function Conversation() {
                 setOtherUser(otherUserCandidate.directus_users_id);
             }
         }
+        // eslint-disable-next-line
     }, [currentConversationDisplayWithAllRelatedData?.user_list, connectedUser?.id]);
 
     const handleAddMessage = async () => {

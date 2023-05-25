@@ -106,6 +106,7 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
         if (createdChat.name === 'conversation') {
             setChatName('Accept');
         }
+        // eslint-disable-next-line
     }, [dispatch, connectedUser]);
 
     const handleMenuOpen = () => {

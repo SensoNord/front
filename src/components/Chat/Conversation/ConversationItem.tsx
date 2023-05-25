@@ -33,6 +33,7 @@ export default function ConversationItem(props: ConversationItemProps) {
                 );
             }
         }
+        // eslint-disable-next-line
     }, [conversation.user_list, connectedUser?.id]);
 
     useEffect(() => {

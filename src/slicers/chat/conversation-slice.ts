@@ -6,7 +6,6 @@ import {
     PayLoadUpdateConversationMessage,
     conversationFields,
     messageFields,
-    conversationListFields,
     PayloadFetchConversationByIdAndPage,
     PayLoadCreateMessage,
 } from './conversation-slice-helper';

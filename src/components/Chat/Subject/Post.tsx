@@ -10,7 +10,7 @@ import LoadingSpinner from '../../LoadingSpinner';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { deletePostById, updatePostMessageById } from '../../../slicers/chat/subject-slice';
 import { downloadFile } from '../../../slicers/file/file-slice';
-import { PayloadFetchSubjectByIdAndPage, PayLoadUpdateSubjectPost } from '../../../slicers/chat/subject-slice-helper';
+import { PayLoadUpdateSubjectPost } from '../../../slicers/chat/subject-slice-helper';
 import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
 import { useFetchFile } from '../../../customHook/useFetchFile';
 import DownloadableFile from '../DownloadableFile';
