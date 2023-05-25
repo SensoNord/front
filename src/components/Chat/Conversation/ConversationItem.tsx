@@ -4,6 +4,10 @@ import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 import { fetchConversationByIdAndPage } from '../../../slicers/chat/conversation-slice';
 import { PayloadFetchConversationByIdAndPage } from '../../../slicers/chat/conversation-slice-helper';
+import {
+    setCurrentSubjectDisplay,
+    setCurrentSubjectDisplayWithAllRelatedData,
+} from '../../../slicers/chat/subject-slice';
 
 type ConversationItemProps = {
     conversation: ConversationType;
@@ -49,6 +53,7 @@ export default function ConversationItem(props: ConversationItemProps) {
     }, [currentConversationDisplayWithAllRelatedData, conversation, selectedChat]);
 
     const handleChangeSelectedConversation = async (conversation: ConversationType) => {
+        console.log('conversation', conversation);
         handleSetSelectedChat(ChatEnum.CONVERSATION);
         await dispatch(
             fetchConversationByIdAndPage({

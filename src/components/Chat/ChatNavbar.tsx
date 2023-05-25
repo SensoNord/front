@@ -26,13 +26,6 @@ export default function ChatNavbar(props: ChatNavbarProps) {
     const dispatch = useAppDispatch();
     const { subjectListDisplay } = useAppSelector(state => state.subject);
     const { conversationListDisplay } = useAppSelector(sate => sate.conversation);
-    const [connectedUserId, setConnectedUserId] = useState<string>('');
-    const [connectedUserRoleName, setConnectedUserRoleName] = useState<string>('');
-
-    useEffect(() => {
-        setConnectedUserId(localStorage.getItem('connectedUserId') as string);
-        setConnectedUserRoleName(localStorage.getItem('connectedUserRoleName') as string);
-    }, [connectedUserId, connectedUserRoleName]);
 
     useEffect(() => {
         const localFetchAllSubject = async () => {

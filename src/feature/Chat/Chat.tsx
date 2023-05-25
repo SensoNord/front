@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../App/hooks';
 import ChatNavbar from '../../components/Chat/ChatNavbar';
 import { ChatEnum } from '../../types/Chat/ChatEnum';
@@ -48,6 +48,10 @@ export default function Chat() {
         setIsSubjectAddButtonClick(false);
         setIsConversationAddButtonClick(false);
     };
+
+    useEffect(() => {
+        console.log('currentConversationDisplayWithAllRelatedData', currentConversationDisplayWithAllRelatedData);
+    }, [currentConversationDisplayWithAllRelatedData]);
 
     return (
         <div
