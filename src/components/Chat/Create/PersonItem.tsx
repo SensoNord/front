@@ -1,5 +1,5 @@
 import { UserType } from '@directus/sdk';
-import { PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, MinusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 type PersonItemProps = {
     user: UserType;
@@ -22,6 +22,21 @@ export default function PersonItem(props: PersonItemProps) {
             </p>
             <div className="opacity-0 group-hover:opacity-100">
                 {type === 'selected' ? <MinusIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
+            </div>
+        </div>
+    );
+}
+
+export function SelefPersonItem(user: any) {
+    return (
+        <div
+            className={`flex items-center justify-between my-1 px-2 py-1 cursor-not-allowed group $ rounded-lg w-full text-lg hover:bg-orange-100`}
+        >
+            <p>
+                {user.user.first_name} {user.user.last_name}
+            </p>
+            <div className="opacity-0 group-hover:opacity-100">
+                <XMarkIcon className="h-6 w-6" />
             </div>
         </div>
     );

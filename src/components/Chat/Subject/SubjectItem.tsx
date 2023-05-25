@@ -31,9 +31,10 @@ export default function SubjectItem(props: SubjectItemProps) {
     }, [currentSubjectDisplayWithAllRelatedData, subject, selectedChat]);
 
     const handleChangeSelectedSubject = async (subject: SubjectType) => {
+        handleSetSelectedChat(ChatEnum.SUBJECT);
+
         if (subject.id === currentSubjectDisplayWithAllRelatedData?.id) return;
 
-        handleSetSelectedChat(ChatEnum.SUBJECT);
         await dispatch(fetchSubjectByIdAndPage({ subjectId: subject.id, page: 1 } as PayloadFetchSubjectByIdAndPage));
     };
 

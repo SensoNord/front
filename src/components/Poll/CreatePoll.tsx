@@ -200,10 +200,13 @@ export default function CreatePoll(props: CreatPollProps) {
                         </div>
                         <div className={'flex justify-evenly h-12 items-center mt-2'}>
                             <button
-                                className={
-                                    'bg-green-500 hover:bg-green-700 text-white w-1/6 font-bold py-2 px-4 rounded'
-                                }
+                                className={`bg-green-500 text-white w-1/6 font-bold py-2 px-4 rounded ${
+                                    reponseSondage.length === 0 && enabled === false
+                                        ? 'cursor-not-allowed opacity-50 hover:bg-red-500'
+                                        : 'hover:bg-green-700'
+                                }`}
                                 onClick={() => handleSubmit(typeSondage, nomSondage)}
+                                disabled={reponseSondage.length === 0 && enabled === false}
                             >
                                 Ajouter
                             </button>
