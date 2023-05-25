@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { directus } from '../../libraries/directus';
 import SettingForm from '../../components/Forms/SendInvitationForm';
-import { NameField } from '../../components/Forms/ChangeNameForm';
 import { useAppDispatch } from '../../App/hooks';
 import { updateCurrentUserName } from '../../slicers/authentification/auth-slice';
 import { UserInformationType } from '../../types/Users/UserInformationType';
@@ -11,7 +9,6 @@ export default function ChangeName() {
     const [nouveauFirstName, setNouveauFirstName] = useState('');
     const [nouveauLastName, setNouveauLastName] = useState('');
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
-    const [inputColor, setInputColor] = useState<string>('bg-blue-100 tablet:bg-blue-100');
     const dispatch = useAppDispatch();
 
     const handleInputNouveauFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +40,7 @@ export default function ChangeName() {
                         handleChange={handleInputNouveauFirstName}
                         required
                         label="Prénom"
-                        className={`mb-5 w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
+                        className={`mb-5 w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none bg-blue-100 tablet:bg-blue-100`}
                     />
                     <TextField
                         customKey="new-lastname"
@@ -51,7 +48,7 @@ export default function ChangeName() {
                         handleChange={handleInputNouveauLastName}
                         required
                         label="Nom"
-                        className={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
+                        className={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none bg-blue-100 tablet:bg-blue-100`}
                     />
 
                     {isFormSubmitted && (

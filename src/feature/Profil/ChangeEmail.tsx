@@ -6,19 +6,16 @@ import { updateCurrentUserEmail } from '../../slicers/authentification/auth-slic
 
 export default function ChangeEmail() {
     const dispatch = useAppDispatch();
-
     const [email, setEmail] = useState<string>('');
     const [confirmEmail, setConfirmEmail] = useState<string>('');
-
     const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+
+    // eslint-disable-next-line
     const [isConfirmEmailValid, setIsConfirmEmailValid] = useState<boolean>(false);
-
     const [isEmailSame, setIsEmailSame] = useState<boolean>(false);
-
     const [isEmailChanged, setIsEmailChanged] = useState(false);
     useState(false);
     const [inputColor, setInputColor] = useState<string>('bg-blue-200 tablet:bg-blue-100');
-
     const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +30,7 @@ export default function ChangeEmail() {
         setIsFormSubmitted(false);
         setInputColor('bg-blue-200 tablet:bg-blue-100');
         isEmailAndConfirmEmailSame();
+        // eslint-disable-next-line
     }, [email, confirmEmail]);
 
     const isEmailAndConfirmEmailSame = () => {

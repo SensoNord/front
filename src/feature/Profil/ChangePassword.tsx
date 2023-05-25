@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { directus } from '../../libraries/directus';
 import SettingForm from '../../components/Forms/SendInvitationForm';
 import PasswordField from '../../components/Field/PasswordField';
 import { useAppDispatch } from '../../App/hooks';
@@ -28,6 +27,7 @@ export default function ChangePassword() {
         setIsFormSubmitted(false);
         setInputColor('bg-blue-200 tablet:bg-blue-100');
         isSamePassword();
+        // eslint-disable-next-line
     }, [newPassword, confirmNewPassword]);
 
     const updatePassword = async (event: any) => {

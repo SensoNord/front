@@ -2,11 +2,10 @@ import ChangeName from './ChangeName';
 import SendInvitation from '../../feature/Authentification/SendInvitation';
 import ChangePassword from './ChangePassword';
 import ChangeEmail from './ChangeEmail';
-import { useAppDispatch, useAppSelector } from '../../App/hooks';
+import { useAppSelector } from '../../App/hooks';
 import { useState, useEffect } from 'react';
 
 export default function Profil() {
-    const dispatch = useAppDispatch();
     const { connectedUserRole } = useAppSelector(state => state.auth);
     const [isAdministrator, setIsAdministrator] = useState<boolean>(false);
 

@@ -11,8 +11,9 @@ type CustomButtonProps = {
 };
 
 export default function CustomButtonWithValidation(props: CustomButtonProps) {
-    const { type, disabled, children, validationStates, errorMessages, classNameButton, formId } = props;
+    const { type, disabled, children, validationStates, classNameButton, formId } = props;
 
+    // eslint-disable-next-line
     const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
     const handleClick = () => {
@@ -28,7 +29,6 @@ export default function CustomButtonWithValidation(props: CustomButtonProps) {
             <button type={type} disabled={disabled} onClick={handleClick} className={classNameButton} form={formId}>
                 {children}
             </button>
-            
         </>
     );
 }
