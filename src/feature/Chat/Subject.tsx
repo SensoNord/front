@@ -211,12 +211,6 @@ export default function Subject() {
         setPageNb(pageNb + 1);
     };
 
-    useEffect(() => {
-        console.log(currentSubjectDisplayWithAllRelatedData?.user_created.id === connectedUser.id);
-        console.log(currentSubjectDisplayWithAllRelatedData);
-        console.log(connectedUser);
-    }, [currentSubjectDisplayWithAllRelatedData?.user_created.id, connectedUser.id]);
-
     return (
         <>
             {currentSubjectDisplayWithAllRelatedData && (

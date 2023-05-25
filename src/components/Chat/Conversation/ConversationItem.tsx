@@ -4,10 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 import { fetchConversationByIdAndPage } from '../../../slicers/chat/conversation-slice';
 import { PayloadFetchConversationByIdAndPage } from '../../../slicers/chat/conversation-slice-helper';
-import {
-    setCurrentSubjectDisplay,
-    setCurrentSubjectDisplayWithAllRelatedData,
-} from '../../../slicers/chat/subject-slice';
 
 type ConversationItemProps = {
     conversation: ConversationType;

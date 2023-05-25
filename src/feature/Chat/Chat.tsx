@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppSelector } from '../../App/hooks';
 import ChatNavbar from '../../components/Chat/ChatNavbar';
 import { ChatEnum } from '../../types/Chat/ChatEnum';
