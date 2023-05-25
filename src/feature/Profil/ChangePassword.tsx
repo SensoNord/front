@@ -46,45 +46,41 @@ export default function ChangePassword() {
         <div>
             <SettingForm title="Mot de passe" description="Changer votre mot de passe">
                 <form id="password-form" onSubmit={updatePassword}>
-                    <div className="text-left">
-                        <div className="mb-5 ">
-                            <PasswordField
-                                customKey="password-auth"
-                                password={newPassword}
-                                handleChange={handleInputNewPassword}
-                                required
-                                label="Nouveau mot de passe"
-                                className={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
-                            />
-                        </div>
+                    <div className="mb-5 ">
                         <PasswordField
-                            customKey="confirmpassword-auth"
-                            password={confirmNewPassword}
-                            handleChange={handleInputConfirmNewPassword}
+                            customKey="password-auth"
+                            password={newPassword}
+                            handleChange={handleInputNewPassword}
                             required
-                            label="Confirmer mot de passe"
+                            label="Nouveau mot de passe"
                             className={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
                         />
-                        {isFormSubmitted && !samePassword ? (
-                            <p className="mt-4 mb-4 text-red-500 text-sm">Les mots de passes ne sont pas identiques</p>
-                        ) : (
-                            <>
-                                {isFormSubmitted && samePassword && (
-                                    <p className="mt-4 mb-4 text-green-500 text-sm">
-                                        Votre mot de passe a bien été changé
-                                    </p>
-                                )}
-                            </>
-                        )}
-                        {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
-                        <div className="text-center">
-                            <button
-                                type="submit"
-                                className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
-                            >
-                                Valider
-                            </button>
-                        </div>
+                    </div>
+                    <PasswordField
+                        customKey="confirmpassword-auth"
+                        password={confirmNewPassword}
+                        handleChange={handleInputConfirmNewPassword}
+                        required
+                        label="Confirmer mot de passe"
+                        className={`w-full text-gray-400 placeholder-inherit text-lg tablet:text-2xl rounded-lg p-1 tablet:p-2 border-2 border-transparent focus:border-blue-300 focus:outline-none ${inputColor}`}
+                    />
+                    {isFormSubmitted && !samePassword ? (
+                        <p className="mt-4 mb-4 text-red-500 text-sm">Les mots de passes ne sont pas identiques</p>
+                    ) : (
+                        <>
+                            {isFormSubmitted && samePassword && (
+                                <p className="mt-4 mb-4 text-green-500 text-sm">Votre mot de passe a bien été changé</p>
+                            )}
+                        </>
+                    )}
+                    {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
+                    <div className="text-center">
+                        <button
+                            type="submit"
+                            className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
+                        >
+                            Valider
+                        </button>
                     </div>
                 </form>
             </SettingForm>
