@@ -6,12 +6,7 @@ import stringSimilarity from 'string-similarity';
 import { UserType } from '@directus/sdk';
 import PersonItem from './PersonItem';
 import { addUsersToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
-import {
-    DirectusUserType,
-    PayLoadAddUserToSubject,
-    PayLoadCreateSubject,
-} from '../../../slicers/chat/subject-slice-helper';
-import { type } from 'os';
+import { DirectusUserType, PayLoadAddUserToSubject } from '../../../slicers/chat/subject-slice-helper';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 
 type SubjectAddPersonMenuProps = {
