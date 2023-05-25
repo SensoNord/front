@@ -35,7 +35,7 @@ export default function ChangePassword() {
         setIsFormSubmitted(true);
         event.preventDefault();
         if (samePassword) {
-            await dispatch(updateCurrentUserPassword(newPassword));
+            await dispatch(updateCurrentUserPassword(newPassword.trim()));
             setInputColor('bg-blue-100 tablet:bg-blue-100');
         } else {
             setInputColor('bg-red-200 tablet:bg-red-100');

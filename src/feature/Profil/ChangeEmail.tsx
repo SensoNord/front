@@ -45,7 +45,7 @@ export default function ChangeEmail() {
         event.preventDefault();
         if (isEmailValid && isEmailSame) {
             setIsEmailChanged(true);
-            await dispatch(updateCurrentUserEmail(email));
+            await dispatch(updateCurrentUserEmail(email.trim()));
         } else {
             setInputColor('bg-red-200 tablet:bg-red-100');
         }
