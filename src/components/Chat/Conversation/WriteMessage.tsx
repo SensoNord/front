@@ -76,7 +76,7 @@ export default function WriteMessage(props: WriteMessageProps) {
 
         await updateConversation();
         setUploadedFile(null);
-        formRef.current.reset();
+        if (formRef.current) formRef.current.reset();
     }
 
     return (
