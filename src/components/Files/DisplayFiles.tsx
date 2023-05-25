@@ -6,6 +6,7 @@ import { fetchFolderById, fetchFolderByParent, folderByParentPayload } from '../
 import { deleteFileById, fetchFileByFolder } from '../../slicers/file/file-slice';
 import { ModifiedFileType } from '../../types/File/ModifiedFileType';
 import NameAndDate from '../Field/NameAndDate';
+import LoadingSpinner from '../LoadingSpinner';
 
 type Props = {
     callbackOnClick?: Function;
@@ -106,7 +107,9 @@ export default function DisplayFiles(props: Props) {
     return (
         <>
             {!isDataLoaded ? (
-                <></>
+                <>
+                <LoadingSpinner />
+                </>
             ) : (
                 <div className={'h-full overflow-y-scroll'}>
                     <div className={'cursor-pointer flex mb-4 text-2xl'}>
