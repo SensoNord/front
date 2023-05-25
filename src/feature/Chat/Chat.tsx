@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../App/hooks';
+import { useAppSelector } from '../../App/hooks';
 import ChatNavbar from '../../components/Chat/ChatNavbar';
 import { ChatEnum } from '../../types/Chat/ChatEnum';
 import Subject from './Subject';
 import Conversation from './Conversation';
 import ChatCreationMenu from '../../components/Chat/Create/ChatCreationMenu';
-import { createFolder } from '../../slicers/file/folder-slice';
 
 const ID_FORUM = 'adca289e-8c53-4bb1-b4b5-ca6dd6f7b58a';
 const ID_CONVERSATION = 'b402c651-a4e2-4eec-9686-f71e8b27321a';

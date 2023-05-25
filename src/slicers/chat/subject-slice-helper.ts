@@ -1,5 +1,3 @@
-import { UserType } from '@directus/sdk';
-
 export type PayLoadCreateSubjectMessage = {
     subject_id: string;
     post_id: string;

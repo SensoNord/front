@@ -3,15 +3,9 @@ import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/s
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { fetchUserListWithoutCurrentUser } from '../../../slicers/user/user-slice';
 import stringSimilarity from 'string-similarity';
-import { FolderType, UserType } from '@directus/sdk';
+import { UserType } from '@directus/sdk';
 import PersonItem from './PersonItem';
-import { ChatCreation } from '../../../feature/Chat/Chat';
-import { PayloadCreateFolder, createFolder } from '../../../slicers/file/folder-slice';
-import {
-    addUsersToSubject,
-    createSubjectWithUser,
-    setCurrentSubjectDisplayWithAllRelatedData,
-} from '../../../slicers/chat/subject-slice';
+import { addUsersToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
 import {
     DirectusUserType,
     PayLoadAddUserToSubject,
