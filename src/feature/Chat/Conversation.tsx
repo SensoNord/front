@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import WriteMessage from '../../components/Chat/Conversation/WriteMessage';
 import Message from '../../components/Chat/Conversation/Message';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
@@ -18,6 +18,8 @@ export default function Conversation() {
     const [sortedMessages, setSortedMessages] = useState<MessageType[]>([]);
     const [totalNbMessages, setTotalNbMessages] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (currentConversationDisplayWithAllRelatedData?.messages_list) {
@@ -81,6 +83,12 @@ export default function Conversation() {
         setTimeout(() => setIsLoading(false), 1000);
     };
 
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView();
+        }
+    }, [sortedMessages]);
+
     return (
         <>
             {currentConversationDisplayWithAllRelatedData && (
@@ -136,6 +144,7 @@ export default function Conversation() {
                                         </div>
                                     );
                                 })}
+                            <div ref={messagesEndRef} />
                         </div>
                         <div className={'row-span-2 h-full border-t-2 border-gray-300'}>
                             <WriteMessage conversation={currentConversationDisplayWithAllRelatedData} pageNb={pageNb} />
