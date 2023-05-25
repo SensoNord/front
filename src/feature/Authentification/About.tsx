@@ -4,7 +4,7 @@ import AuthentificationForm from '../../components/Forms/AuthentificationForm';
 import TextField from '../../components/Field/TextField';
 import { CredentialsType } from '../../types/Users/CredentialsType';
 import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { fetchLogin, updateCurrentUser } from '../../slicers/authentification/auth-slice';
+import { fetchLogin, updateCurrentUserName } from '../../slicers/authentification/auth-slice';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { useNavigate } from 'react-router';
 import { UserInformationType } from '../../types/Users/UserInformationType';
@@ -59,7 +59,7 @@ export const About = (props: AboutProps) => {
 
     const updateUserData = useCallback(async () => {
         await dispatch(
-            updateCurrentUser({
+            updateCurrentUserName({
                 first_name: firstname,
                 last_name: lastname,
             } as UserInformationType),

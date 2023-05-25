@@ -75,13 +75,45 @@ export const fetchConnectedUserRole = createAsyncThunk(
     },
 );
 
-export const updateCurrentUser = createAsyncThunk(
-    'auth/updateCurrentUser',
+export const updateCurrentUserName = createAsyncThunk(
+    'auth/updateCurrentUserName',
     async (userInformation: UserInformationType, { rejectWithValue }) => {
         try {
             await directus.users.me.update({
                 first_name: userInformation.first_name,
                 last_name: userInformation.last_name,
+            });
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const updateCurrentUserPassword = createAsyncThunk(
+    'auth/updateCurrentUserPassword',
+    async (password: string, { rejectWithValue }) => {
+        try {
+            await directus.users.me.update({
+                password: password,
+            });
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const updateCurrentUserEmail = createAsyncThunk(
+    'auth/updateCurrentUserEmail',
+    async (email: string, { rejectWithValue }) => {
+        try {
+            await directus.users.me.update({
+                email: email,
             });
         } catch (error: any) {
             return rejectWithValue({
@@ -158,15 +190,43 @@ const authSlice = createSlice({
                 state.connectedUserRole = {} as RoleItem;
                 state.error = action.payload as ErrorType;
             })
-            .addCase(updateCurrentUser.pending, state => {
+            .addCase(updateCurrentUserName.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(updateCurrentUser.fulfilled, (state, action) => {
+            .addCase(updateCurrentUserName.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 state.error = {} as ErrorType;
+                state.connectedUser.first_name = action.meta.arg.first_name;
+                state.connectedUser.last_name = action.meta.arg.last_name;
             })
-            .addCase(updateCurrentUser.rejected, (state, action) => {
+            .addCase(updateCurrentUserName.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(updateCurrentUserPassword.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updateCurrentUserPassword.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+                state.connectedUser.password = action.meta.arg;
+            })
+            .addCase(updateCurrentUserPassword.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(updateCurrentUserEmail.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(updateCurrentUserEmail.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+                state.connectedUser.email = action.meta.arg;
+            })
+            .addCase(updateCurrentUserEmail.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });
