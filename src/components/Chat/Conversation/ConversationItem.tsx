@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { ConversationType } from '../../../types/Chat/ConversationType';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
-import { fetchConversationById } from '../../../slicers/chat/conversation-slice';
+import {fetchConversationByIdAndPage} from '../../../slicers/chat/conversation-slice';
+import {PayloadFetchConversationByIdAndPage} from "../../../slicers/chat/conversation-slice-helper";
 
 type ConversationItemProps = {
     conversation: ConversationType;
@@ -27,12 +28,12 @@ export default function ConversationItem(props: ConversationItemProps) {
             if (otherUserCandidate) {
                 setDisplayableConversationName(
                     otherUserCandidate.directus_users_id.first_name +
-                        ' ' +
-                        otherUserCandidate.directus_users_id.last_name,
+                    ' ' +
+                    otherUserCandidate.directus_users_id.last_name,
                 );
             }
         }
-    }, [conversation, connectedUser?.id]);
+    }, [conversation.user_list, connectedUser?.id]);
 
     useEffect(() => {
         if (
@@ -48,7 +49,7 @@ export default function ConversationItem(props: ConversationItemProps) {
 
     const handleChangeSelectedConversation = async (conversation: ConversationType) => {
         handleSetSelectedChat(ChatEnum.CONVERSATION);
-        await dispatch(fetchConversationById(conversation.id));
+        await dispatch(fetchConversationByIdAndPage({conversationId: conversation.id, page: 1} as PayloadFetchConversationByIdAndPage));
     };
 
     return (

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { PostType } from '../../types/Chat/PostType';
 import Post from '../../components/Chat/Subject/Post';
 import '../../styles/Popup.css';
-import { createPortal } from 'react-dom';
-import { ModifiedFileType } from '../../types/File/ModifiedFileType';
-import { useAppDispatch, useAppSelector } from '../../App/hooks';
-import { createPostToSubject, setCurrentSubjectDisplayWithAllRelatedData } from '../../slicers/chat/subject-slice';
-import { PayLoadCreateSubjectPost } from '../../slicers/chat/subject-slice-helper';
+import {createPortal} from 'react-dom';
+import {ModifiedFileType} from '../../types/File/ModifiedFileType';
+import {useAppDispatch, useAppSelector} from '../../App/hooks';
+import {clearCurrentSubjectDisplayWithAllRelatedData, createPostToSubject, fetchSubjectByIdAndPage} from '../../slicers/chat/subject-slice';
+import {PayLoadCreateSubjectPost, PayloadFetchSubjectByIdAndPage} from '../../slicers/chat/subject-slice-helper';
 import {
     UpdateFilePayload,
     createFile,
@@ -17,6 +17,7 @@ import {
 import AddFilePopup from '../../components/Chat/AddFilePopup';
 import CreateSondage from '../../components/Poll/CreatePoll';
 import { PaperAirplaneIcon, DocumentPlusIcon, TrashIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import {directus} from "../../libraries/directus";
 import SubjectAddPersonMenu from '../../components/Chat/Create/SubjectAddPersonMenu';
 
 type UploadedFile = {
@@ -36,6 +37,8 @@ export default function Subject() {
     const [sortedPost, setSortedPost] = useState<PostType[]>([]);
     const [sondageId, setSondageId] = useState<number | null>(null);
     const [nomSondage, setNomSondage] = useState('');
+    const [pageNb, setPageNb] = useState<number>(2);
+    const [totalNbPost, setTotalNbPost] = useState<number>(0);
 
     const resetForm = () => {
         setTitle('');
@@ -45,11 +48,30 @@ export default function Subject() {
     };
 
     useEffect(() => {
-        const sortedPost = [...currentSubjectDisplayWithAllRelatedData!.posts].sort((a: PostType, b: PostType) => {
-            return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
-        });
-        setSortedPost(sortedPost);
-        resetForm();
+        const fetchNbPost = async () => {
+            let response = await directus.items('posts').readByQuery({
+                filter: {
+                    subject_id: {
+                        _eq: currentSubjectDisplayWithAllRelatedData?.id
+                    }
+                },
+                aggregate: {
+                    count: "id"
+                }
+            }) as { data: [{ count: { id: number } }] };
+            setTotalNbPost(response.data[0].count.id);
+        }
+        fetchNbPost();
+    }, [currentSubjectDisplayWithAllRelatedData?.id]);
+
+    useEffect(() => {
+        if (currentSubjectDisplayWithAllRelatedData && currentSubjectDisplayWithAllRelatedData.posts) {
+            const sortedPost = [...currentSubjectDisplayWithAllRelatedData!.posts].sort((a: PostType, b: PostType) => {
+                return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+            });
+            setSortedPost(sortedPost);
+            resetForm();
+        }
     }, [currentSubjectDisplayWithAllRelatedData]);
 
     function quitPopup() {
@@ -77,6 +99,14 @@ export default function Subject() {
                     sondage_id: sondageId,
                 } as PayLoadCreateSubjectPost),
             );
+        }
+    }
+
+    const updateSubject = async () => {
+        let subjectId = currentSubjectDisplayWithAllRelatedData?.id;
+        dispatch(clearCurrentSubjectDisplayWithAllRelatedData());
+        for (let i = 1; i <= pageNb; i++) {
+            await dispatch(fetchSubjectByIdAndPage({subjectId: subjectId, page: i} as PayloadFetchSubjectByIdAndPage));
         }
     }
 
@@ -119,7 +149,7 @@ export default function Subject() {
                     } as PayLoadCreateSubjectPost),
                 );
             }
-            dispatch(setCurrentSubjectDisplayWithAllRelatedData(currentSubjectDisplayWithAllRelatedData!.id));
+            await updateSubject();
             resetForm();
         } else {
             document.getElementById('errorMessage')?.classList.remove('hidden');
@@ -157,6 +187,11 @@ export default function Subject() {
         setShowAddPersonPopup(false);
     };
 
+    const handleAddPost = async () => {
+        await dispatch(fetchSubjectByIdAndPage({subjectId: currentSubjectDisplayWithAllRelatedData!.id, page: pageNb} as PayloadFetchSubjectByIdAndPage));
+        setPageNb(pageNb + 1);
+    }
+
     return (
         <>
             {currentSubjectDisplayWithAllRelatedData && (
@@ -185,20 +220,28 @@ export default function Subject() {
                             className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden'}
                             style={{ overflowAnchor: 'auto' }}
                         >
-                            {sortedPost.map((post: PostType, index: number) => {
+                            {sortedPost.map((post: PostType, index) => {
                                 return (
                                     <div
                                         className={'bg-white w-10/12 mx-auto rounded-3xl drop-shadow-xl p-6 my-14'}
-                                        key={post.id}
+                                        key={index}
                                     >
                                         <Post
                                             post={post}
                                             key={post.id}
                                             subject={currentSubjectDisplayWithAllRelatedData!}
+                                            updateSubject={updateSubject}
                                         ></Post>
                                     </div>
                                 );
                             })}
+                            {sortedPost.length < totalNbPost && (
+                                <div className={'text-center'}>
+                                    <button className={"mt-6 mb-4 bg-blue-300 p-2 rounded-xl"} onClick={handleAddPost}>
+                                        Afficher plus de topics
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         <div className={'row-span-3 h-full bg-white border-t-2 border-t-gray-400'}>
                             <form className={'text-center overflow-y-scroll h-full'} onSubmit={handleSubmit}>

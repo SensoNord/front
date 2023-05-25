@@ -1,35 +1,50 @@
-import { useEffect, useRef, useState } from 'react';
-import { PostType } from '../../../types/Chat/PostType';
-import { ResponseType } from '../../../types/Chat/ResponseType';
+import {useEffect, useRef, useState} from 'react';
+import {PostType} from '../../../types/Chat/PostType';
+import {ResponseType} from '../../../types/Chat/ResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import { SubjectType } from '../../../types/Chat/SubjectType';
-import { ModifiedFileType } from '../../../types/File/ModifiedFileType';
-import { createPortal } from 'react-dom';
+import {SubjectType} from '../../../types/Chat/SubjectType';
+import {ModifiedFileType} from '../../../types/File/ModifiedFileType';
+import {createPortal} from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
-import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import {useAppDispatch, useAppSelector} from '../../../App/hooks';
 import {
     deletePostById,
-    setCurrentSubjectDisplayWithAllRelatedData,
     updatePostMessageById,
 } from '../../../slicers/chat/subject-slice';
-import { downloadFile } from '../../../slicers/file/file-slice';
-import { PayLoadUpdateSubjectPost } from '../../../slicers/chat/subject-slice-helper';
-import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
-import { useFetchFile } from '../../../customHook/useFetchFile';
+import {downloadFile} from '../../../slicers/file/file-slice';
+import {PayloadFetchSubjectByIdAndPage, PayLoadUpdateSubjectPost} from '../../../slicers/chat/subject-slice-helper';
+import {FileTypeWithStatus} from '../../../types/File/FileTypeWithStatus';
+import {useFetchFile} from '../../../customHook/useFetchFile';
 import DownloadableFile from '../DownloadableFile';
 import NameAndDate from '../../Field/NameAndDate';
 import Sondage from '../../Poll/Poll';
+import {directus} from "../../../libraries/directus";
 
 type Props = {
     post: PostType;
     subject: SubjectType;
+    updateSubject: Function;
 };
 
+const responseField = [
+    'user_created.first_name',
+    'user_created.last_name',
+    'user_created.id',
+    'date_created',
+    'user_updated.first_name',
+    'user_updated.last_name',
+    'date_updated.id',
+    'date_updated',
+    'message',
+    'file_id',
+    'id',
+]
+
 export default function Post(props: Props) {
-    const { post, subject } = props;
+    const {post, subject, updateSubject} = props;
     const dispatch = useAppDispatch();
-    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
+    const {connectedUser, connectedUserRole} = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
     const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
@@ -38,11 +53,45 @@ export default function Post(props: Props) {
     const isLoaded = true;
     const [isAdministrator, setIsAdministrator] = useState(null as boolean | null);
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
+    const [responsesList, setResponsesList] = useState([] as ResponseType[]);
+    const [responsesPageNb, setResponsesPageNb] = useState(1);
+    const [totalNbResponses, setTotalNbResponses] = useState<number>(0);
 
     useEffect(() => {
         setIsAdministrator(connectedUserRole.name === 'Administrator');
         setIsPostOwner(connectedUser.id === post.user_created.id);
     }, [connectedUser, connectedUserRole, post.user_created.id]);
+
+    useEffect(() => {
+        const fetchResponsesList = async () => {
+            let msgList = await directus.items('responses').readByQuery({
+                filter: {
+                    post_id: {
+                        _eq: post.id
+                    }
+                },
+                fields: responseField,
+                limit: 5,
+                // @ts-ignore
+                sort: '-date_created',
+                page: 1,
+            });
+            setResponsesList(msgList.data as ResponseType[]);
+
+            let nbResponses = await directus.items('responses').readByQuery({
+                filter: {
+                    post_id: {
+                        _eq: post.id
+                    }
+                },
+                aggregate: {
+                    count: "id"
+                }
+            }) as { data: [{ count: { id: number } }] };
+            setTotalNbResponses(nbResponses.data[0].count.id);
+        }
+        fetchResponsesList();
+    }, [post.id]);
 
     useFetchFile({
         file_id: post.file_id,
@@ -53,9 +102,10 @@ export default function Post(props: Props) {
         setShowPopup(false);
     }
 
+
     async function deletePost() {
         await dispatch(deletePostById(post.id));
-        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+        await updateSubject();
         quitPopup();
     }
 
@@ -66,7 +116,7 @@ export default function Post(props: Props) {
                 message: textAreaRef.current.value,
             } as PayLoadUpdateSubjectPost),
         );
-        dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+        await updateSubject();
         setPostIsBeingEdited(false);
     }
 
@@ -74,15 +124,47 @@ export default function Post(props: Props) {
         await dispatch(downloadFile(file.file as ModifiedFileType));
     }
 
+    async function updateResponsesList() {
+        let msgList = await directus.items('responses').readByQuery({
+            filter: {
+                post_id: {
+                    _eq: post.id
+                }
+            },
+            fields: responseField,
+            limit: 5 * responsesPageNb,
+            // @ts-ignore
+            sort: '-date_created',
+        });
+        setResponsesList(msgList.data as ResponseType[]);
+    }
+
+    async function handleShowMoreResponses() {
+        let response = await directus.items('responses').readByQuery({
+            filter: {
+                post_id: {
+                    _eq: post.id
+                }
+            },
+            fields: responseField,
+            limit: 5,
+            // @ts-ignore
+            sort: '-date_created',
+            page: responsesPageNb + 1,
+        });
+        setResponsesList([...responsesList, ...response.data as ResponseType[]]);
+        setResponsesPageNb(responsesPageNb + 1);
+    }
+
     return (
         <>
             {!isLoaded ? (
-                <LoadingSpinner />
+                <LoadingSpinner/>
             ) : (
                 <>
                     <div className={'w-full'}>
                         <div className={'flex justify-between'}>
-                            <NameAndDate date_created={post.date_created} user_created={post.user_created} />
+                            <NameAndDate date_created={post.date_created} user_created={post.user_created}/>
                             <div>
                                 {isPostOwner && !postIsBeingEdited && (
                                     //  Bouton modifier
@@ -158,7 +240,7 @@ export default function Post(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <div className={'p-4 rounded-lg'} style={{ backgroundColor: 'rgb(219, 234, 254)' }}>
+                        <div className={'p-4 rounded-lg'} style={{backgroundColor: 'rgb(219, 234, 254)'}}>
                             <div>
                                 <h2 className={'text-2xl font-bold'}>{post.title}</h2>
                             </div>
@@ -182,20 +264,24 @@ export default function Post(props: Props) {
                             )}
                             {post.sondage_id && (
                                 <div className="border-t-2 border-gray-300 mt-2">
-                                    <Sondage sondage_id={post.sondage_id} />
+                                    <Sondage sondage_id={post.sondage_id}/>
                                 </div>
                             )}
-                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
-                            <div className={'text-right'}>
-                                <NameAndDate user_created={post.user_created} date_created={post.date_created} />
-                            </div>
+                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile}/>
                         </div>
                         <div className={'w-full'}>
-                            {[...post['responses']]
+                            {responsesList.length < totalNbResponses && (
+                                <div className={'text-center'}>
+                                    <button className={"mt-6 mb-4 bg-blue-300 p-2 rounded-xl"} onClick={handleShowMoreResponses}>
+                                        Afficher plus de réponse
+                                    </button>
+                                </div>
+                            )}
+                            {responsesList
                                 .sort((a: ResponseType, b: ResponseType) => {
                                     return new Date(a.date_created).getTime() - new Date(b.date_created).getTime();
                                 })
-                                .map((response: ResponseType) => {
+                                .map((response: ResponseType, index) => {
                                     return (
                                         <div
                                             className={`flex ${
@@ -203,12 +289,13 @@ export default function Post(props: Props) {
                                                     ? 'justify-end'
                                                     : 'justify-start'
                                             }`}
+                                            key={index}
                                         >
                                             <div className={'w-7/12'}>
                                                 <Response
                                                     response={response}
                                                     subjectId={subject.id}
-                                                    key={response.id}
+                                                    key={index}
                                                     align={
                                                         response.user_created.id === connectedUser.id ? 'right' : 'end'
                                                     }
@@ -217,7 +304,7 @@ export default function Post(props: Props) {
                                         </div>
                                     );
                                 })}
-                            <WriteResponse postId={post.id} subject={subject} key={post.id + 'writeResponse'} />
+                            <WriteResponse postId={post.id} subject={subject} key={post.id + 'writeResponse'} updateResponsesList={updateResponsesList}/>
                         </div>
                     </div>
                     {showPopup &&

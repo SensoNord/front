@@ -7,6 +7,7 @@ import {
     conversationFields,
     messageFields,
     conversationListFields,
+    PayloadFetchConversationByIdAndPage,
 } from './conversation-slice-helper';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { ErrorType } from '../../types/Request/ErrorType';
@@ -46,12 +47,19 @@ export const fetchAllVisibleConversation = createAsyncThunk(
     },
 );
 
-export const fetchConversationById = createAsyncThunk(
-    'conversation/fetchConversationById',
-    async (conversationId: string, { rejectWithValue }) => {
+export const fetchConversationByIdAndPage = createAsyncThunk(
+    'conversation/fetchConversationByIdAndPage',
+    async (payLoad: PayloadFetchConversationByIdAndPage, { rejectWithValue }) => {
         try {
-            const response = await directus.items('conversations').readOne(conversationId, {
+            const response = await directus.items('conversations').readOne(payLoad.conversationId, {
                 fields: conversationFields,
+                deep: {
+                    messages_list: {
+                        _limit: 10,
+                        _sort: '-date_created',
+                        _page: payLoad.page,
+                    }
+                },
             });
             return response as ConversationType;
         } catch (error: any) {
@@ -161,6 +169,9 @@ const conversationSlice = createSlice({
                 state.currentConversationDisplayWithAllRelatedData = foundConversation;
             }
         },
+        clearCurrentConversationDisplayWithAllRelatedData: state => {
+            state.currentConversationDisplayWithAllRelatedData = null;
+        }
     },
     extraReducers: builder => {
         builder
@@ -177,16 +188,20 @@ const conversationSlice = createSlice({
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
-            .addCase(fetchConversationById.pending, state => {
+            .addCase(fetchConversationByIdAndPage.pending, state => {
                 state.status = StatusEnum.LOADING;
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchConversationById.fulfilled, (state, action) => {
+            .addCase(fetchConversationByIdAndPage.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.currentConversationDisplayWithAllRelatedData = action.payload;
+                if (state.currentConversationDisplayWithAllRelatedData?.messages_list) {
+                    state.currentConversationDisplayWithAllRelatedData.messages_list = [...state.currentConversationDisplayWithAllRelatedData.messages_list, ...action.payload.messages_list];
+                } else {
+                    state.currentConversationDisplayWithAllRelatedData = action.payload;
+                }
                 state.error = {} as ErrorType;
             })
-            .addCase(fetchConversationById.rejected, (state, action) => {
+            .addCase(fetchConversationByIdAndPage.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             })
@@ -209,15 +224,6 @@ const conversationSlice = createSlice({
             })
             .addCase(createMessageToConversation.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.conversationListDisplay = state.conversationListDisplay.map((conversation: ConversationType) => {
-                    if (conversation.id === action.payload.conversation_id) {
-                        return {
-                            ...conversation,
-                            messages_list: [...(conversation.messages_list as MessageType[]), action.payload],
-                        };
-                    }
-                    return conversation;
-                });
                 state.error = {} as ErrorType;
             })
             .addCase(createMessageToConversation.rejected, (state, action) => {
@@ -276,5 +282,5 @@ const conversationSlice = createSlice({
 });
 
 export default conversationSlice.reducer;
-export const { setCurrentConversationDisplay, setCurrentConversationDisplayWithAllRelatedData } =
+export const { setCurrentConversationDisplay, setCurrentConversationDisplayWithAllRelatedData, clearCurrentConversationDisplayWithAllRelatedData } =
     conversationSlice.actions;

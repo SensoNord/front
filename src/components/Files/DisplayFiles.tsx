@@ -110,11 +110,11 @@ export default function DisplayFiles(props: Props) {
             ) : (
                 <div className={'h-full overflow-y-scroll'}>
                     <div className={'cursor-pointer flex mb-4 text-2xl'}>
-                        {folderListToDisplay.map(folder => {
+                        {folderListToDisplay.map((folder, index) => {
                             return (
                                 <div key={folder.id} onClick={() => handleClickFolder(folder)}>
                                     {folder.name}
-                                    {folderListToDisplay[folderListToDisplay.length - 1] === folder ? '' : ' >'}&nbsp;
+                                    {index === folderListToDisplay.length - 1 ? '' : ' >'}&nbsp;
                                 </div>
                             );
                         })}
@@ -128,11 +128,11 @@ export default function DisplayFiles(props: Props) {
                         <div className={'col-span-12 w-full'}>
                             {folderList && (
                                 <>
-                                    {folderList.map(folder => {
+                                    {folderList.map((folder, index) => {
                                         return (
                                             <>
                                                 <div
-                                                    key={folder.id}
+                                                    key={index}
                                                     onClick={() => handleClickFolder(folder)}
                                                     className={`cursor-pointer flex w-full ${
                                                         compactMode ? '' : 'my-2'
@@ -154,7 +154,7 @@ export default function DisplayFiles(props: Props) {
                                                     </svg>
                                                     {folder.name}
                                                 </div>
-                                                {folderList[folderList.length - 1] === folder ? '' : <hr></hr>}
+                                                {index === folderList.length - 1 ? '' : <hr></hr>}
                                             </>
                                         );
                                     })}
@@ -162,10 +162,10 @@ export default function DisplayFiles(props: Props) {
                             )}
                             {fileList && (
                                 <>
-                                    {fileList.map(file => {
+                                    {fileList.map((file, index) => {
                                         return (
                                             <>
-                                                <div key={file.id} className={'grid grid-cols-12 my-2 w-full'}>
+                                                <div key={index} className={'grid grid-cols-12 my-2 w-full'}>
                                                     <div
                                                         onClick={() => {
                                                             if (callbackOnClick) callbackOnClick(file);
@@ -264,7 +264,7 @@ export default function DisplayFiles(props: Props) {
                                                         </div>
                                                     )}
                                                 </div>
-                                                {fileList[fileList.length - 1] === file ? '' : <hr></hr>}
+                                                {index === fileList.length - 1 ? '' : <hr></hr>}
                                             </>
                                         );
                                     })}
