@@ -20,8 +20,6 @@ export type PayLoadUpdateSubjectPost = {
 
 export type DirectusUserType = {
     directus_users_id: {
-        first_name: string;
-        last_name: string;
         id: string;
     };
 };
@@ -48,9 +46,11 @@ export const subjectFields = [
     'id',
     'user_created.first_name',
     'user_created.last_name',
+    'user_created.id',
     'date_created',
     'user_updated.first_name',
     'user_updated.last_name',
+    'user_updated.id',
     'date_updated',
     'name',
     'user_list.directus_users_id.id',
@@ -63,6 +63,7 @@ export const subjectFields = [
     'posts.date_created',
     'posts.user_updated.first_name',
     'posts.user_updated.last_name',
+    'posts.user_updated.id',
     'posts.date_updated',
     'posts.title',
     'posts.message',

@@ -152,8 +152,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
         const directusConnectedUser = {
             directus_users_id: {
                 id: connectedUser.id,
-                first_name: connectedUser.first_name,
-                last_name: connectedUser.last_name,
             },
         } as DirectusUserType;
 
@@ -161,8 +159,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
             directusUserIdList.push({
                 directus_users_id: {
                     id: user.id,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
                 },
             } as DirectusUserType);
         });
