@@ -49,6 +49,8 @@ export default function ConversationItem(props: ConversationItemProps) {
     }, [currentConversationDisplayWithAllRelatedData, conversation, selectedChat]);
 
     const handleChangeSelectedConversation = async (conversation: ConversationType) => {
+        if (conversation.id === currentConversationDisplayWithAllRelatedData?.id) return;
+
         handleSetSelectedChat(ChatEnum.CONVERSATION);
         await dispatch(
             fetchConversationByIdAndPage({
