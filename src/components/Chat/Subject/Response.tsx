@@ -25,12 +25,11 @@ type Props = {
 export default function Response(props: Props) {
     const { response, subjectId } = props;
     const dispatch = useAppDispatch();
-    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
+    const { connectedUser } = useAppSelector(state => state.auth);
 
     const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [showPopup, setShowPopup] = useState(false);
 
-    const [isAdministrator, setIsAdministrator] = useState(null as boolean | null);
     const [isResponseOwner, setIsResponseOwner] = useState(null as boolean | null);
 
     const [responseIsBeingEdited, setResponseIsBeingEdited] = useState(false);
@@ -40,9 +39,8 @@ export default function Response(props: Props) {
     const isLoaded = true;
 
     useEffect(() => {
-        setIsAdministrator(connectedUserRole.name === 'Administrator');
         setIsResponseOwner(connectedUser.id === response.user_created.id);
-    }, [connectedUser, connectedUserRole, response.user_created.id]);
+    }, [connectedUser, response.user_created.id]);
 
     useFetchFile({
         file_id: response.file_id,
@@ -105,7 +103,7 @@ export default function Response(props: Props) {
                                         />
                                     </svg>
                                 )}
-                                {(isResponseOwner || isAdministrator) && !responseIsBeingEdited && (
+                                {(isResponseOwner) && !responseIsBeingEdited && (
                                     // Bouton supprimer
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
