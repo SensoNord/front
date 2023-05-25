@@ -126,14 +126,14 @@ export default function CreatePoll(props: CreatPollProps) {
                             <div className={'flex flex-row justify-center mt-2 gap-x-4'}>
                                 <button
                                     type={'button'}
-                                    className="bg-blue-50 focus:bg-blue-300 p-2 rounded"
+                                    className={`p-2 rounded ${typeSondage === 'Histogramme' ? 'bg-blue-300' : 'bg-blue-50'}`}
                                     onClick={() => handleInputTypeSondage('Histogramme')}
                                 >
                                     Histogramme
                                 </button>
                                 <button
                                     type={'button'}
-                                    className="bg-blue-50 focus:bg-blue-300 p-2 rounded"
+                                    className={`p-2 rounded ${typeSondage === 'Diagramme circulaire' ? 'bg-blue-300' : 'bg-blue-50'}`}
                                     onClick={() => handleInputTypeSondage('Diagramme circulaire')}
                                 >
                                     Diagramme circulaire
