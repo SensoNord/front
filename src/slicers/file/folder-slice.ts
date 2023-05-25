@@ -23,6 +23,11 @@ export type folderByParentPayload = {
     connectedUserId: string | null;
 };
 
+export type PayloadCreateFolder = {
+    name: string;
+    parentId: string | undefined;
+};
+
 export const fetchFolderByParent = createAsyncThunk(
     'folder/fetchFolderByParent',
     async (folderByParentPayload: folderByParentPayload, { rejectWithValue }) => {
@@ -86,6 +91,24 @@ export const fetchFolderById = createAsyncThunk(
     },
 );
 
+export const createFolder = createAsyncThunk(
+    'folder/createFolder',
+    async (payloadCreateFolder: PayloadCreateFolder, { rejectWithValue }) => {
+        try {
+            const response = await directus.folders.createOne({
+                name: payloadCreateFolder.name,
+                parent: payloadCreateFolder.parentId,
+            });
+            return response as FolderType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 const folderSlice = createSlice({
     name: 'folder',
     initialState,
@@ -119,6 +142,19 @@ const folderSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(fetchFolderById.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(createFolder.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createFolder.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.error = {} as ErrorType;
+                state.folderList.push(action.payload as FolderType);
+            })
+            .addCase(createFolder.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });

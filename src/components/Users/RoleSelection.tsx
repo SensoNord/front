@@ -8,10 +8,11 @@ type RoleSelectionProps = {
     selectedRole: RoleType | undefined;
     setSelectedRole: React.Dispatch<React.SetStateAction<RoleType | undefined>>;
     setIsRoleValid: React.Dispatch<React.SetStateAction<boolean>>;
+    classNameSelection?: string;
 };
 
 export default function RoleSelection(props: RoleSelectionProps) {
-    const { selectedRole, setSelectedRole, setIsRoleValid } = props;
+    const { selectedRole, setSelectedRole, setIsRoleValid, classNameSelection } = props;
     const dispatch = useAppDispatch();
     const { roles } = useAppSelector(state => state.role);
 
@@ -34,7 +35,8 @@ export default function RoleSelection(props: RoleSelectionProps) {
             value={selectedRole?.name || ''}
             handleChange={handleChange}
             required={true}
-            label="Role: "
+            label=""
+            className={classNameSelection}
         />
     );
 }

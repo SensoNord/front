@@ -1,23 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
 import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
 import { useAppDispatch, useAppSelector } from '../../../App/hooks';
-import { fetchUserList } from '../../../slicers/user/user-slice';
+import { fetchUserListWithoutCurrentUser } from '../../../slicers/user/user-slice';
 import stringSimilarity from 'string-similarity';
-import { UserType } from '@directus/sdk';
+import { FolderType, UserType } from '@directus/sdk';
 import PersonItem from './PersonItem';
+import { ChatCreation } from '../../../feature/Chat/Chat';
+import { PayloadCreateFolder, createFolder } from '../../../slicers/file/folder-slice';
+import { createSubjectWithUser, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
+import { DirectusUserType, PayLoadCreateSubject } from '../../../slicers/chat/subject-slice-helper';
+import { ChatEnum } from '../../../types/Chat/ChatEnum';
+import { SubjectType } from '../../../types/Chat/SubjectType';
 
-export default function ChatCreationMenu() {
+type ChatCreationMenuProps = {
+    createdChat: ChatCreation;
+    handleSetSelectedChat: (selectedChat: ChatEnum) => void;
+};
+
+export default function ChatCreationMenu(props: ChatCreationMenuProps) {
+    const { createdChat, handleSetSelectedChat } = props;
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const dispatch = useAppDispatch();
     const { userList } = useAppSelector(state => state.user);
+    const { connectedUser } = useAppSelector(state => state.auth);
+
+    const [chatName, setChatName] = useState('');
     const [selectedUser, setSelectedUser] = useState([] as UserType[]);
     const [matchedUserList, setMatchedUserList] = useState([] as UserType[]);
     const leveinshtenCoef = 0.8;
     const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        console.log(selectedUser);
-    }, [selectedUser]);
 
     const handleSelectUser = (user: UserType) => {
         setSelectedUser(selectedUser => [...selectedUser, user]);
@@ -79,11 +91,56 @@ export default function ChatCreationMenu() {
     };
 
     useEffect(() => {
-        dispatch(fetchUserList());
+        dispatch(fetchUserListWithoutCurrentUser());
     }, [dispatch]);
 
     const handleMenuOpen = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleCreateGroup = async () => {
+        const createdFolderPayload = await dispatch(
+            createFolder({
+                name: chatName,
+                parentId: createdChat.id,
+            } as PayloadCreateFolder),
+        );
+
+        const createdFolder = createdFolderPayload.payload as FolderType;
+
+        if (createdChat.name === 'forum') {
+            const directusUserIdList = [] as DirectusUserType[];
+            const directusConnectedUser = {
+                directus_users_id: {
+                    id: connectedUser.id,
+                    first_name: connectedUser.first_name,
+                    last_name: connectedUser.last_name,
+                },
+            } as DirectusUserType;
+
+            selectedUser.forEach(user => {
+                directusUserIdList.push({
+                    directus_users_id: {
+                        id: user.id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                    },
+                } as DirectusUserType);
+            });
+
+            const createdSubjectPayload = await dispatch(
+                createSubjectWithUser({
+                    name: chatName,
+                    folderId: createdFolder.id,
+                    userList: [...directusUserIdList, directusConnectedUser],
+                } as PayLoadCreateSubject),
+            );
+
+            const subject = createdSubjectPayload.payload as SubjectType;
+
+            dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
+            handleSetSelectedChat(ChatEnum.SUBJECT);
+        }
     };
 
     return (
@@ -162,11 +219,22 @@ export default function ChatCreationMenu() {
                             ))}
                     </div>
                 </div>{' '}
+                <div>
+                    <input
+                        className="bg-gray-200 rounded-lg px-2 py-1 w-4/5 text-lg focus:outline-none my-4"
+                        placeholder="Nom du groupe"
+                        onChange={e => setChatName(e.target.value)}
+                    />
+                </div>
                 <button
                     type="submit"
-                    className="w-2/3 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
+                    disabled={chatName.length === 0 || selectedUser.length === 0}
+                    className={`w-2/3 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none
+                    ${chatName.length === 0 || selectedUser.length === 0 ? 'cursor-not-allowed opacity-50' : ''}
+                    `}
+                    onClick={handleCreateGroup}
                 >
-                    Créer le groupe {selectedUser.length > 0 && `(${selectedUser.length})`}
+                    Créer le groupe {selectedUser.length > 0 && `(${selectedUser.length + 1})`}
                 </button>
             </div>
             {/* List of users selected - Tablet > */}

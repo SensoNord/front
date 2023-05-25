@@ -25,16 +25,18 @@ function EmailField(props: EmailFieldProps) {
 
     return (
         <>
-            <input
-                className={classNameInput}
-                placeholder={label}
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={handleEmailChange}
-                required={required}
-            />
+            <div className="relative">
+                <input
+                    className={classNameInput}
+                    placeholder={label}
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={value}
+                    onChange={handleEmailChange}
+                    required={required}
+                />
+            </div>
         </>
     );
 }
