@@ -48,7 +48,8 @@ export default function SendInvitation() {
     };
 
     return (
-        <SettingForm title="Envoyer une invitation">
+        <SettingForm title="Invitation"
+        description='Envoyer une invitation'>
             <section className="">
                 <form id={formId} onSubmit={handleSendInvitation}>
                     <div className="text-left">

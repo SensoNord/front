@@ -45,8 +45,9 @@ export default function ChangePassword() {
 
     return (
         <div>
-            <SettingForm title="Changer votre mot de passe">
-       
+            <SettingForm title="Mot de passe"
+            description='Changer votre mot de passe'>
+                <form id="password-form" onSubmit={updatePassword}>
                 <div className="text-left">
                     <PasswordField
                         customKey="password-auth"
@@ -76,7 +77,7 @@ export default function ChangePassword() {
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                     <div className="text-center">
                         <button
-                        onClick={updatePassword}
+                        type='submit'
                             className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                           
                         >
@@ -84,7 +85,7 @@ export default function ChangePassword() {
                         </button>
                     </div>
                 </div>
-   
+                </form>
             </SettingForm>
         </div>
     );

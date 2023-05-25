@@ -42,8 +42,8 @@ export default function ChangeName() {
 
         <div>
             <SettingForm
-                title="Changer votre nom"
-          
+                title="Nom"
+                description="Changer votre nom"
             ><div className='text-left'>
                     <form id="name-form" onSubmit={updateName}>
                     <TextField

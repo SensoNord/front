@@ -41,7 +41,7 @@ export default function ChangeEmail() {
         }
     };
 
-    const updateName = async (event: any) => {
+    const updateEmail = async (event: any) => {
         setIsFormSubmitted(true);
         isEmailAndConfirmEmailSame();
         event.preventDefault();
@@ -55,8 +55,9 @@ export default function ChangeEmail() {
 
     return (
         <div>
-            <SettingForm title="Changer votre email">
-                <>
+            <SettingForm title="Email"
+            description='Changer votre email'>
+                <><form id="password-form" onSubmit={updateEmail}>
                     
                         <EmailField
                             value={email}
@@ -92,12 +93,12 @@ export default function ChangeEmail() {
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                         <button
                             
-                            onClick={updateName}
+                            type='submit'
                             className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                         >
                             Valider
                         </button>
-               
+                        </form>
                 </>
             </SettingForm>
         </div>
