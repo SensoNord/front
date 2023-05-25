@@ -31,6 +31,7 @@ export default function ChangeName() {
 
     const updateName = async (event: any) => {
         setIsFormSubmitted(true);
+        event.preventDefault()
             await dispatch(updateCurrentUserName({
                 first_name: nouveauFirstName,
                 last_name: nouveauLastName,
