@@ -156,8 +156,27 @@ export const updateMessageById = createAsyncThunk(
 
 export const createConversation = createAsyncThunk(
     'conversation/createConversation',
-    async (payLoadCreateMessage: PayLoadCreateMessage, { rejectWithValue }) => {
+    async (payLoadCreateMessage: PayLoadCreateMessage, { rejectWithValue, getState }) => {
         try {
+            const state = getState() as any;
+            const conversationList = state.conversation.conversationListDisplay as ConversationType[];
+
+            const foundConversation = conversationList.find(
+                (conversation: ConversationType) =>
+                    (conversation.user_list[0].directus_users_id.id ===
+                        payLoadCreateMessage.userList[0].directus_users_id.id &&
+                        conversation.user_list[1].directus_users_id.id ===
+                            payLoadCreateMessage.userList[1].directus_users_id.id) ||
+                    (conversation.user_list[0].directus_users_id.id ===
+                        payLoadCreateMessage.userList[1].directus_users_id.id &&
+                        conversation.user_list[1].directus_users_id.id ===
+                            payLoadCreateMessage.userList[0].directus_users_id.id),
+            );
+
+            if (foundConversation) {
+                return { conversation: foundConversation, created: false };
+            }
+
             const response = await directus.items('conversations').createOne(
                 {
                     user_list: payLoadCreateMessage.userList,
@@ -167,7 +186,7 @@ export const createConversation = createAsyncThunk(
                     fields: conversationFields,
                 },
             );
-            return response as ConversationType;
+            return { conversation: response, created: true };
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -313,7 +332,9 @@ const conversationSlice = createSlice({
             })
             .addCase(createConversation.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                state.conversationListDisplay = [...state.conversationListDisplay, action.payload];
+                if (action.payload.created) {
+                    state.conversationListDisplay = [...state.conversationListDisplay, action.payload.conversation];
+                }
                 state.error = {} as ErrorType;
             })
             .addCase(createConversation.rejected, (state, action) => {
