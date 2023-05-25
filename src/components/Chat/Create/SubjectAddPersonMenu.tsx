@@ -19,7 +19,6 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const dispatch = useAppDispatch();
     const { userList } = useAppSelector(state => state.user);
-    const { connectedUser } = useAppSelector(state => state.auth);
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
 
     const [selectedUser, setSelectedUser] = useState([] as UserType[]);
