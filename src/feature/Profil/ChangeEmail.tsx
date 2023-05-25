@@ -36,7 +36,7 @@ export default function ChangeEmail() {
     }, [email, confirmEmail]);
 
     const isEmailAndConfirmEmailSame = () => {
-        if(email === confirmEmail){
+        if (email === confirmEmail) {
             setIsEmailSame(true);
         }
     };
@@ -55,10 +55,9 @@ export default function ChangeEmail() {
 
     return (
         <div>
-            <SettingForm title="Email"
-            description='Changer votre email'>
-                <><form id="password-form" onSubmit={updateEmail}>
-                    
+            <SettingForm title="Email" description="Changer votre email">
+                <>
+                    <form id="password-form" onSubmit={updateEmail}>
                         <EmailField
                             value={email}
                             handleChange={handleEmailChange}
@@ -92,13 +91,12 @@ export default function ChangeEmail() {
                         )}
                         {!isFormSubmitted && <p className="mt-4 mb-4 text-sm invisible">" "</p>}
                         <button
-                            
-                            type='submit'
+                            type="submit"
                             className="w-3/5 tablet:mb-5 bg-blue-500 hover:bg-blue-600 text-white text-lg tablet:text-xl rounded-lg p-2 tablet:p-3 focus:outline-none"
                         >
                             Valider
                         </button>
-                        </form>
+                    </form>
                 </>
             </SettingForm>
         </div>
