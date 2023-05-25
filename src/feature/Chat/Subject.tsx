@@ -32,6 +32,7 @@ type UploadedFile = {
 
 export default function Subject() {
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
+    const { connectedUser } = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
     const [showPopup, setShowPopup] = useState(false);
     const [showAddPersonPopup, setShowAddPersonPopup] = useState(false);
@@ -216,7 +217,7 @@ export default function Subject() {
                 <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
                     <div
                         className={
-                            'text-3xl flex items-center border-b-2 border-gray-300 mx-auto px-4 pb-2 bg-white z-10'
+                            'text-3xl flex items-center border-b-2 border-gray-300 mx-auto px-4 pb-2 bg-white z-10 relative py-2'
                         }
                         style={{
                             position: 'absolute',
@@ -224,12 +225,27 @@ export default function Subject() {
                             left: 0,
                         }}
                     >
-                        <h1 className="flex-grow text-center">{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
-                        <AdjustmentsHorizontalIcon
-                            className={'w-7 h-7 cursor-pointer hover:text-gray-500'}
-                            onClick={() => setShowAddPersonPopup(true)}
-                        />
+                        <div>
+                            <h1 className="text-left text-sm">
+                                Crée par :{' '}
+                                {currentSubjectDisplayWithAllRelatedData!.user_created.first_name +
+                                    ' ' +
+                                    currentSubjectDisplayWithAllRelatedData!.user_created.last_name}
+                            </h1>
+                        </div>
+                        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                            <h1 className="text-center">{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
+                        </div>
+                        <div className="ml-auto">
+                            {currentSubjectDisplayWithAllRelatedData.user_created.id === connectedUser.id && (
+                                <AdjustmentsHorizontalIcon
+                                    className={'w-7 h-7 cursor-pointer hover:text-gray-500'}
+                                    onClick={() => setShowAddPersonPopup(true)}
+                                />
+                            )}
+                        </div>
                     </div>
+
                     <div
                         style={{ backgroundColor: 'rgb(239, 246, 255)' }}
                         className={'grid grid-rows-[repeat(11,_minmax(0,_1fr))] grid-flow-col h-full'}

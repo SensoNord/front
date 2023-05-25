@@ -1,5 +1,3 @@
-// For testing purposes
-
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { directus } from '../../libraries/directus';
 import { ErrorType } from '../../types/Request/ErrorType';

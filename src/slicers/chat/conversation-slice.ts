@@ -217,7 +217,10 @@ const conversationSlice = createSlice({
             })
             .addCase(fetchConversationByIdAndPage.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
-                if (state.currentConversationDisplayWithAllRelatedData?.messages_list) {
+                if (
+                    state.currentConversationDisplayWithAllRelatedData?.messages_list &&
+                    action.payload.id === state.currentConversationDisplayWithAllRelatedData.id
+                ) {
                     state.currentConversationDisplayWithAllRelatedData.messages_list = [
                         ...state.currentConversationDisplayWithAllRelatedData.messages_list,
                         ...action.payload.messages_list,

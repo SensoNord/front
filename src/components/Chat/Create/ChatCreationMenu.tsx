@@ -117,10 +117,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
         return `${firstName.charAt(0).toUpperCase()}.${lastName.charAt(0).toUpperCase()}${lastName.slice(1)}`;
     }
 
-    useEffect(() => {
-        console.log(chatName);
-    }, [chatName]);
-
     const handleCreateGroup = async () => {
         let newChatName = chatName;
 
@@ -156,8 +152,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
         const directusConnectedUser = {
             directus_users_id: {
                 id: connectedUser.id,
-                first_name: connectedUser.first_name,
-                last_name: connectedUser.last_name,
             },
         } as DirectusUserType;
 
@@ -165,8 +159,6 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
             directusUserIdList.push({
                 directus_users_id: {
                     id: user.id,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
                 },
             } as DirectusUserType);
         });

@@ -111,8 +111,6 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
             directusUserList.push({
                 directus_users_id: {
                     id: user.id,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
                 },
             } as DirectusUserType);
         });
