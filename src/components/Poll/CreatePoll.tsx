@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
-import {useState} from 'react';
-import {directus} from '../../libraries/directus';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import { directus } from '../../libraries/directus';
 import moment from 'moment';
-import {Switch} from '@headlessui/react';
-import {ChartBarIcon, PlusIcon, TrashIcon} from '@heroicons/react/24/outline';
+import { Switch } from '@headlessui/react';
+import { ChartBarIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 type CreatPollProps = {
     setSondageId: (id: number) => void;
@@ -12,7 +12,7 @@ type CreatPollProps = {
 };
 
 export default function CreatePoll(props: CreatPollProps) {
-    const {setSondageId, nomSondage, setNomSondage} = props;
+    const { setSondageId, nomSondage, setNomSondage } = props;
     const [showPopup, setShowPopup] = useState(false);
     const [typeSondage, setTypeSondage] = useState('');
     const [idSondage, setIdSondage] = useState(0);
@@ -22,7 +22,7 @@ export default function CreatePoll(props: CreatPollProps) {
     const responseRef = React.useRef<HTMLInputElement>(null);
 
     const getUserId = async () => {
-        const currentUser = await directus.users.me.read({fields: ['id']});
+        const currentUser = await directus.users.me.read({ fields: ['id'] });
         const userId = currentUser.id;
         return userId;
     };
@@ -30,29 +30,25 @@ export default function CreatePoll(props: CreatPollProps) {
     const createSondage = async (typeSondage: string, nomSondage: string) => {
         const now = moment().format('YYYY-MM-DD HH:mm:ss');
         try {
-            if (!enabled && reponseSondage.length === 0) {
-                const listeSondageItem = await directus.items('liste_sondage').createOne({
-                    typeSondage: typeSondage,
-                    nomSondage: nomSondage,
-                    date_creation: now,
-                    user_list: [],
-                    choix_user_list: [],
-                    user_created: await getUserId(),
-                    isEditable: enabled,
+            const listeSondageItem = await directus.items('liste_sondage').createOne({
+                typeSondage: typeSondage,
+                nomSondage: nomSondage,
+                date_creation: now,
+                user_list: [],
+                choix_user_list: [],
+                user_created: await getUserId(),
+                isEditable: enabled,
+            });
+
+            if (listeSondageItem !== null && typeof listeSondageItem === 'object' && 'id' in listeSondageItem) {
+                const parentId = listeSondageItem.id as number;
+                await directus.items('sondage').createOne({
+                    sondage_id: parentId,
+                    reponses: reponseSondage,
+                    nombre_vote: reponseSondage.map(() => 0),
                 });
 
-                if (listeSondageItem !== null && typeof listeSondageItem === 'object' && 'id' in listeSondageItem) {
-                    const parentId = listeSondageItem.id as number;
-                    await directus.items('sondage').createOne({
-                        sondage_id: parentId,
-                        reponses: reponseSondage,
-                        nombre_vote: reponseSondage.map(() => 0),
-                    });
-
-                    setIdSondage(parentId);
-                }
-            } else {
-                alert('Veuillez ajouter au moins une réponse');
+                setIdSondage(parentId);
             }
         } catch (error) {
             console.error("Erreur lors de l'ajout de l'élément:", error);
@@ -106,11 +102,11 @@ export default function CreatePoll(props: CreatPollProps) {
     return (
         <div>
             <button onClick={initialisationPopup} type={'button'} className={'mx-2 px-1 my-1 py-1 cursor-pointer'}>
-                <ChartBarIcon className="h-7 w-7 hover:text-gray-500"/>
+                <ChartBarIcon className="h-7 w-7 hover:text-gray-500" />
             </button>
             {showPopup && (
                 <div className="alertContainer">
-                    <div className="alertPopup" style={{minWidth: '600px', minHeight: '480px', padding: '0.5rem'}}>
+                    <div className="alertPopup" style={{ minWidth: '600px', minHeight: '480px', padding: '0.5rem' }}>
                         <h1 className={'font-bold text-xl'}>Créer votre sondage</h1>
                         <div>
                             <label htmlFor={'namePoll'} className={'cursor-pointer'}>
@@ -200,7 +196,7 @@ export default function CreatePoll(props: CreatPollProps) {
                                 ref={responseRef}
                                 className={'border-2 border-gray-300 py-2 px-3 mr-4 rounded-md w-6/12'}
                             />
-                            <PlusIcon className={'h-6 w-6 cursor-pointer'} onClick={handleAddReponseSondage}/>
+                            <PlusIcon className={'h-6 w-6 cursor-pointer'} onClick={handleAddReponseSondage} />
                         </div>
                         <div className={'flex justify-evenly h-12 items-center mt-2'}>
                             <button
