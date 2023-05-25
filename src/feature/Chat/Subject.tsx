@@ -228,16 +228,16 @@ export default function Subject() {
                         <div>
                             <h1 className="text-left text-sm">
                                 Crée par :{' '}
-                                {currentSubjectDisplayWithAllRelatedData!.user_created.first_name +
+                                {currentSubjectDisplayWithAllRelatedData!.user_created?.first_name +
                                     ' ' +
-                                    currentSubjectDisplayWithAllRelatedData!.user_created.last_name}
+                                    currentSubjectDisplayWithAllRelatedData!.user_created?.last_name}
                             </h1>
                         </div>
                         <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                             <h1 className="text-center">{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
                         </div>
                         <div className="ml-auto">
-                            {currentSubjectDisplayWithAllRelatedData.user_created.id === connectedUser.id && (
+                            {currentSubjectDisplayWithAllRelatedData.user_created?.id === connectedUser?.id && (
                                 <AdjustmentsHorizontalIcon
                                     className={'w-7 h-7 cursor-pointer hover:text-gray-500'}
                                     onClick={() => setShowAddPersonPopup(true)}
