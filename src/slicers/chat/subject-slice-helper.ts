@@ -39,6 +39,11 @@ export type PayLoadAddUserToSubject = {
 
 export type PayLoadUpdateSubjectResponse = PayLoadUpdateSubjectPost;
 
+export type PayloadFetchSubjectByIdAndPage = {
+    subjectId: string;
+    page: number;
+};
+
 export const subjectFields = [
     'id',
     'user_created.first_name',
@@ -91,17 +96,6 @@ export const postFields = [
     'message',
     'file_id',
     'subject_id',
-    'responses.user_created.first_name',
-    'responses.user_created.last_name',
-    'responses.user_created.id',
-    'responses.date_created',
-    'responses.user_updated.first_name',
-    'responses.user_updated.last_name',
-    'responses.date_updated.id',
-    'responses.date_updated',
-    'responses.message',
-    'responses.file_id',
-    'responses.id',
     'sondage_id',
 ];
 

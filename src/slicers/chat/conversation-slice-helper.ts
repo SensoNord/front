@@ -11,6 +11,11 @@ export type PayLoadCreateConversationMessage = {
     fileId: string | null;
 };
 
+export type PayloadFetchConversationByIdAndPage = {
+    conversationId: string;
+    page: number;
+};
+
 export type PayLoadCreateMessage = {
     userList: DirectusUserType[];
     folderId: string | undefined;

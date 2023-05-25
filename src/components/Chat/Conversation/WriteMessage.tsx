@@ -4,20 +4,25 @@ import { createPortal } from 'react-dom';
 import '../../../styles/textarea.css';
 import { useAppDispatch } from '../../../App/hooks';
 import {
+    clearCurrentConversationDisplayWithAllRelatedData,
     createMessageToConversation,
-    setCurrentConversationDisplayWithAllRelatedData,
+    fetchConversationByIdAndPage,
 } from '../../../slicers/chat/conversation-slice';
-import { PayLoadCreateConversationMessage } from '../../../slicers/chat/conversation-slice-helper';
+import {
+    PayLoadCreateConversationMessage,
+    PayloadFetchConversationByIdAndPage,
+} from '../../../slicers/chat/conversation-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from '../AddFilePopup';
 import { DocumentPlusIcon, PaperAirplaneIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 type WriteMessageProps = {
     conversation: ConversationType;
+    pageNb: number;
 };
 
 export default function WriteMessage(props: WriteMessageProps) {
-    const { conversation } = props;
+    const { conversation, pageNb } = props;
     const dispatch = useAppDispatch();
     const formRef = useRef(null) as { current: any };
 
@@ -35,6 +40,18 @@ export default function WriteMessage(props: WriteMessageProps) {
         chat: conversation,
         chatType: 'conversation',
     });
+
+    const updateConversation = async () => {
+        dispatch(clearCurrentConversationDisplayWithAllRelatedData());
+        for (let i = 1; i <= pageNb; i++) {
+            await dispatch(
+                fetchConversationByIdAndPage({
+                    conversationId: conversation?.id,
+                    page: i,
+                } as PayloadFetchConversationByIdAndPage),
+            );
+        }
+    };
 
     async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
@@ -57,7 +74,6 @@ export default function WriteMessage(props: WriteMessageProps) {
                     } as PayLoadCreateConversationMessage),
                 );
             }
-            setUploadedFile(null);
         } else {
             await dispatch(
                 createMessageToConversation({
@@ -66,8 +82,9 @@ export default function WriteMessage(props: WriteMessageProps) {
                 } as PayLoadCreateConversationMessage),
             );
         }
-        dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
 
+        await updateConversation();
+        setUploadedFile(null);
         formRef.current.reset();
     }
 
