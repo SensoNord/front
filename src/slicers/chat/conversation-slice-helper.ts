@@ -1,3 +1,5 @@
+import { DirectusUserType } from './subject-slice-helper';
+
 export type PayLoadUpdateConversationMessage = {
     messageId: string;
     message: string;
@@ -7,6 +9,11 @@ export type PayLoadCreateConversationMessage = {
     conversation_id: string;
     message: string;
     fileId: string | null;
+};
+
+export type PayLoadCreateMessage = {
+    userList: DirectusUserType[];
+    folderId: string | undefined;
 };
 
 export const conversationFields = [

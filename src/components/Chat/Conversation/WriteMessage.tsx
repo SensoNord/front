@@ -82,7 +82,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                     <textarea
                         id={'response'}
                         placeholder={'Nouveau Message'}
-                        className={'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'}
+                        className={'w-full p-2 mt-2 border border-gray-700 rounded-md'}
                         rows={3}
                         cols={30}
                     ></textarea>

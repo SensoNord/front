@@ -15,6 +15,7 @@ export default function Conversation() {
     const messagesEndRef = useRef(null) as { current: any };
 
     useEffect(() => {
+        console.log(currentConversationDisplayWithAllRelatedData);
         const sortedMessages = [...currentConversationDisplayWithAllRelatedData!.messages_list].sort(
             (a: MessageType, b: MessageType) => {
                 return new Date(a.date_created).getTime() - new Date(b.date_created).getTime();
@@ -90,7 +91,7 @@ export default function Conversation() {
                             })}
                             <div ref={messagesEndRef} />
                         </div>
-                        <div className={'row-span-2 h-full'}>
+                        <div className={'row-span-2 h-full border-t-2 border-gray-300'}>
                             <WriteMessage conversation={currentConversationDisplayWithAllRelatedData} />
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import {
     conversationFields,
     messageFields,
     conversationListFields,
+    PayLoadCreateMessage,
 } from './conversation-slice-helper';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { ErrorType } from '../../types/Request/ErrorType';
@@ -34,7 +35,7 @@ export const fetchAllVisibleConversation = createAsyncThunk(
         try {
             const response = await directus.items('conversations').readByQuery({
                 limit: -1,
-                fields: conversationListFields,
+                fields: conversationFields,
             });
             return response.data as ConversationType[];
         } catch (error: any) {
@@ -137,6 +138,29 @@ export const updateMessageById = createAsyncThunk(
                 },
             );
             return response as MessageType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const createConversation = createAsyncThunk(
+    'conversation/createConversation',
+    async (payLoadCreateMessage: PayLoadCreateMessage, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('conversations').createOne(
+                {
+                    user_list: payLoadCreateMessage.userList,
+                    folder_id: payLoadCreateMessage.folderId,
+                },
+                {
+                    fields: conversationFields,
+                },
+            );
+            return response as ConversationType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -269,6 +293,19 @@ const conversationSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(updateMessageById.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(createConversation.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createConversation.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.conversationListDisplay = [...state.conversationListDisplay, action.payload];
+                state.error = {} as ErrorType;
+            })
+            .addCase(createConversation.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });

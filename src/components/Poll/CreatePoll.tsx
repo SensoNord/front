@@ -45,7 +45,7 @@ export default function CreatePoll(props: CreatPollProps) {
                 await directus.items('sondage').createOne({
                     sondage_id: parentId,
                     reponses: reponseSondage,
-                    nombre_vote: [0],
+                    nombre_vote: reponseSondage.map(() => 0),
                 });
 
                 setIdSondage(parentId);

@@ -200,7 +200,7 @@ export default function Subject() {
                                 );
                             })}
                         </div>
-                        <div className={'row-span-3 h-full bg-white border-t-2 border-t-gray-400'}>
+                        <div className={'row-span-3 h-full bg-white border-t-2 border-gray-300'}>
                             <form className={'text-center overflow-y-scroll h-full'} onSubmit={handleSubmit}>
                                 <div className={'p-2 text-xl grid grid-cols-12 h-full'}>
                                     <div className={'col-span-9'}>

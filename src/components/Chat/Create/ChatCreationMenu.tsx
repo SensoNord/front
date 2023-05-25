@@ -11,6 +11,13 @@ import { createSubjectWithUser, setCurrentSubjectDisplayWithAllRelatedData } fro
 import { DirectusUserType, PayLoadCreateSubject } from '../../../slicers/chat/subject-slice-helper';
 import { ChatEnum } from '../../../types/Chat/ChatEnum';
 import { SubjectType } from '../../../types/Chat/SubjectType';
+import { v4 as uuidv4 } from 'uuid';
+import {
+    createConversation,
+    setCurrentConversationDisplayWithAllRelatedData,
+} from '../../../slicers/chat/conversation-slice';
+import { PayLoadCreateMessage } from '../../../slicers/chat/conversation-slice-helper';
+import { ConversationType } from '../../../types/Chat/ConversationType';
 
 type ChatCreationMenuProps = {
     createdChat: ChatCreation;
@@ -32,7 +39,11 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleSelectUser = (user: UserType) => {
-        setSelectedUser(selectedUser => [...selectedUser, user]);
+        if (createdChat.name === 'forum') {
+            setSelectedUser(selectedUser => [...selectedUser, user]);
+        } else if (createdChat.name === 'conversation') {
+            setSelectedUser(selectedUser => [user]);
+        }
         if (inputRef.current) {
             inputRef.current.value = '';
         }
@@ -92,42 +103,74 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
 
     useEffect(() => {
         dispatch(fetchUserListWithoutCurrentUser());
-    }, [dispatch]);
+        if (createdChat.name === 'conversation') {
+            setChatName('Accept');
+        }
+    }, [dispatch, connectedUser]);
 
     const handleMenuOpen = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    function formatName(firstName: string, lastName: string): string {
+        return `${firstName.charAt(0).toUpperCase()}.${lastName.charAt(0).toUpperCase()}${lastName.slice(1)}`;
+    }
+
+    useEffect(() => {
+        console.log(chatName);
+    }, [chatName]);
+
     const handleCreateGroup = async () => {
+        let newChatName = chatName;
+
+        if (createdChat.name === 'conversation') {
+            if (
+                connectedUser.first_name &&
+                connectedUser.last_name &&
+                selectedUser &&
+                selectedUser[0].first_name &&
+                selectedUser[0].last_name
+            ) {
+                newChatName =
+                    formatName(connectedUser.first_name, connectedUser.last_name) +
+                    '_' +
+                    formatName(selectedUser[0].first_name, selectedUser[0].last_name);
+                setChatName(newChatName);
+            } else {
+                newChatName = uuidv4();
+                setChatName(newChatName);
+            }
+        }
+
         const createdFolderPayload = await dispatch(
             createFolder({
-                name: chatName,
+                name: newChatName,
                 parentId: createdChat.id,
             } as PayloadCreateFolder),
         );
 
         const createdFolder = createdFolderPayload.payload as FolderType;
 
-        if (createdChat.name === 'forum') {
-            const directusUserIdList = [] as DirectusUserType[];
-            const directusConnectedUser = {
+        const directusUserIdList = [] as DirectusUserType[];
+        const directusConnectedUser = {
+            directus_users_id: {
+                id: connectedUser.id,
+                first_name: connectedUser.first_name,
+                last_name: connectedUser.last_name,
+            },
+        } as DirectusUserType;
+
+        selectedUser.forEach(user => {
+            directusUserIdList.push({
                 directus_users_id: {
-                    id: connectedUser.id,
-                    first_name: connectedUser.first_name,
-                    last_name: connectedUser.last_name,
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
                 },
-            } as DirectusUserType;
+            } as DirectusUserType);
+        });
 
-            selectedUser.forEach(user => {
-                directusUserIdList.push({
-                    directus_users_id: {
-                        id: user.id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                    },
-                } as DirectusUserType);
-            });
-
+        if (createdChat.name === 'forum') {
             const createdSubjectPayload = await dispatch(
                 createSubjectWithUser({
                     name: chatName,
@@ -140,6 +183,18 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
 
             dispatch(setCurrentSubjectDisplayWithAllRelatedData(subject.id));
             handleSetSelectedChat(ChatEnum.SUBJECT);
+        } else if ((createdChat.name = 'conversation')) {
+            const createConversationPayload = await dispatch(
+                createConversation({
+                    folderId: createdFolder.id,
+                    userList: [...directusUserIdList, directusConnectedUser],
+                } as PayLoadCreateMessage),
+            );
+
+            const conversation = createConversationPayload.payload as ConversationType;
+
+            dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
+            handleSetSelectedChat(ChatEnum.CONVERSATION);
         }
     };
 
@@ -173,42 +228,83 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
                             />
                         </div>
                     </div>
-                    {isMenuOpen ? (
-                        <XMarkIcon onClick={handleMenuOpen} className="h-8 w-8 text-gray-400 cursor-pointer" />
-                    ) : (
-                        <Bars3Icon onClick={handleMenuOpen} className="h-8 w-8 text-gray-400 cursor-pointer" />
+                    {createdChat.name === 'forum' && (
+                        <>
+                            {isMenuOpen ? (
+                                <XMarkIcon onClick={handleMenuOpen} className="h-8 w-8 text-gray-400 cursor-pointer" />
+                            ) : (
+                                <Bars3Icon onClick={handleMenuOpen} className="h-8 w-8 text-gray-400 cursor-pointer" />
+                            )}
+                        </>
                     )}
                 </div>
                 <div className="border-t-2 border-gray-300 my-4"></div>
-                <div
-                    className="pb-2"
-                    style={{
-                        minHeight: '200px',
-                        maxHeight: '200px',
-                        overflowY: 'auto',
-                    }}
-                >
-                    {/* List of users found - Tablet > */}
-                    <div className="hidden tablet:block">
-                        {matchedUserList.map((user: any) => (
-                            <div className="flex space-x-4" key={user.id}>
-                                <PersonItem user={user} handleSelectUser={handleSelectUser} type="matched" />
+                {createdChat.name === 'forum' && (
+                    <>
+                        <div
+                            className="pb-2"
+                            style={{
+                                minHeight: '200px',
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                            }}
+                        >
+                            {/* List of users found - Tablet > */}
+                            <div className="hidden tablet:block">
+                                {matchedUserList.map((user: any) => (
+                                    <div className="flex space-x-4" key={user.id}>
+                                        <PersonItem user={user} handleSelectUser={handleSelectUser} type="matched" />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                    {/* List of users found - Tablet < */}
-                    <div className="tablet:hidden">
-                        {!isMenuOpen &&
-                            matchedUserList.map((user: any) => (
+                            {/* List of users found - Tablet < */}
+                            <div className="tablet:hidden">
+                                {!isMenuOpen &&
+                                    matchedUserList.map((user: any) => (
+                                        <div className="flex space-x-4" key={user.id}>
+                                            <PersonItem
+                                                user={user}
+                                                handleSelectUser={handleSelectUser}
+                                                type="matched"
+                                            />
+                                        </div>
+                                    ))}
+                            </div>
+                            {/* List of users selected - Tablet < */}
+                            <div className="tablet:hidden">
+                                {isMenuOpen &&
+                                    selectedUser.map((user: UserType) => (
+                                        <div className="flex space-x-4" key={user.id}>
+                                            <PersonItem
+                                                user={user}
+                                                handleSelectUser={handleRemoveSelectedUser}
+                                                type="selected"
+                                            />
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>{' '}
+                    </>
+                )}
+
+                {createdChat.name === 'conversation' && (
+                    <>
+                        <div
+                            className="pb-2"
+                            style={{
+                                minHeight: '200px',
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                            }}
+                        >
+                            {matchedUserList.length >= 1 && <h1>Recherche</h1>}
+                            {matchedUserList.map((user: any) => (
                                 <div className="flex space-x-4" key={user.id}>
                                     <PersonItem user={user} handleSelectUser={handleSelectUser} type="matched" />
                                 </div>
                             ))}
-                    </div>
-                    {/* List of users selected - Tablet < */}
-                    <div className="tablet:hidden">
-                        {isMenuOpen &&
-                            selectedUser.map((user: UserType) => (
+                            {selectedUser.length >= 1 && <h1>Sélection</h1>}
+                            {selectedUser.map((user: UserType) => (
                                 <div className="flex space-x-4" key={user.id}>
                                     <PersonItem
                                         user={user}
@@ -217,15 +313,19 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
                                     />
                                 </div>
                             ))}
+                        </div>{' '}
+                    </>
+                )}
+
+                {createdChat.name === 'forum' && (
+                    <div>
+                        <input
+                            className="bg-gray-200 rounded-lg px-2 py-1 w-4/5 text-lg focus:outline-none my-4"
+                            placeholder="Nom du groupe"
+                            onChange={e => setChatName(e.target.value)}
+                        />
                     </div>
-                </div>{' '}
-                <div>
-                    <input
-                        className="bg-gray-200 rounded-lg px-2 py-1 w-4/5 text-lg focus:outline-none my-4"
-                        placeholder="Nom du groupe"
-                        onChange={e => setChatName(e.target.value)}
-                    />
-                </div>
+                )}
                 <button
                     type="submit"
                     disabled={chatName.length === 0 || selectedUser.length === 0}
@@ -234,11 +334,12 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
                     `}
                     onClick={handleCreateGroup}
                 >
-                    Créer le groupe {selectedUser.length > 0 && `(${selectedUser.length + 1})`}
+                    {createdChat.name === 'forum' ? 'Créer le groupe' : 'Créer la conversation'}
+                    {selectedUser.length > 0 && createdChat.name === 'forum' && ` (${selectedUser.length + 1})`}
                 </button>
             </div>
             {/* List of users selected - Tablet > */}
-            {isMenuOpen && (
+            {isMenuOpen && createdChat.name === 'forum' && (
                 <div className="hidden tablet:block w-64 pl-4">
                     <h1 className="flex text-lg h-11 items-center justify-center">Participants</h1>
                     <div className="border-t-2 border-gray-300 my-4"></div>
