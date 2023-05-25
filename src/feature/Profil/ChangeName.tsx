@@ -24,8 +24,8 @@ export default function ChangeName() {
         event.preventDefault();
         await dispatch(
             updateCurrentUserName({
-                first_name: nouveauFirstName,
-                last_name: nouveauLastName,
+                first_name: nouveauFirstName.trim(),
+                last_name: nouveauLastName.trim(),
             } as UserInformationType),
         );
     };

@@ -60,8 +60,8 @@ export const About = (props: AboutProps) => {
     const updateUserData = useCallback(async () => {
         await dispatch(
             updateCurrentUserName({
-                first_name: firstname,
-                last_name: lastname,
+                first_name: firstname.trim(),
+                last_name: lastname.trim(),
             } as UserInformationType),
         );
     }, [dispatch, firstname, lastname]);
@@ -94,8 +94,8 @@ export const About = (props: AboutProps) => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const credentials: CredentialsType = {
-            email,
-            password,
+            email: email.trim(),
+            password: password.trim(),
         };
         await dispatch(fetchLogin(credentials));
     };

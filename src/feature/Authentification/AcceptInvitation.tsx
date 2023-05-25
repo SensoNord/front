@@ -38,7 +38,7 @@ export default function AcceptInvitation() {
             setIsPasswordValid(true);
             await dispatch(
                 acceptInvite({
-                    password: password,
+                    password: password.trim(),
                     token: invitationToken,
                 } as AcceptInvitationType),
             );

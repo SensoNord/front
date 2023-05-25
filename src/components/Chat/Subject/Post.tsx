@@ -41,23 +41,21 @@ const responseField = [
 export default function Post(props: Props) {
     const { post, subject, updateSubject } = props;
     const dispatch = useAppDispatch();
-    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
+    const { connectedUser } = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
     const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
     const [postIsBeingEdited, setPostIsBeingEdited] = useState(false);
     const textAreaRef = useRef(null) as { current: any };
     const isLoaded = true;
-    const [isAdministrator, setIsAdministrator] = useState(null as boolean | null);
     const [isPostOwner, setIsPostOwner] = useState(null as boolean | null);
     const [responsesList, setResponsesList] = useState([] as ResponseType[]);
     const [responsesPageNb, setResponsesPageNb] = useState(1);
     const [totalNbResponses, setTotalNbResponses] = useState<number>(0);
 
     useEffect(() => {
-        setIsAdministrator(connectedUserRole.name === 'Administrator');
         setIsPostOwner(connectedUser.id === post.user_created.id);
-    }, [connectedUser, connectedUserRole, post.user_created.id]);
+    }, [connectedUser, post.user_created.id]);
 
     useEffect(() => {
         if (post.id) {
@@ -187,7 +185,7 @@ export default function Post(props: Props) {
                                         />
                                     </svg>
                                 )}
-                                {(isPostOwner || isAdministrator) && !postIsBeingEdited && (
+                                {(isPostOwner) && !postIsBeingEdited && (
                                     // Bouton supprimer
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

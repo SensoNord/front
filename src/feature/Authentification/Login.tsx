@@ -56,8 +56,8 @@ export default function Login() {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const credentials: CredentialsType = {
-            email,
-            password,
+            email: email.trim(),
+            password: password.trim(),
         };
         await dispatch(fetchLogin(credentials));
     };

@@ -28,7 +28,7 @@ function SelectField(props: SelectFieldProps) {
                 onChange={handleChange}
                 required={required}
             >
-                <option value="">Rôle</option>
+                <option value="">Choisir un rôle</option>
                 {options.map((option, index) => (
                     <option key={index} value={option.value}>
                         {option.label}

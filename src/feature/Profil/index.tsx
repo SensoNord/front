@@ -10,7 +10,7 @@ export default function Profil() {
     const [isAdministrator, setIsAdministrator] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsAdministrator(connectedUserRole.name === 'Administrator');
+        setIsAdministrator(connectedUserRole.name === 'Manager');
     }, [connectedUserRole.name]);
 
     return (
@@ -33,7 +33,6 @@ export default function Profil() {
                     <SendInvitation />
                 </div>
             )}
-            ;
         </section>
     );
 }

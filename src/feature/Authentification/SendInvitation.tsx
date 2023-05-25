@@ -35,7 +35,7 @@ export default function SendInvitation() {
         if (isEmailValid && isRoleValid) {
             dispatch(
                 sendInvite({
-                    email: email,
+                    email: email.trim(),
                     roleId: selectedRole?.id,
                 } as InvitationType),
             );
