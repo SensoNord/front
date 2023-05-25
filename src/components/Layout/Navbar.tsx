@@ -161,9 +161,13 @@ export default function Navbar() {
             <div className="tablet:hidden items-center">
                 <p className="text-blue-600 text-2xl">Sensonord</p>
             </div>
-            <div className="hidden tablet:flex items-center rounded-full bg-gray-200 px-3 py-2 w-1/3">
+            <div className="hidden tablet:flex items-center rounded-full bg-gray-200 px-3 py-2 w-1/3 cursor-not-allowed">
                 <MagnifyingGlassIcon className="h-61 w-6 text-gray-500" />
-                <input className="ml-2 bg-transparent focus:outline-none w-full text-lg" placeholder="Rechercher" />
+                <input
+                    disabled
+                    className="ml-2 bg-transparent focus:outline-none w-full text-lg cursor-not-allowed"
+                    placeholder="Rechercher"
+                />
             </div>
             <div className="tablet:flex space-x-4">
                 <div className="hidden tablet:flex space-x-4">

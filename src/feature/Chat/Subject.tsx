@@ -16,7 +16,8 @@ import {
 } from '../../slicers/file/file-slice';
 import AddFilePopup from '../../components/Chat/AddFilePopup';
 import CreateSondage from '../../components/Poll/CreatePoll';
-import { PaperAirplaneIcon, DocumentPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, DocumentPlusIcon, TrashIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import SubjectAddPersonMenu from '../../components/Chat/Create/SubjectAddPersonMenu';
 
 type UploadedFile = {
     file: ModifiedFileType | File;
@@ -28,6 +29,7 @@ export default function Subject() {
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const dispatch = useAppDispatch();
     const [showPopup, setShowPopup] = useState(false);
+    const [showAddPersonPopup, setShowAddPersonPopup] = useState(false);
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
     const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
@@ -151,13 +153,17 @@ export default function Subject() {
         setMessage(e.target.value);
     };
 
+    const handleCloseAddPersonPopup = () => {
+        setShowAddPersonPopup(false);
+    };
+
     return (
         <>
             {currentSubjectDisplayWithAllRelatedData && (
                 <div style={{ height: '100%', position: 'relative' }} className={'overflow-hidden'}>
                     <div
                         className={
-                            'text-3xl justify-center flex border-b-2 border-gray-300 mx-auto px-10 pb-2 bg-white z-10'
+                            'text-3xl flex items-center border-b-2 border-gray-300 mx-auto px-4 pb-2 bg-white z-10'
                         }
                         style={{
                             position: 'absolute',
@@ -165,7 +171,11 @@ export default function Subject() {
                             left: 0,
                         }}
                     >
-                        <h1>{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
+                        <h1 className="flex-grow text-center">{currentSubjectDisplayWithAllRelatedData!['name']}</h1>
+                        <AdjustmentsHorizontalIcon
+                            className={'w-7 h-7 cursor-pointer hover:text-gray-500'}
+                            onClick={() => setShowAddPersonPopup(true)}
+                        />
                     </div>
                     <div
                         style={{ backgroundColor: 'rgb(239, 246, 255)' }}
@@ -296,6 +306,11 @@ export default function Subject() {
                         getFileFromComputer={getFileFromComputer}
                         quitPopup={quitPopup}
                     />,
+                    document.getElementById('modal-root') as HTMLElement,
+                )}
+            {showAddPersonPopup &&
+                createPortal(
+                    <SubjectAddPersonMenu handleCloseAddPersonPopup={handleCloseAddPersonPopup} />,
                     document.getElementById('modal-root') as HTMLElement,
                 )}
         </>

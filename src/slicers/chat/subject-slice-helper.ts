@@ -1,3 +1,5 @@
+import { UserType } from '@directus/sdk';
+
 export type PayLoadCreateSubjectMessage = {
     subject_id: string;
     post_id: string;
@@ -16,6 +18,25 @@ export type PayLoadCreateSubjectPost = {
 export type PayLoadUpdateSubjectPost = {
     id: string;
     message: string;
+};
+
+export type DirectusUserType = {
+    directus_users_id: {
+        first_name: string;
+        last_name: string;
+        id: string;
+    };
+};
+
+export type PayLoadCreateSubject = {
+    name: string;
+    userList: DirectusUserType[];
+    folderId: string | undefined;
+};
+
+export type PayLoadAddUserToSubject = {
+    subjectId: string;
+    userList: DirectusUserType[];
 };
 
 export type PayLoadUpdateSubjectResponse = PayLoadUpdateSubjectPost;
