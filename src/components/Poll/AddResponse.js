@@ -22,7 +22,12 @@ export default function AddResponse({ data, onClose }) {
             />
             {affichePopup && (
                 <div className="flex space-x-4">
-                    <input className="pl-2 rounded-lg" type="text" onChange={handleAddNewElement} />
+                    <input
+                        placeholder="Ajouter un choix"
+                        className="pl-2 rounded-lg"
+                        type="text"
+                        onChange={handleAddNewElement}
+                    />
                     <PlusIcon className="h-8 w-8 cursor-pointer hover:text-gray-500" onClick={handleAjouter} />
                 </div>
             )}

@@ -8,6 +8,8 @@ import { SubjectType } from '../../types/Chat/SubjectType';
 import { PostType } from '../../types/Chat/PostType';
 import { ResponseType } from '../../types/Chat/ResponseType';
 import {
+    PayLoadAddUserToSubject,
+    PayLoadCreateSubject,
     PayLoadCreateSubjectMessage,
     PayLoadCreateSubjectPost,
     PayLoadUpdateSubjectPost,
@@ -225,6 +227,53 @@ export const deleteResponseById = createAsyncThunk(
     async (responseId: string, { rejectWithValue }) => {
         try {
             await directus.items('responses').deleteOne(responseId);
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const createSubjectWithUser = createAsyncThunk(
+    'items/createSubjectWithUser',
+    async (payLoadCreateSubject: PayLoadCreateSubject, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('subjects').createOne(
+                {
+                    name: payLoadCreateSubject.name,
+                    folder_id: payLoadCreateSubject.folderId,
+                    user_list: payLoadCreateSubject.userList,
+                },
+                {
+                    fields: subjectFields,
+                },
+            );
+            return response as SubjectType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
+export const addUsersToSubject = createAsyncThunk(
+    'items/addUsersToSubject',
+    async (payLoadAddUserToSubject: PayLoadAddUserToSubject, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('subjects').updateOne(
+                payLoadAddUserToSubject.subjectId,
+                {
+                    user_list: payLoadAddUserToSubject.userList,
+                },
+                {
+                    fields: subjectFields,
+                },
+            );
+            return response as SubjectType;
         } catch (error: any) {
             return rejectWithValue({
                 error: error.message,
@@ -478,6 +527,37 @@ const subjectSlice = createSlice({
                 state.error = {} as ErrorType;
             })
             .addCase(updateResponseMessageById.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(createSubjectWithUser.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createSubjectWithUser.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.subjectListDisplay = [...state.subjectListDisplay, action.payload];
+                state.error = {} as ErrorType;
+            })
+            .addCase(createSubjectWithUser.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
+            })
+            .addCase(addUsersToSubject.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(addUsersToSubject.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.subjectListDisplay = state.subjectListDisplay.map((subject: SubjectType) => {
+                    if (subject.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return subject;
+                });
+                state.error = {} as ErrorType;
+            })
+            .addCase(addUsersToSubject.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
             });

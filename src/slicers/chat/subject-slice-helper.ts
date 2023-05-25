@@ -18,6 +18,25 @@ export type PayLoadUpdateSubjectPost = {
     message: string;
 };
 
+export type DirectusUserType = {
+    directus_users_id: {
+        first_name: string;
+        last_name: string;
+        id: string;
+    };
+};
+
+export type PayLoadCreateSubject = {
+    name: string;
+    userList: DirectusUserType[];
+    folderId: string | undefined;
+};
+
+export type PayLoadAddUserToSubject = {
+    subjectId: string;
+    userList: DirectusUserType[];
+};
+
 export type PayLoadUpdateSubjectResponse = PayLoadUpdateSubjectPost;
 
 export const subjectFields = [
