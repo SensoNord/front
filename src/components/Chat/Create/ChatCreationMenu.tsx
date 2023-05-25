@@ -186,7 +186,7 @@ export default function ChatCreationMenu(props: ChatCreationMenuProps) {
 
             const conversation = createConversationPayload.payload as ConversationType;
 
-            dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation.id));
+            dispatch(setCurrentConversationDisplayWithAllRelatedData(conversation));
             handleSetSelectedChat(ChatEnum.CONVERSATION);
         }
     };
