@@ -107,9 +107,9 @@ export default function Conversation() {
                     </div>
                     <div
                         style={{ backgroundColor: 'rgb(239, 246, 255)' }}
-                        className={'grid grid-rows-[repeat(10,_minmax(0,_1fr))] grid-flow-col h-full mt-10'}
+                        className={'grid grid-rows-[repeat(10,_minmax(0,_1fr))] grid-flow-col h-full'}
                     >
-                        <div className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden text-center'}>
+                        <div className={'row-[span_8_/_span_8] overflow-scroll overflow-x-hidden text-center mt-10'}>
                             {sortedMessages.length < totalNbMessages && (
                                 <div className={'text-center'}>
                                     <button
