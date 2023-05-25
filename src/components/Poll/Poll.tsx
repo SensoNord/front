@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import DisplayPoll from './DisplayPoll';
 import { directus } from '../../libraries/directus';
 import { getDataListeSondageById } from './DisplayPoll';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 type PollProps = {
     sondage_id: number;
@@ -61,9 +62,7 @@ export default function Poll({ sondage_id }: PollProps) {
                 <div>
                     <DisplayPoll sondage_id={sondage_id} userId={userId} />
                     {userId === dataListeSondage.user_created && (
-                        <div>
-                            <button onClick={supprimerSondage}>supprimer le sondage</button>
-                        </div>
+                        <TrashIcon className="h-8 w-8 cursor-pointer hover:text-red-500" onClick={supprimerSondage} />
                     )}
                 </div>
             )}

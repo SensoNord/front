@@ -6,11 +6,28 @@ import Subject from './Subject';
 import Conversation from './Conversation';
 import ChatCreationMenu from '../../components/Chat/Create/ChatCreationMenu';
 
+const ID_FORUM = 'adca289e-8c53-4bb1-b4b5-ca6dd6f7b58a';
+const ID_CONVERSATION = 'b402c651-a4e2-4eec-9686-f71e8b27321a';
+
+export type ChatCreation = {
+    name: 'forum' | 'conversation';
+    id: string;
+};
+
+const conversationChat = {
+    name: 'conversation',
+    id: ID_CONVERSATION,
+} as ChatCreation;
+
+const forumChat = {
+    name: 'forum',
+    id: ID_FORUM,
+} as ChatCreation;
+
 export default function Chat() {
-    const [selectedChat, setSelectedChat] = useState<ChatEnum>(ChatEnum.NONE);
     const { currentSubjectDisplayWithAllRelatedData } = useAppSelector(state => state.subject);
     const { currentConversationDisplayWithAllRelatedData } = useAppSelector(state => state.conversation);
-
+    const [selectedChat, setSelectedChat] = useState<ChatEnum>(ChatEnum.NONE);
     const [isSubjectAddButtonClick, setIsSubjectAddButtonClick] = useState<boolean>(false);
     const [isConversationAddButtonClick, setIsConversationAddButtonClick] = useState<boolean>(false);
 
@@ -50,7 +67,10 @@ export default function Chat() {
             <div className="flex-1 bg-blue-50">
                 {isConversationAddButtonClick || isSubjectAddButtonClick ? (
                     <div className="h-full flex items-center justify-center">
-                        <ChatCreationMenu />
+                        <ChatCreationMenu
+                            createdChat={isConversationAddButtonClick ? conversationChat : forumChat}
+                            handleSetSelectedChat={handleSetSelectedChat}
+                        />
                     </div>
                 ) : (
                     <>

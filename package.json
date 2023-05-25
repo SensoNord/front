@@ -3,6 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@devexpress/dx-react-core": "^4.0.4",
+        "@devexpress/dx-react-scheduler": "^4.0.4",
+        "@devexpress/dx-react-scheduler-material-ui": "^4.0.4",
         "@directus/sdk": "^10.3.1",
         "@headlessui/react": "^1.7.14",
         "@heroicons/react": "^2.0.18",

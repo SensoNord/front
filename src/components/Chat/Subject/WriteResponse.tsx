@@ -6,6 +6,7 @@ import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from
 import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from '../AddFilePopup';
+import { PaperAirplaneIcon, DocumentPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 type Props = {
     postId: string;
@@ -72,36 +73,41 @@ export default function WriteResponse(props: Props) {
     return (
         <>
             <form ref={formRef} onSubmit={handleSubmit} className={'grid grid-cols-12 mt-10'}>
-                <span className={'inline col-span-9 flex flex-col'}>
+                <span className={'col-span-9 flex flex-col'}>
                     <textarea
-                        className={'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'}
+                        className={'w-full p-2 mt-2 border border-gray-700 rounded-md'}
                         rows={2}
                         cols={30}
                         placeholder={'Nouveau Message'}
                     ></textarea>
                 </span>
                 <span className={'col-start-10 col-span-3 flex flex-col justify-start items-center'}>
-                    <button
-                        type={'button'}
-                        className={'w-12/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-2 rounded'}
-                        onClick={() => setShowPopup(true)}
-                    >
-                        Ajouter un fichier
-                    </button>
+                    <div>
+                        <button
+                            type={'button'}
+                            className={'mx-2 px-1 my-1 py-1 cursor-pointer'}
+                            onClick={() => setShowPopup(true)}
+                        >
+                            <DocumentPlusIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
+                        </button>
+                        <button type="submit" className={'mx-2 px-1 my-1 py-1 cursor-pointer'}>
+                            <PaperAirplaneIcon className={'w-7 h-7 cursor-pointer hover:text-gray-500'} />
+                        </button>
+                    </div>
                     {uploadedFile?.name && (
-                        <>
-                            <span>Fichier : {uploadedFile?.name}</span>
-                            <span>
-                                Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
-                            </span>
-                        </>
+                        <div className={'flex gap-10'}>
+                            <div className={'flex flex-col items-start'}>
+                                <span>Fichier : {uploadedFile?.name}</span>
+                                <span>
+                                    Origine : {uploadedFile?.uploadOrigin === 'drive' ? 'Drive' : 'Ordinateur local'}
+                                </span>
+                            </div>
+                            <TrashIcon
+                                className={'w-7 h-7 cursor-pointer hover:text-red-500'}
+                                onClick={() => setUploadedFile(null)}
+                            />
+                        </div>
                     )}
-                    <button
-                        type="submit"
-                        className={'w-12/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'}
-                    >
-                        Envoyer
-                    </button>
                 </span>
             </form>
             {showPopup &&

@@ -15,7 +15,7 @@ export default function AddFilePopup(props: Props) {
         <div className={'alertContainer'}>
             <div
                 className={'alertPopup text-center grid grid-rows-[repeat(10,_minmax(0,_1fr))] grid-flow-col'}
-                style={{ width: '50%', height: '80vh' }}
+                style={{ width: '50%', height: '80vh', minWidth: '700px', minHeight: '470px' }}
             >
                 <div className={'row-[span_8_/_span_8] p-8 pb-0'}>
                     <DisplayFiles callbackOnClick={getFileFromDrive} startingFolderId={folderId} compactMode={true} />
