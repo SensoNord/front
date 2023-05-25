@@ -6,8 +6,8 @@ import {
     PayLoadUpdateConversationMessage,
     conversationFields,
     messageFields,
-    conversationListFields,
     PayloadFetchConversationByIdAndPage,
+    PayLoadCreateMessage,
 } from './conversation-slice-helper';
 import { StatusEnum } from '../../types/Request/StatusEnum';
 import { ErrorType } from '../../types/Request/ErrorType';
@@ -35,7 +35,7 @@ export const fetchAllVisibleConversation = createAsyncThunk(
         try {
             const response = await directus.items('conversations').readByQuery({
                 limit: -1,
-                fields: conversationListFields,
+                fields: conversationFields,
             });
             return response.data as ConversationType[];
         } catch (error: any) {
@@ -58,7 +58,7 @@ export const fetchConversationByIdAndPage = createAsyncThunk(
                         _limit: 10,
                         _sort: '-date_created',
                         _page: payLoad.page,
-                    }
+                    },
                 },
             });
             return response as ConversationType;
@@ -154,6 +154,29 @@ export const updateMessageById = createAsyncThunk(
     },
 );
 
+export const createConversation = createAsyncThunk(
+    'conversation/createConversation',
+    async (payLoadCreateMessage: PayLoadCreateMessage, { rejectWithValue }) => {
+        try {
+            const response = await directus.items('conversations').createOne(
+                {
+                    user_list: payLoadCreateMessage.userList,
+                    folder_id: payLoadCreateMessage.folderId,
+                },
+                {
+                    fields: conversationFields,
+                },
+            );
+            return response as ConversationType;
+        } catch (error: any) {
+            return rejectWithValue({
+                error: error.message,
+                status: error.response.status,
+            });
+        }
+    },
+);
+
 const conversationSlice = createSlice({
     name: 'conversation',
     initialState,
@@ -171,7 +194,7 @@ const conversationSlice = createSlice({
         },
         clearCurrentConversationDisplayWithAllRelatedData: state => {
             state.currentConversationDisplayWithAllRelatedData = null;
-        }
+        },
     },
     extraReducers: builder => {
         builder
@@ -195,7 +218,10 @@ const conversationSlice = createSlice({
             .addCase(fetchConversationByIdAndPage.fulfilled, (state, action) => {
                 state.status = StatusEnum.SUCCEEDED;
                 if (state.currentConversationDisplayWithAllRelatedData?.messages_list) {
-                    state.currentConversationDisplayWithAllRelatedData.messages_list = [...state.currentConversationDisplayWithAllRelatedData.messages_list, ...action.payload.messages_list];
+                    state.currentConversationDisplayWithAllRelatedData.messages_list = [
+                        ...state.currentConversationDisplayWithAllRelatedData.messages_list,
+                        ...action.payload.messages_list,
+                    ];
                 } else {
                     state.currentConversationDisplayWithAllRelatedData = action.payload;
                 }
@@ -277,10 +303,26 @@ const conversationSlice = createSlice({
             .addCase(updateMessageById.rejected, (state, action) => {
                 state.status = StatusEnum.FAILED;
                 state.error = action.payload as ErrorType;
+            })
+            .addCase(createConversation.pending, state => {
+                state.status = StatusEnum.LOADING;
+                state.error = {} as ErrorType;
+            })
+            .addCase(createConversation.fulfilled, (state, action) => {
+                state.status = StatusEnum.SUCCEEDED;
+                state.conversationListDisplay = [...state.conversationListDisplay, action.payload];
+                state.error = {} as ErrorType;
+            })
+            .addCase(createConversation.rejected, (state, action) => {
+                state.status = StatusEnum.FAILED;
+                state.error = action.payload as ErrorType;
             });
     },
 });
 
 export default conversationSlice.reducer;
-export const { setCurrentConversationDisplay, setCurrentConversationDisplayWithAllRelatedData, clearCurrentConversationDisplayWithAllRelatedData } =
-    conversationSlice.actions;
+export const {
+    setCurrentConversationDisplay,
+    setCurrentConversationDisplayWithAllRelatedData,
+    clearCurrentConversationDisplayWithAllRelatedData,
+} = conversationSlice.actions;

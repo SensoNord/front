@@ -1,25 +1,22 @@
-import {useEffect, useRef, useState} from 'react';
-import {PostType} from '../../../types/Chat/PostType';
-import {ResponseType} from '../../../types/Chat/ResponseType';
+import { useEffect, useRef, useState } from 'react';
+import { PostType } from '../../../types/Chat/PostType';
+import { ResponseType } from '../../../types/Chat/ResponseType';
 import Response from './Response';
 import WriteResponse from './WriteResponse';
-import {SubjectType} from '../../../types/Chat/SubjectType';
-import {ModifiedFileType} from '../../../types/File/ModifiedFileType';
-import {createPortal} from 'react-dom';
+import { SubjectType } from '../../../types/Chat/SubjectType';
+import { ModifiedFileType } from '../../../types/File/ModifiedFileType';
+import { createPortal } from 'react-dom';
 import LoadingSpinner from '../../LoadingSpinner';
-import {useAppDispatch, useAppSelector} from '../../../App/hooks';
-import {
-    deletePostById,
-    updatePostMessageById,
-} from '../../../slicers/chat/subject-slice';
-import {downloadFile} from '../../../slicers/file/file-slice';
-import {PayloadFetchSubjectByIdAndPage, PayLoadUpdateSubjectPost} from '../../../slicers/chat/subject-slice-helper';
-import {FileTypeWithStatus} from '../../../types/File/FileTypeWithStatus';
-import {useFetchFile} from '../../../customHook/useFetchFile';
+import { useAppDispatch, useAppSelector } from '../../../App/hooks';
+import { deletePostById, updatePostMessageById } from '../../../slicers/chat/subject-slice';
+import { downloadFile } from '../../../slicers/file/file-slice';
+import { PayLoadUpdateSubjectPost } from '../../../slicers/chat/subject-slice-helper';
+import { FileTypeWithStatus } from '../../../types/File/FileTypeWithStatus';
+import { useFetchFile } from '../../../customHook/useFetchFile';
 import DownloadableFile from '../DownloadableFile';
 import NameAndDate from '../../Field/NameAndDate';
 import Sondage from '../../Poll/Poll';
-import {directus} from "../../../libraries/directus";
+import { directus } from '../../../libraries/directus';
 
 type Props = {
     post: PostType;
@@ -39,12 +36,12 @@ const responseField = [
     'message',
     'file_id',
     'id',
-]
+];
 
 export default function Post(props: Props) {
-    const {post, subject, updateSubject} = props;
+    const { post, subject, updateSubject } = props;
     const dispatch = useAppDispatch();
-    const {connectedUser, connectedUserRole} = useAppSelector(state => state.auth);
+    const { connectedUser, connectedUserRole } = useAppSelector(state => state.auth);
 
     const [showPopup, setShowPopup] = useState(false);
     const [file, setFile] = useState<FileTypeWithStatus>({} as FileTypeWithStatus);
@@ -69,8 +66,8 @@ export default function Post(props: Props) {
                     let msgList = await directus.items('responses').readByQuery({
                         filter: {
                             post_id: {
-                                _eq: post.id
-                            }
+                                _eq: post.id,
+                            },
                         },
                         fields: responseField,
                         limit: 5,
@@ -80,21 +77,21 @@ export default function Post(props: Props) {
                     });
                     setResponsesList(msgList.data as ResponseType[]);
 
-                    let nbResponses = await directus.items('responses').readByQuery({
+                    let nbResponses = (await directus.items('responses').readByQuery({
                         filter: {
                             post_id: {
-                                _eq: post.id
-                            }
+                                _eq: post.id,
+                            },
                         },
                         aggregate: {
-                            count: "id"
-                        }
-                    }) as { data: [{ count: { id: number } }] };
+                            count: 'id',
+                        },
+                    })) as { data: [{ count: { id: number } }] };
                     setTotalNbResponses(nbResponses.data[0].count.id);
-                }
+                };
                 fetchResponsesList();
             } catch (error) {
-                console.error("Erreur lors de la récupération du nombre de réponses:", error);
+                console.error('Erreur lors de la récupération du nombre de réponses:', error);
                 throw error;
             }
         }
@@ -108,7 +105,6 @@ export default function Post(props: Props) {
     function quitPopup() {
         setShowPopup(false);
     }
-
 
     async function deletePost() {
         await dispatch(deletePostById(post.id));
@@ -135,8 +131,8 @@ export default function Post(props: Props) {
         let msgList = await directus.items('responses').readByQuery({
             filter: {
                 post_id: {
-                    _eq: post.id
-                }
+                    _eq: post.id,
+                },
             },
             fields: responseField,
             limit: 5 * responsesPageNb,
@@ -150,8 +146,8 @@ export default function Post(props: Props) {
         let response = await directus.items('responses').readByQuery({
             filter: {
                 post_id: {
-                    _eq: post.id
-                }
+                    _eq: post.id,
+                },
             },
             fields: responseField,
             limit: 5,
@@ -159,19 +155,19 @@ export default function Post(props: Props) {
             sort: '-date_created',
             page: responsesPageNb + 1,
         });
-        setResponsesList([...responsesList, ...response.data as ResponseType[]]);
+        setResponsesList([...responsesList, ...(response.data as ResponseType[])]);
         setResponsesPageNb(responsesPageNb + 1);
     }
 
     return (
         <>
             {!isLoaded ? (
-                <LoadingSpinner/>
+                <LoadingSpinner />
             ) : (
                 <>
                     <div className={'w-full'}>
                         <div className={'flex justify-between'}>
-                            <NameAndDate date_created={post.date_created} user_created={post.user_created}/>
+                            <NameAndDate date_created={post.date_created} user_created={post.user_created} />
                             <div>
                                 {isPostOwner && !postIsBeingEdited && (
                                     //  Bouton modifier
@@ -247,7 +243,7 @@ export default function Post(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <div className={'p-4 rounded-lg'} style={{backgroundColor: 'rgb(219, 234, 254)'}}>
+                        <div className={'p-4 rounded-lg'} style={{ backgroundColor: 'rgb(219, 234, 254)' }}>
                             <div>
                                 <h2 className={'text-2xl font-bold'}>{post.title}</h2>
                             </div>
@@ -271,15 +267,18 @@ export default function Post(props: Props) {
                             )}
                             {post.sondage_id && (
                                 <div className="border-t-2 border-gray-300 mt-2">
-                                    <Sondage sondage_id={post.sondage_id}/>
+                                    <Sondage sondage_id={post.sondage_id} />
                                 </div>
                             )}
-                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile}/>
+                            <DownloadableFile file={file} handleDownloadFile={handleDownloadFile} />
                         </div>
                         <div className={'w-full'}>
                             {responsesList.length < totalNbResponses && (
                                 <div className={'text-center'}>
-                                    <button className={"mt-6 mb-4 bg-blue-300 p-2 rounded-xl"} onClick={handleShowMoreResponses}>
+                                    <button
+                                        className={'mt-6 mb-4 bg-blue-300 p-2 rounded-xl'}
+                                        onClick={handleShowMoreResponses}
+                                    >
                                         Afficher plus de réponse
                                     </button>
                                 </div>
@@ -311,7 +310,12 @@ export default function Post(props: Props) {
                                         </div>
                                     );
                                 })}
-                            <WriteResponse postId={post.id} subject={subject} key={post.id + 'writeResponse'} updateResponsesList={updateResponsesList}/>
+                            <WriteResponse
+                                postId={post.id}
+                                subject={subject}
+                                key={post.id + 'writeResponse'}
+                                updateResponsesList={updateResponsesList}
+                            />
                         </div>
                     </div>
                     {showPopup &&

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { SubjectType } from '../../../types/Chat/SubjectType';
 import { createPortal } from 'react-dom';
 import { useAppDispatch } from '../../../App/hooks';
-import { createResponseToPost, setCurrentSubjectDisplayWithAllRelatedData } from '../../../slicers/chat/subject-slice';
+import { createResponseToPost } from '../../../slicers/chat/subject-slice';
 import { PayLoadCreateSubjectMessage } from '../../../slicers/chat/subject-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from '../AddFilePopup';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function WriteResponse(props: Props) {
-    const {postId, subject, updateResponsesList} = props;
+    const { postId, subject, updateResponsesList } = props;
     const dispatch = useAppDispatch();
     const formRef = useRef(null) as { current: any };
 

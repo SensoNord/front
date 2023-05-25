@@ -39,11 +39,10 @@ export type PayLoadAddUserToSubject = {
 
 export type PayLoadUpdateSubjectResponse = PayLoadUpdateSubjectPost;
 
-
 export type PayloadFetchSubjectByIdAndPage = {
     subjectId: string;
     page: number;
-}
+};
 
 export const subjectFields = [
     'id',

@@ -108,7 +108,7 @@ export default function DisplayFiles(props: Props) {
         <>
             {!isDataLoaded ? (
                 <>
-                <LoadingSpinner />
+                    <LoadingSpinner />
                 </>
             ) : (
                 <div className={'h-full overflow-y-scroll'}>

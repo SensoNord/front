@@ -5,9 +5,13 @@ import '../../../styles/textarea.css';
 import { useAppDispatch } from '../../../App/hooks';
 import {
     clearCurrentConversationDisplayWithAllRelatedData,
-    createMessageToConversation, fetchConversationByIdAndPage,
+    createMessageToConversation,
+    fetchConversationByIdAndPage,
 } from '../../../slicers/chat/conversation-slice';
-import {PayLoadCreateConversationMessage, PayloadFetchConversationByIdAndPage} from '../../../slicers/chat/conversation-slice-helper';
+import {
+    PayLoadCreateConversationMessage,
+    PayloadFetchConversationByIdAndPage,
+} from '../../../slicers/chat/conversation-slice-helper';
 import { useFileManagement } from '../../../customHook/useFileManagement';
 import AddFilePopup from '../AddFilePopup';
 import { DocumentPlusIcon, PaperAirplaneIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -40,9 +44,14 @@ export default function WriteMessage(props: WriteMessageProps) {
     const updateConversation = async () => {
         dispatch(clearCurrentConversationDisplayWithAllRelatedData());
         for (let i = 1; i <= pageNb; i++) {
-            await dispatch(fetchConversationByIdAndPage({conversationId: conversation?.id, page: i} as PayloadFetchConversationByIdAndPage));
+            await dispatch(
+                fetchConversationByIdAndPage({
+                    conversationId: conversation?.id,
+                    page: i,
+                } as PayloadFetchConversationByIdAndPage),
+            );
         }
-    }
+    };
 
     async function handleSubmit(e: { preventDefault: () => void; target: any }) {
         e.preventDefault();
@@ -90,7 +99,7 @@ export default function WriteMessage(props: WriteMessageProps) {
                     <textarea
                         id={'response'}
                         placeholder={'Nouveau Message'}
-                        className={'w-full p-2 mt-2 border-2 border-gray-600 rounded-md'}
+                        className={'w-full p-2 mt-2 border border-gray-700 rounded-md'}
                         rows={3}
                         cols={30}
                     ></textarea>
