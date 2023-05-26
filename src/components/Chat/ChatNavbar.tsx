@@ -113,7 +113,7 @@ export default function ChatNavbar(props: ChatNavbarProps) {
                     </div>
                 </nav>
             </Transition>
-            <nav className="hidden laptop:block laptop:fixed h-full border-r-2 border-gray-300 laptop:w-60">
+            <nav className="hidden laptop:block laptop:fixed h-full border-r-2 border-gray-300 laptop:w-60 overflow-auto">
                 <div className="flex flex-col">
                     <div className="flex justify-between items-center mx-2 my-2">
                         <h1 className="text-2xl font-bold cursor-default pr-4">Groupes</h1>
