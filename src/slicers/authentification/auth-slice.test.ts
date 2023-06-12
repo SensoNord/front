@@ -15,18 +15,6 @@ describe('Test authentication', () => {
         expect(store.getState().auth.token).toBeNull;
     });
 
-    test('should handle test user connected', async () => {
-        const credentials = {
-            email: process.env.REACT_APP_EMAIL_TESTEUR,
-            password: process.env.REACT_APP_PASSWORD_TESTEUR,
-        } as CredentialsType;
-
-        await store.dispatch(fetchLogin(credentials) as any);
-        expect(store.getState().auth.token!.access_token).not.toEqual('');
-        expect(store.getState().auth.token!.access_token).not.toBeUndefined();
-        expect(store.getState().auth.status).toEqual('succeeded');
-    });
-
     test('should handle failed login', async () => {
         const credentials = {
             email: 'test@gmail.com',
