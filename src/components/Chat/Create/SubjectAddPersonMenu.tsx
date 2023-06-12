@@ -95,6 +95,7 @@ export default function SubjectAddPersonMenu(props: SubjectAddPersonMenuProps) {
         });
 
         setSelectedUser(groupMemberWithoutCurrentUser || []);
+        // eslint-disable-next-line
     }, [dispatch, currentSubjectDisplayWithAllRelatedData]);
 
     useEffect(() => {
