@@ -11,7 +11,7 @@ export default function Profil() {
 
     useEffect(() => {
         setIsAdministrator(connectedUserRole.name === 'Manager');
-    }, [connectedUserRole.name]);
+    }, [connectedUserRole.name, setIsAdministrator]);
 
     return (
         <section
