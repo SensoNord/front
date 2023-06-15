@@ -24,7 +24,7 @@ export const sendInvite = createAsyncThunk(
             await directus.users.invites.send(
                 invitation.email,
                 invitation.roleId,
-                'http://localhost:3000/accept-invitation',
+                'https://www.sensonord.fr/accept-invitation',
             );
             return invitation;
         } catch (error: any) {
